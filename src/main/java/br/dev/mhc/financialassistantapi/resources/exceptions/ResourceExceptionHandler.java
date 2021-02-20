@@ -42,5 +42,13 @@ public class ResourceExceptionHandler {
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
+	
+	@ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
+	public ResponseEntity<StandardError> dataBaseValidation(org.hibernate.exception.ConstraintViolationException e, HttpServletRequest request) {
 
+		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Data base validation error",
+				System.currentTimeMillis());
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
 }
