@@ -1,7 +1,11 @@
 package br.dev.mhc.financialassistantapi.dto;
 
-public class UserNewDTO {
+import java.io.Serializable;
+
+public class UserNewDTO implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	private String nickname;
 	private String email;
 	private String password;
