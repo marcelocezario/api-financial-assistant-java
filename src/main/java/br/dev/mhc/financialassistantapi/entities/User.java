@@ -16,6 +16,9 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.dev.mhc.financialassistantapi.dto.UserDTO;
+import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
+
 @Entity
 @Table(name = "tb_user")
 public class User implements Serializable {
@@ -30,10 +33,12 @@ public class User implements Serializable {
 	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
+	@NotEmpty(message = "Required field")
 	@Email(message = "Invalid email adress")
 	@Column(unique = true)
 	private String email;
 
+	@NotEmpty(message = "Required field")
 	@JsonIgnore
 	private String password;
 
@@ -54,6 +59,20 @@ public class User implements Serializable {
 		this.registrationDate = registrationDate;
 		this.lastAccess = lastAccess;
 		this.active = active;
+	}
+	
+	public User(UserDTO userDTO) {
+		this.id = userDTO.getId();
+		this.nickname = userDTO.getNickname();
+		this.email = userDTO.getEmail();
+		this.registrationDate = userDTO.getRegistrationDate();
+		this.lastAccess = userDTO.getLastAccess();
+	}
+	
+	public User(UserNewDTO userNewDTO) {
+		this.nickname = userNewDTO.getNickname();
+		this.email = userNewDTO.getEmail();
+		this.password = userNewDTO.getPassword();
 	}
 
 	public Long getId() {

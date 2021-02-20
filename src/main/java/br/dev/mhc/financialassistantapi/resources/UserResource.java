@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
+import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.services.UserService;
 
@@ -32,8 +33,8 @@ public class UserResource {
 	private UserService service;
 
 	@PostMapping
-	public ResponseEntity<Void> insert(@Valid @RequestBody UserDTO objDTO) {
-		User obj = service.fromDTO(objDTO);
+	public ResponseEntity<Void> insert(@Valid @RequestBody UserNewDTO objDTO) {
+		User obj = new User(objDTO);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
@@ -70,7 +71,7 @@ public class UserResource {
 
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody UserDTO objDTO, @PathVariable Long id) {
-		User obj = service.fromDTO(objDTO);
+		User obj = new User(objDTO);
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();

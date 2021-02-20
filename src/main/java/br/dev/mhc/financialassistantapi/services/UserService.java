@@ -1,5 +1,6 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 import br.dev.mhc.financialassistantapi.services.exceptions.DataIntegrityException;
@@ -25,7 +25,7 @@ public class UserService {
 	public List<User> findAll() {
 		return repository.findAll();
 	}
-	
+
 	public Page<User> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findAll(pageRequest);
@@ -38,6 +38,9 @@ public class UserService {
 	}
 
 	public User insert(User obj) {
+		obj.setActive(true);
+		obj.setRegistrationDate(Instant.now());
+		obj.setLastAccess(obj.getRegistrationDate());
 		obj = repository.save(obj);
 		return obj;
 	}
@@ -46,8 +49,7 @@ public class UserService {
 		findById(id);
 		try {
 			repository.deleteById(id);
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("You cannot delete a user with linked accounts");
 		}
 	}
@@ -62,10 +64,4 @@ public class UserService {
 		newObj.setNickname(obj.getNickname());
 		newObj.setEmail(obj.getEmail());
 	}
-
-	public User fromDTO(UserDTO objDTO) {
-		return new User(objDTO.getId(), objDTO.getNickname(), objDTO.getEmail(), null, objDTO.getRegistrationDate(),
-				objDTO.getLastAccess(), objDTO.isActive());
-	}
-	
 }

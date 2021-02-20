@@ -11,20 +11,17 @@ public class UserDTO {
 	private String email;
 	private Instant registrationDate;
 	private Instant lastAccess;
-	private boolean active;
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String nickname, String email, Instant registrationDate, Instant lastAccess,
-			boolean active) {
+	public UserDTO(Long id, String nickname, String email, Instant registrationDate, Instant lastAccess) {
 		super();
 		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
 		this.registrationDate = registrationDate;
 		this.lastAccess = lastAccess;
-		this.active = active;
 	}
 
 	public UserDTO(User obj) {
@@ -33,7 +30,6 @@ public class UserDTO {
 		this.email = obj.getEmail();
 		this.registrationDate = obj.getRegistrationDate();
 		this.lastAccess = obj.getLastAccess();
-		this.active = obj.isActive();
 	}
 
 	public Long getId() {
@@ -74,13 +70,5 @@ public class UserDTO {
 
 	public void setLastAccess(Instant lastAccess) {
 		this.lastAccess = lastAccess;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
 	}
 }
