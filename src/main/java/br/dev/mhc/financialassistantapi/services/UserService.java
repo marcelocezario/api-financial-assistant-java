@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
@@ -37,6 +38,7 @@ public class UserService {
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
 	}
 
+	@Transactional
 	public User insert(User obj) {
 		obj.setActive(true);
 		obj.setRegistrationDate(Instant.now());
