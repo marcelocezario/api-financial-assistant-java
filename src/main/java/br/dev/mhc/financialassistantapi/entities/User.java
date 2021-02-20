@@ -18,9 +18,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
+import br.dev.mhc.financialassistantapi.services.validation.UserInsert;
 
 @Entity
 @Table(name = "tb_user")
+@UserInsert
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
