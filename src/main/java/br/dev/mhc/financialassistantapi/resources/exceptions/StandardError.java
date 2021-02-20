@@ -1,20 +1,28 @@
 package br.dev.mhc.financialassistantapi.resources.exceptions;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 public class StandardError implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private Integer status;
 	private String msg;
-	private Long timeStamp;
-	
-	public StandardError(Integer status, String msg, Long timeStamp) {
+	private Instant instant;
+
+	public StandardError(Integer status, String msg, Instant instant) {
 		super();
 		this.status = status;
 		this.msg = msg;
-		this.timeStamp = timeStamp;
+		this.instant = instant;
+	}
+
+	public StandardError(Integer status, String msg, Long timeMilliSeconds) {
+		super();
+		this.status = status;
+		this.msg = msg;
+		this.instant = Instant.ofEpochMilli(timeMilliSeconds);
 	}
 
 	public Integer getStatus() {
@@ -33,11 +41,15 @@ public class StandardError implements Serializable {
 		this.msg = msg;
 	}
 
-	public Long getTimeStamp() {
-		return timeStamp;
+	public Instant getInstant() {
+		return instant;
 	}
 
-	public void setTimeStamp(Long timeStamp) {
-		this.timeStamp = timeStamp;
+	public void setInstant(Instant instant) {
+		this.instant = instant;
+	}
+
+	public void setInstant(Long timeMilliSeconds) {
+		this.instant = Instant.ofEpochMilli(timeMilliSeconds);
 	}
 }
