@@ -23,21 +23,6 @@ public class UserService {
 	@Autowired
 	private UserRepository repository;
 
-	public List<User> findAll() {
-		return repository.findAll();
-	}
-
-	public Page<User> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findAll(pageRequest);
-	}
-
-	public User findById(Long id) {
-		Optional<User> obj = repository.findById(id);
-		return obj.orElseThrow(
-				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
-	}
-
 	@Transactional
 	public User insert(User obj) {
 		obj.setActive(true);
@@ -54,6 +39,25 @@ public class UserService {
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("You cannot delete a user with linked accounts");
 		}
+	}
+
+	public List<User> findAll() {
+		return repository.findAll();
+	}
+
+	public Page<User> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findAll(pageRequest);
+	}
+
+	public User findById(Long id) {
+		Optional<User> obj = repository.findById(id);
+		return obj.orElseThrow(
+				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
+	}
+	
+	public User findByEmail(String email) {
+		return repository.findByEmail(email);
 	}
 
 	public User update(User obj) {
