@@ -158,4 +158,23 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [id=");
+		builder.append(id);
+		builder.append(", nickname=");
+		builder.append(nickname);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", registrationDate=");
+		builder.append(registrationDate);
+		builder.append(", lastAccess=");
+		builder.append(lastAccess);
+		builder.append(", active=");
+		builder.append(active);
+		builder.append("]");
+		return builder.toString();
+	}
 }
