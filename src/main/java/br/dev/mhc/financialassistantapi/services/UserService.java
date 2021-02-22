@@ -32,6 +32,18 @@ public class UserService {
 		return obj;
 	}
 
+	@Transactional
+	public User update(User obj) {
+		User newObj = findById(obj.getId());
+		updateData(newObj, obj);
+		return repository.save(newObj);
+	}
+
+	public void updateData(User newObj, User obj) {
+		newObj.setNickname(obj.getNickname());
+		newObj.setEmail(obj.getEmail());
+	}
+
 	public void delete(Long id) {
 		findById(id);
 		try {
@@ -55,19 +67,8 @@ public class UserService {
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
 	}
-	
+
 	public User findByEmail(String email) {
 		return repository.findByEmail(email);
-	}
-
-	public User update(User obj) {
-		User newObj = findById(obj.getId());
-		updateData(newObj, obj);
-		return repository.save(newObj);
-	}
-
-	public void updateData(User newObj, User obj) {
-		newObj.setNickname(obj.getNickname());
-		newObj.setEmail(obj.getEmail());
 	}
 }
