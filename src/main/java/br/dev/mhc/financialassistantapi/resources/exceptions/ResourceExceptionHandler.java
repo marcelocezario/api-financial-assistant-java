@@ -33,7 +33,8 @@ public class ResourceExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<StandardError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
+	public ResponseEntity<StandardError> methodArgumentNotValid(MethodArgumentNotValidException e,
+			HttpServletRequest request) {
 
 		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Validation error",
 				System.currentTimeMillis());
@@ -44,7 +45,8 @@ public class ResourceExceptionHandler {
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<StandardError> validation(ConstraintViolationException e, HttpServletRequest request) {
+	public ResponseEntity<StandardError> constraintViolation(ConstraintViolationException e,
+			HttpServletRequest request) {
 
 		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Validation error",
 				System.currentTimeMillis());
@@ -57,11 +59,11 @@ public class ResourceExceptionHandler {
 	}
 
 	@ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
-	public ResponseEntity<StandardError> dataBaseValidation(org.hibernate.exception.ConstraintViolationException e,
-			HttpServletRequest request) {
+	public ResponseEntity<StandardError> dataBaseConstraintViolation(
+			org.hibernate.exception.ConstraintViolationException e, HttpServletRequest request) {
 
-		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Database validation error",
-				System.currentTimeMillis());
+		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(),
+				"Database constraint validation error", System.currentTimeMillis());
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
