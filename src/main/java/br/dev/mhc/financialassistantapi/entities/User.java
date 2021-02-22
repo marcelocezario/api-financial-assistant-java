@@ -18,11 +18,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
-import br.dev.mhc.financialassistantapi.services.validation.UserInsert;
 
 @Entity
 @Table(name = "tb_user")
-@UserInsert
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -30,7 +28,7 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotEmpty(message = "Required field")
 	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
@@ -62,7 +60,7 @@ public class User implements Serializable {
 		this.lastAccess = lastAccess;
 		this.active = active;
 	}
-	
+
 	public User(UserDTO userDTO) {
 		this.id = userDTO.getId();
 		this.nickname = userDTO.getNickname();
@@ -70,7 +68,7 @@ public class User implements Serializable {
 		this.registrationDate = userDTO.getRegistrationDate();
 		this.lastAccess = userDTO.getLastAccess();
 	}
-	
+
 	public User(UserNewDTO userNewDTO) {
 		this.nickname = userNewDTO.getNickname();
 		this.email = userNewDTO.getEmail();
@@ -158,7 +156,7 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

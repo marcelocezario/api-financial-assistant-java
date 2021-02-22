@@ -8,21 +8,21 @@ public class StandardError implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer status;
-	private String msg;
-	private Instant instant;
+	private String message;
+	private Instant timeStamp;
 
-	public StandardError(Integer status, String msg, Instant instant) {
+	public StandardError(Integer status, String message, Instant timeStamp) {
 		super();
 		this.status = status;
-		this.msg = msg;
-		this.instant = instant;
+		this.message = message;
+		this.timeStamp = timeStamp;
 	}
 
-	public StandardError(Integer status, String msg, Long timeMilliSeconds) {
+	public StandardError(Integer status, String message, Long timeMilliSeconds) {
 		super();
 		this.status = status;
-		this.msg = msg;
-		this.instant = Instant.ofEpochMilli(timeMilliSeconds);
+		this.message = message;
+		this.timeStamp = Instant.ofEpochMilli(timeMilliSeconds);
 	}
 
 	public Integer getStatus() {
@@ -33,23 +33,23 @@ public class StandardError implements Serializable {
 		this.status = status;
 	}
 
-	public String getMsg() {
-		return msg;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setMsg(String msg) {
-		this.msg = msg;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
-	public Instant getInstant() {
-		return instant;
+	public Instant getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setInstant(Instant instant) {
-		this.instant = instant;
+	public void setTimeStamp(Instant timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
-	public void setInstant(Long timeMilliSeconds) {
-		this.instant = Instant.ofEpochMilli(timeMilliSeconds);
+	public void setTimeStamp(Long timeMilliSeconds) {
+		this.timeStamp = Instant.ofEpochMilli(timeMilliSeconds);
 	}
 }

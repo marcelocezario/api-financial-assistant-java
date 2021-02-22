@@ -6,6 +6,8 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -30,6 +32,17 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<StandardError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
+
+		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Validation error",
+				System.currentTimeMillis());
+		for (FieldError x : e.getBindingResult().getFieldErrors()) {
+			err.addError(x.getField(), x.getDefaultMessage());
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<StandardError> validation(ConstraintViolationException e, HttpServletRequest request) {
 
@@ -42,13 +55,14 @@ public class ResourceExceptionHandler {
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
-	
+
 	@ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
-	public ResponseEntity<StandardError> dataBaseValidation(org.hibernate.exception.ConstraintViolationException e, HttpServletRequest request) {
+	public ResponseEntity<StandardError> dataBaseValidation(org.hibernate.exception.ConstraintViolationException e,
+			HttpServletRequest request) {
 
 		ValidationError err = new ValidationError(HttpStatus.BAD_REQUEST.value(), "Database validation error",
 				System.currentTimeMillis());
-		
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 }
