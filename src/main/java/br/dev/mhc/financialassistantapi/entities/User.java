@@ -9,8 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.dev.mhc.financialassistantapi.dto.UserDTO;
+import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
 
 @Entity
 @Table(name = "tb_user")
@@ -21,11 +28,17 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@NotEmpty(message = "Required field")
+	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
+	@NotEmpty(message = "Required field")
+	@Email(message = "Invalid email adress")
 	@Column(unique = true)
 	private String email;
 
+	@NotEmpty(message = "Required field")
 	@JsonIgnore
 	private String password;
 
@@ -46,6 +59,20 @@ public class User implements Serializable {
 		this.registrationDate = registrationDate;
 		this.lastAccess = lastAccess;
 		this.active = active;
+	}
+
+	public User(UserDTO userDTO) {
+		this.id = userDTO.getId();
+		this.nickname = userDTO.getNickname();
+		this.email = userDTO.getEmail();
+		this.registrationDate = userDTO.getRegistrationDate();
+		this.lastAccess = userDTO.getLastAccess();
+	}
+
+	public User(UserNewDTO userNewDTO) {
+		this.nickname = userNewDTO.getNickname();
+		this.email = userNewDTO.getEmail();
+		this.password = userNewDTO.getPassword();
 	}
 
 	public Long getId() {
@@ -128,5 +155,24 @@ public class User implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [id=");
+		builder.append(id);
+		builder.append(", nickname=");
+		builder.append(nickname);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", registrationDate=");
+		builder.append(registrationDate);
+		builder.append(", lastAccess=");
+		builder.append(lastAccess);
+		builder.append(", active=");
+		builder.append(active);
+		builder.append("]");
+		return builder.toString();
 	}
 }

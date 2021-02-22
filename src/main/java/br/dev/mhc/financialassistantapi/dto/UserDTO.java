@@ -1,30 +1,46 @@
 package br.dev.mhc.financialassistantapi.dto;
 
+import java.io.Serializable;
 import java.time.Instant;
 
-import br.dev.mhc.financialassistantapi.entities.User;
+import javax.persistence.Column;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
-public class UserDTO {
+import org.hibernate.validator.constraints.Length;
+
+import br.dev.mhc.financialassistantapi.entities.User;
+import br.dev.mhc.financialassistantapi.services.validation.UserUpdate;
+
+@UserUpdate
+public class UserDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
+
+	@NotEmpty(message = "Required field")
+	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
+
+	@NotEmpty(message = "Required field")
+	@Email(message = "Invalid email adress")
+	@Column(unique = true)
 	private String email;
+
 	private Instant registrationDate;
 	private Instant lastAccess;
-	private boolean active;
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String nickname, String email, Instant registrationDate, Instant lastAccess,
-			boolean active) {
+	public UserDTO(Long id, String nickname, String email, Instant registrationDate, Instant lastAccess) {
 		super();
 		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
 		this.registrationDate = registrationDate;
 		this.lastAccess = lastAccess;
-		this.active = active;
 	}
 
 	public UserDTO(User obj) {
@@ -33,7 +49,6 @@ public class UserDTO {
 		this.email = obj.getEmail();
 		this.registrationDate = obj.getRegistrationDate();
 		this.lastAccess = obj.getLastAccess();
-		this.active = obj.isActive();
 	}
 
 	public Long getId() {
@@ -74,13 +89,5 @@ public class UserDTO {
 
 	public void setLastAccess(Instant lastAccess) {
 		this.lastAccess = lastAccess;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
 	}
 }
