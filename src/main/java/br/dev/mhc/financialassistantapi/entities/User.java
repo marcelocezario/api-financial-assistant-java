@@ -2,6 +2,9 @@ package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -159,19 +162,25 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withLocale(new Locale("pt", "BR"))
+				.withZone(ZoneId.systemDefault());
+
 		StringBuilder builder = new StringBuilder();
-		builder.append("Olá ");
-		builder.append(nickname);
-		builder.append(".");
-		builder.append(".\n\n");
-		builder.append("Seu cadastro foi realizado com sucesso!");
 		builder.append("\n");
+		builder.append("----------------------------------------------------------");
+		builder.append("\n");
+		builder.append("Cadastrado realizado com sucesso!\n\n");
+		builder.append("Nickname: ");
+		builder.append(nickname);
+		builder.append("\n\n");
 		builder.append("E-mail de cadastro: ");
 		builder.append(email);
 		builder.append("\n");
 		builder.append("Data e hora do cadastro: ");
-		builder.append(registrationMoment);
-		builder.append(".");
+		builder.append(dtf.format(registrationMoment));
+		builder.append("\n");
+		builder.append("----------------------------------------------------------");
+		builder.append("\n");
 		return builder.toString();
 	}
 }
