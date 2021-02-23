@@ -26,8 +26,8 @@ public class UserService {
 	@Transactional
 	public User insert(User obj) {
 		obj.setActive(true);
-		obj.setRegistrationDate(Instant.now());
-		obj.setLastAccess(obj.getRegistrationDate());
+		obj.setRegistrationMoment(Instant.now());
+		obj.setLastAccess(obj.getRegistrationMoment());
 		obj = repository.save(obj);
 		return obj;
 	}
