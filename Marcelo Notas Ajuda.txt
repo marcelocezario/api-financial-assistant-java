@@ -7,3 +7,13 @@ Window > Show View > Other...
 Atalho: Alt + Shift + Q, Q
 Procure por Boot Dashboard, ou vá direto em: Other > Boot Dashboard
 ------
+Dependências removidas:
+<dependency>
+	<groupId>org.thymeleaf.extras</groupId>
+	<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.security</groupId>
+	<artifactId>spring-security-test</artifactId>
+	<scope>test</scope>
+</dependency>
