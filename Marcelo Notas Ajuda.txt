@@ -1,0 +1,9 @@
+Para adicionar variável de ambiente Spring:
+Clica com o botão direito no projeto (BootDashboard - canto inferior esquerdo) > Open Config > Environment > Add
+Atalho: Ctrl + Alt + Shift + B, F
+------
+Para habilitar bootDashboard, vá em:
+Window > Show View > Other...
+Atalho: Alt + Shift + Q, Q
+Procure por Boot Dashboard, ou vá direto em: Other > Boot Dashboard
+------
