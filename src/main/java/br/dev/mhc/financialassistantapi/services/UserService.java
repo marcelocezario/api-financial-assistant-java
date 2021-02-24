@@ -9,9 +9,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.dev.mhc.financialassistantapi.dto.UserDTO;
+import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 import br.dev.mhc.financialassistantapi.services.email.EmailService;
@@ -22,8 +25,11 @@ import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundExcept
 public class UserService {
 
 	@Autowired
+	private BCryptPasswordEncoder pe;
+
+	@Autowired
 	private UserRepository repository;
-	
+
 	@Autowired
 	private EmailService emailService;
 
@@ -76,5 +82,17 @@ public class UserService {
 
 	public User findByEmail(String email) {
 		return repository.findByEmail(email);
+	}
+
+	public User fromDTO(UserDTO objDto) {
+		return new User(objDto.getId(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
+				objDto.getLastAccess(), objDto.isActive());
+	}
+
+	public User fromDTO(UserNewDTO objDTO) {
+		User user = new User(null, objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
+				true);
+		
+		return user;
 	}
 }

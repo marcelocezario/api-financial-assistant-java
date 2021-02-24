@@ -19,9 +19,6 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.dev.mhc.financialassistantapi.dto.UserDTO;
-import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
-
 @Entity
 @Table(name = "tb_user")
 public class User implements Serializable {
@@ -62,20 +59,6 @@ public class User implements Serializable {
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 		this.active = active;
-	}
-
-	public User(UserDTO userDTO) {
-		this.id = userDTO.getId();
-		this.nickname = userDTO.getNickname();
-		this.email = userDTO.getEmail();
-		this.registrationMoment = userDTO.getRegistrationMoment();
-		this.lastAccess = userDTO.getLastAccess();
-	}
-
-	public User(UserNewDTO userNewDTO) {
-		this.nickname = userNewDTO.getNickname();
-		this.email = userNewDTO.getEmail();
-		this.password = userNewDTO.getPassword();
 	}
 
 	public Long getId() {

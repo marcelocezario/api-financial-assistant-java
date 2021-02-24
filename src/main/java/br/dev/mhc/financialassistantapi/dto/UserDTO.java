@@ -30,17 +30,19 @@ public class UserDTO implements Serializable {
 
 	private Instant registrationMoment;
 	private Instant lastAccess;
+	private boolean active;
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String nickname, String email, Instant registrationMoment, Instant lastAccess) {
+	public UserDTO(Long id, String nickname, String email, Instant registrationMoment, Instant lastAccess, boolean active) {
 		super();
 		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
+		this.active = active;
 	}
 
 	public UserDTO(User obj) {
@@ -49,6 +51,7 @@ public class UserDTO implements Serializable {
 		this.email = obj.getEmail();
 		this.registrationMoment = obj.getRegistrationMoment();
 		this.lastAccess = obj.getLastAccess();
+		this.active = obj.isActive();
 	}
 
 	public Long getId() {
@@ -89,5 +92,13 @@ public class UserDTO implements Serializable {
 
 	public void setLastAccess(Instant lastAccess) {
 		this.lastAccess = lastAccess;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
