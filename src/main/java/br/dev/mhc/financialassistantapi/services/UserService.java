@@ -33,7 +33,8 @@ public class UserService {
 		obj.setRegistrationMoment(Instant.now());
 		obj.setLastAccess(obj.getRegistrationMoment());
 		obj = repository.save(obj);
-		emailService.sendUserConfirmationEmail(obj);
+//		emailService.sendUserConfirmationEmail(obj);
+		emailService.sendUserConfirmationHtmlEmail(obj);
 		return obj;
 	}
 

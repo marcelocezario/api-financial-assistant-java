@@ -166,20 +166,23 @@ public class User implements Serializable {
 				.withZone(ZoneId.systemDefault());
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("\n");
-		builder.append("----------------------------------------------------------");
-		builder.append("\n");
-		builder.append("Cadastrado realizado com sucesso!\n\n");
-		builder.append("Nickname: ");
+		builder.append("Olá ");
 		builder.append(nickname);
-		builder.append("\n\n");
+		builder.append("!\n\n");
+		builder.append("Cadastrado realizado com sucesso!\n\n");
 		builder.append("E-mail de cadastro: ");
 		builder.append(email);
 		builder.append("\n");
 		builder.append("Data e hora do cadastro: ");
 		builder.append(dtf.format(registrationMoment));
 		builder.append("\n");
-		builder.append("----------------------------------------------------------");
+		builder.append("\n");
+		builder.append("O que posso fazer agora?");
+		builder.append("\n");
+		builder.append("Agora você tem acesso ao app Assitente Financeiro, para lhe ajudar a controlar suas finanças.");
+		builder.append("\n");
+		builder.append("\n");
+		builder.append("---------------------------------------------------------------------------------------------");
 		builder.append("\n");
 		return builder.toString();
 	}

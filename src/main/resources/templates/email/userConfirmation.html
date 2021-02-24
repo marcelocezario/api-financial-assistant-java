@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:remove="all">User Confirmation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<div>
+		<h1>
+			Olá <span th:text="${user.nickname}"></span>, usuário criado com sucesso!
+		</h1>
+		<p>
+			O que posso fazer agora?
+		</p>
+		<p>
+			<span>Agora você tem acesso ao app Assitente Financeiro, para lhe ajudar a controlar suas finanças.</span>
+		</p>
+		<h3>Contas cadastradas</h3>
+		<table border="1">
+			<tr>
+				<th>Conta</th>
+				<th>Saldo</th>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
