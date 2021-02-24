@@ -28,18 +28,18 @@ public class UserDTO implements Serializable {
 	@Column(unique = true)
 	private String email;
 
-	private Instant registrationDate;
+	private Instant registrationMoment;
 	private Instant lastAccess;
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String nickname, String email, Instant registrationDate, Instant lastAccess) {
+	public UserDTO(Long id, String nickname, String email, Instant registrationMoment, Instant lastAccess) {
 		super();
 		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
-		this.registrationDate = registrationDate;
+		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 	}
 
@@ -47,7 +47,7 @@ public class UserDTO implements Serializable {
 		this.id = obj.getId();
 		this.nickname = obj.getNickname();
 		this.email = obj.getEmail();
-		this.registrationDate = obj.getRegistrationDate();
+		this.registrationMoment = obj.getRegistrationMoment();
 		this.lastAccess = obj.getLastAccess();
 	}
 
@@ -75,12 +75,12 @@ public class UserDTO implements Serializable {
 		this.email = email;
 	}
 
-	public Instant getRegistrationDate() {
-		return registrationDate;
+	public Instant getRegistrationMoment() {
+		return registrationMoment;
 	}
 
-	public void setRegistrationDate(Instant registrationDate) {
-		this.registrationDate = registrationDate;
+	public void setRegistrationMoment(Instant registrationMoment) {
+		this.registrationMoment = registrationMoment;
 	}
 
 	public Instant getLastAccess() {

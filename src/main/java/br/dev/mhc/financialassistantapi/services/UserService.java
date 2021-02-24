@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
+import br.dev.mhc.financialassistantapi.services.email.EmailService;
 import br.dev.mhc.financialassistantapi.services.exceptions.DataIntegrityException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
@@ -22,13 +23,18 @@ public class UserService {
 
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Transactional
 	public User insert(User obj) {
 		obj.setActive(true);
-		obj.setRegistrationDate(Instant.now());
-		obj.setLastAccess(obj.getRegistrationDate());
+		obj.setRegistrationMoment(Instant.now());
+		obj.setLastAccess(obj.getRegistrationMoment());
 		obj = repository.save(obj);
+//		emailService.sendUserConfirmationEmail(obj);
+		emailService.sendUserConfirmationHtmlEmail(obj);
 		return obj;
 	}
 

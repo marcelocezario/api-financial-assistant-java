@@ -2,6 +2,9 @@ package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,21 +45,21 @@ public class User implements Serializable {
 	@JsonIgnore
 	private String password;
 
-	private Instant registrationDate;
+	private Instant registrationMoment;
 	private Instant lastAccess;
 	private boolean active;
 
 	public User() {
 	}
 
-	public User(Long id, String nickname, String email, String password, Instant registrationDate, Instant lastAccess,
+	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
 			boolean active) {
 		super();
 		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
-		this.registrationDate = registrationDate;
+		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 		this.active = active;
 	}
@@ -65,7 +68,7 @@ public class User implements Serializable {
 		this.id = userDTO.getId();
 		this.nickname = userDTO.getNickname();
 		this.email = userDTO.getEmail();
-		this.registrationDate = userDTO.getRegistrationDate();
+		this.registrationMoment = userDTO.getRegistrationMoment();
 		this.lastAccess = userDTO.getLastAccess();
 	}
 
@@ -108,12 +111,12 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public Instant getRegistrationDate() {
-		return registrationDate;
+	public Instant getRegistrationMoment() {
+		return registrationMoment;
 	}
 
-	public void setRegistrationDate(Instant registrationDate) {
-		this.registrationDate = registrationDate;
+	public void setRegistrationMoment(Instant registrationMoment) {
+		this.registrationMoment = registrationMoment;
 	}
 
 	public Instant getLastAccess() {
@@ -159,20 +162,28 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withLocale(new Locale("pt", "BR"))
+				.withZone(ZoneId.systemDefault());
+
 		StringBuilder builder = new StringBuilder();
-		builder.append("User [id=");
-		builder.append(id);
-		builder.append(", nickname=");
+		builder.append("Olá ");
 		builder.append(nickname);
-		builder.append(", email=");
+		builder.append("!\n\n");
+		builder.append("Cadastrado realizado com sucesso!\n\n");
+		builder.append("E-mail de cadastro: ");
 		builder.append(email);
-		builder.append(", registrationDate=");
-		builder.append(registrationDate);
-		builder.append(", lastAccess=");
-		builder.append(lastAccess);
-		builder.append(", active=");
-		builder.append(active);
-		builder.append("]");
+		builder.append("\n");
+		builder.append("Data e hora do cadastro: ");
+		builder.append(dtf.format(registrationMoment));
+		builder.append("\n");
+		builder.append("\n");
+		builder.append("O que posso fazer agora?");
+		builder.append("\n");
+		builder.append("Agora você tem acesso ao app Assitente Financeiro, para lhe ajudar a controlar suas finanças.");
+		builder.append("\n");
+		builder.append("\n");
+		builder.append("---------------------------------------------------------------------------------------------");
+		builder.append("\n");
 		return builder.toString();
 	}
 }
