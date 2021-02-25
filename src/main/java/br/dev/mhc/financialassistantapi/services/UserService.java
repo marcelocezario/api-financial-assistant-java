@@ -28,7 +28,7 @@ import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundExcept
 @Service
 public class UserService {
 
-	public static UserSpringSecurity authenticate() {
+	public static UserSpringSecurity authenticated() {
 		try {
 		return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		} catch (Exception e) {
@@ -58,7 +58,7 @@ public class UserService {
 
 	@Transactional
 	public User update(User obj) {
-		UserSpringSecurity userSS = UserService.authenticate();
+		UserSpringSecurity userSS = UserService.authenticated();
 		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
@@ -74,7 +74,7 @@ public class UserService {
 	}
 
 	public void delete(Long id) {
-		UserSpringSecurity userSS = UserService.authenticate();
+		UserSpringSecurity userSS = UserService.authenticated();
 		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
@@ -97,7 +97,7 @@ public class UserService {
 	}
 
 	public User findById(Long id) {
-		UserSpringSecurity userSS = UserService.authenticate();
+		UserSpringSecurity userSS = UserService.authenticated();
 		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
