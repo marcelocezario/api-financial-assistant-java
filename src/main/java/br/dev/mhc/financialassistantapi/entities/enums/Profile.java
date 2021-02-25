@@ -3,7 +3,7 @@ package br.dev.mhc.financialassistantapi.entities.enums;
 public enum Profile {
 	
 	ADMIN(1, "ROLE_ADMIN"),
-	USER_FREE(2, "ROLE_USER_FREE");
+	FREE_USER(2, "ROLE_FREE_USER");
 	
 	private int cod;
 	private String description;

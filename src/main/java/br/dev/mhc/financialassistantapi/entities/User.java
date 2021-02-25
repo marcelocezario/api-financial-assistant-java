@@ -53,13 +53,13 @@ public class User implements Serializable {
 	private Instant registrationMoment;
 	private Instant lastAccess;
 	private boolean active;
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "tb_profiles")
 	private Set<Integer> profiles = new HashSet<>();
-	
+
 	public User() {
-		addProfile(Profile.USER_FREE);
+		addProfile(Profile.FREE_USER);
 	}
 
 	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
@@ -72,7 +72,7 @@ public class User implements Serializable {
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 		this.active = active;
-		addProfile(Profile.USER_FREE);
+		addProfile(Profile.FREE_USER);
 	}
 
 	public Long getId() {
@@ -131,11 +131,11 @@ public class User implements Serializable {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public Set<Profile> getProfiles() {
 		return profiles.stream().map(x -> Profile.toEnum(x)).collect(Collectors.toSet());
 	}
-	
+
 	public void addProfile(Profile profile) {
 		profiles.add(profile.getCod());
 	}
