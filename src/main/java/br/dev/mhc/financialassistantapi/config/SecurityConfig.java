@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.dev.mhc.financialassistantapi.security.JWTAuthenticationFilter;
+import br.dev.mhc.financialassistantapi.security.JWTAuthorizationFilter;
 import br.dev.mhc.financialassistantapi.security.JWTUtil;
 
 @Configuration
@@ -28,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] PUBLIC_MATCHERS = {
 			"/h2-console/**",
 			"/outrosendpointsliberados/**",
-			"/users/**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
@@ -57,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(PUBLIC_MATCHERS).permitAll()
 			.anyRequest().authenticated();
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
