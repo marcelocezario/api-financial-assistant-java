@@ -33,7 +33,6 @@ public class UserResource {
 	@Autowired
 	private UserService service;
 	
-	
 	/*
 	 *  Métodos que não exigem autenticação
 	 */
