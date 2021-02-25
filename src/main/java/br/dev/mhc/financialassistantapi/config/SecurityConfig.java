@@ -39,16 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS = {
 			"/h2-console/**",
-			"/outrosendpointsliberados/**",
 	};
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
-			"/outrosendpointscomapenasgetliberado/**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/users",
-			"/outrosendpointscomapenaspostliberado/**"
+			"/users/**",
 	};
 
 	@Override

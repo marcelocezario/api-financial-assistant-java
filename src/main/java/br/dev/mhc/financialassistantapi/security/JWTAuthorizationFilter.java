@@ -39,7 +39,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 			}
 		}
 		chain.doFilter(request, response);
-
 	}
 
 	private UsernamePasswordAuthenticationToken getAuthentication(String token) {

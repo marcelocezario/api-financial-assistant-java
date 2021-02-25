@@ -32,6 +32,11 @@ public class UserResource {
 
 	@Autowired
 	private UserService service;
+	
+	
+	/*
+	 *  Métodos que não exigem autenticação
+	 */
 
 	@PostMapping
 	public ResponseEntity<Void> insert(@Valid @RequestBody UserNewDTO objDTO) {
@@ -40,7 +45,18 @@ public class UserResource {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
+	
+	/*
+	 * Métodos que exigem no mínimo autenticação de usuário com profile HOLE_FREE_USER (2)
+	 */
 
+	@PreAuthorize("hasAnyRole('FREE_USER')")
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+		User obj = service.findById(id);
+		return ResponseEntity.ok().body(new UserDTO(obj));
+	}
+	
 	@PreAuthorize("hasAnyRole('FREE_USER')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody UserDTO objDTO, @PathVariable Long id) {
@@ -50,12 +66,16 @@ public class UserResource {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('FREE_USER')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	/*
+	 * Métodos que exigem autenticação de usuário com profile HOLE_ADMIN (1)
+	 */
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
@@ -63,13 +83,6 @@ public class UserResource {
 		List<User> list = service.findAll();
 		List<UserDTO> listDTO = list.stream().map(x -> new UserDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
-	}
-
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-		User obj = service.findById(id);
-		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
