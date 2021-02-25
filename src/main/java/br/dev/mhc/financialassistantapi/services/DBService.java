@@ -23,7 +23,7 @@ public class DBService {
 
 	public void instantiateTestDatabase() throws ParseException {
 
-		User u1 = new User(null, "Marcelo", "marcelo@gmail.com", pe.encode("111111"),
+		User u1 = new User(null, "Marcelo", "marcelocezario@gmail.com", pe.encode("111111"),
 				Instant.parse("2021-02-01T10:00:00Z"), Instant.parse("2021-02-01T10:01:00Z"), true);
 		u1.addProfile(Profile.ADMIN);
 		
