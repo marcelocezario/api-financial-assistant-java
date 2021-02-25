@@ -2,6 +2,9 @@ package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.validation.constraints.Email;
@@ -10,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import br.dev.mhc.financialassistantapi.entities.User;
+import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 import br.dev.mhc.financialassistantapi.services.validation.UserUpdate;
 
 @UserUpdate
@@ -31,6 +35,8 @@ public class UserDTO implements Serializable {
 	private Instant registrationMoment;
 	private Instant lastAccess;
 	private boolean active;
+	
+	private List<Profile> profiles = new ArrayList<>();
 
 	public UserDTO() {
 	}
@@ -52,6 +58,7 @@ public class UserDTO implements Serializable {
 		this.registrationMoment = obj.getRegistrationMoment();
 		this.lastAccess = obj.getLastAccess();
 		this.active = obj.isActive();
+		this.profiles = obj.getProfiles().stream().collect(Collectors.toList());
 	}
 
 	public Long getId() {
@@ -100,5 +107,9 @@ public class UserDTO implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public List<Profile> getProfiles() {
+		return profiles;
 	}
 }

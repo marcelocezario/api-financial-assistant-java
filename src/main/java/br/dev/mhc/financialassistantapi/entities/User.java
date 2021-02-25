@@ -4,10 +4,16 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +24,8 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 
 @Entity
 @Table(name = "tb_user")
@@ -45,8 +53,13 @@ public class User implements Serializable {
 	private Instant registrationMoment;
 	private Instant lastAccess;
 	private boolean active;
-
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "tb_profiles")
+	private Set<Integer> profiles = new HashSet<>();
+	
 	public User() {
+		addProfile(Profile.USER_FREE);
 	}
 
 	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
@@ -59,6 +72,7 @@ public class User implements Serializable {
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 		this.active = active;
+		addProfile(Profile.USER_FREE);
 	}
 
 	public Long getId() {
@@ -116,6 +130,14 @@ public class User implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	public Set<Profile> getProfiles() {
+		return profiles.stream().map(x -> Profile.toEnum(x)).collect(Collectors.toSet());
+	}
+	
+	public void addProfile(Profile profile) {
+		profiles.add(profile.getCod());
 	}
 
 	@Override
