@@ -4,10 +4,16 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,8 +25,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.dev.mhc.financialassistantapi.dto.UserDTO;
-import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
+import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 
 @Entity
 @Table(name = "tb_user")
@@ -49,7 +54,12 @@ public class User implements Serializable {
 	private Instant lastAccess;
 	private boolean active;
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "tb_profiles")
+	private Set<Integer> profiles = new HashSet<>();
+
 	public User() {
+		addProfile(Profile.FREE_USER);
 	}
 
 	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
@@ -62,20 +72,7 @@ public class User implements Serializable {
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 		this.active = active;
-	}
-
-	public User(UserDTO userDTO) {
-		this.id = userDTO.getId();
-		this.nickname = userDTO.getNickname();
-		this.email = userDTO.getEmail();
-		this.registrationMoment = userDTO.getRegistrationMoment();
-		this.lastAccess = userDTO.getLastAccess();
-	}
-
-	public User(UserNewDTO userNewDTO) {
-		this.nickname = userNewDTO.getNickname();
-		this.email = userNewDTO.getEmail();
-		this.password = userNewDTO.getPassword();
+		addProfile(Profile.FREE_USER);
 	}
 
 	public Long getId() {
@@ -133,6 +130,14 @@ public class User implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public Set<Profile> getProfiles() {
+		return profiles.stream().map(x -> Profile.toEnum(x)).collect(Collectors.toSet());
+	}
+
+	public void addProfile(Profile profile) {
+		profiles.add(profile.getCod());
 	}
 
 	@Override
