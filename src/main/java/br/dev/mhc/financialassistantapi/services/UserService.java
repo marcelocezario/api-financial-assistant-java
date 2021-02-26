@@ -1,11 +1,13 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +51,12 @@ public class UserService {
 
 	@Autowired
 	private S3Service s3Service;
+	
+	@Autowired
+	private imageService imageService;
+	
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
 
 	@Transactional
 	public User insert(User obj) {
@@ -133,11 +141,13 @@ public class UserService {
 			throw new AuthorizationException("Access denied");
 		}
 		
-		URI uri = s3Service.uploadFile(multipartFile);
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix + userSS.getId() + ".jpg";
 		
+		URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+
 		User user = findById(userSS.getId());
 		user.setImageUrl(uri.toString());
-		
 		repository.save(user);
 		
 		return uri;
