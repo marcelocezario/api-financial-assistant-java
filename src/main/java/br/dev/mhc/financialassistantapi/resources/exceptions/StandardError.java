@@ -7,22 +7,27 @@ public class StandardError implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer status;
-	private String message;
 	private Instant timeStamp;
-
-	public StandardError(Integer status, String message, Instant timeStamp) {
+	private Integer status;
+	private String error;
+	private String message;
+	private String path;
+	
+	public StandardError(Long timeStamp, Integer status, String error, String message, String path) {
 		super();
+		this.timeStamp = Instant.ofEpochMilli(timeStamp);
 		this.status = status;
+		this.error = error;
 		this.message = message;
-		this.timeStamp = timeStamp;
+		this.path = path;
 	}
 
-	public StandardError(Integer status, String message, Long timeMilliSeconds) {
-		super();
-		this.status = status;
-		this.message = message;
-		this.timeStamp = Instant.ofEpochMilli(timeMilliSeconds);
+	public Instant getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(Long timeStamp) {
+		this.timeStamp = Instant.ofEpochMilli(timeStamp);
 	}
 
 	public Integer getStatus() {
@@ -33,6 +38,14 @@ public class StandardError implements Serializable {
 		this.status = status;
 	}
 
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
 	public String getMessage() {
 		return message;
 	}
@@ -41,15 +54,11 @@ public class StandardError implements Serializable {
 		this.message = message;
 	}
 
-	public Instant getTimeStamp() {
-		return timeStamp;
+	public String getPath() {
+		return path;
 	}
 
-	public void setTimeStamp(Instant timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-
-	public void setTimeStamp(Long timeMilliSeconds) {
-		this.timeStamp = Instant.ofEpochMilli(timeMilliSeconds);
+	public void setPath(String path) {
+		this.path = path;
 	}
 }
