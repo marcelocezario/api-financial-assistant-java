@@ -32,7 +32,7 @@ public class UserService {
 
 	public static UserSpringSecurity authenticated() {
 		try {
-		return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		} catch (Exception e) {
 			return null;
 		}
@@ -46,7 +46,7 @@ public class UserService {
 
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private S3Service s3Service;
 
@@ -64,7 +64,7 @@ public class UserService {
 	@Transactional
 	public User update(User obj) {
 		UserSpringSecurity userSS = UserService.authenticated();
-		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
+		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
 
@@ -80,7 +80,7 @@ public class UserService {
 
 	public void delete(Long id) {
 		UserSpringSecurity userSS = UserService.authenticated();
-		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
+		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
 
@@ -103,10 +103,10 @@ public class UserService {
 
 	public User findById(Long id) {
 		UserSpringSecurity userSS = UserService.authenticated();
-		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
+		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
-		
+
 		Optional<User> obj = repository.findById(id);
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
@@ -118,16 +118,28 @@ public class UserService {
 
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
-				objDto.getLastAccess(), objDto.isActive());
+				objDto.getLastAccess(), objDto.getImageUrl(), objDto.isActive());
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
 		User user = new User(null, objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
-				true);
+				null, true);
 		return user;
 	}
-	
+
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		return s3Service.uploadFile(multipartFile);		
+		UserSpringSecurity userSS = UserService.authenticated();
+		if (userSS == null) {
+			throw new AuthorizationException("Access denied");
+		}
+		
+		URI uri = s3Service.uploadFile(multipartFile);
+		
+		User user = findById(userSS.getId());
+		user.setImageUrl(uri.toString());
+		
+		repository.save(user);
+		
+		return uri;
 	}
 }
