@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
@@ -46,17 +48,24 @@ public class UserResource {
 	}
 	
 	/*
-	 * Métodos que exigem no mínimo autenticação de usuário com profile HOLE_FREE_USER (2)
+	 * Métodos que exigem no mínimo autenticação HOLE_BASIC_USER (2)
 	 */
+	
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@RequestMapping(value = "/picture", method = RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name = "file") MultipartFile file) {
+		URI uri = service.uploadProfilePicture(file);
+		return ResponseEntity.created(uri).build();
+	}
 
-	@PreAuthorize("hasAnyRole('FREE_USER')")
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
 		User obj = service.findById(id);
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 	
-	@PreAuthorize("hasAnyRole('FREE_USER')")
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody UserDTO objDTO, @PathVariable Long id) {
 		User obj = service.fromDTO(objDTO);
@@ -65,7 +74,7 @@ public class UserResource {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasAnyRole('FREE_USER')")
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);

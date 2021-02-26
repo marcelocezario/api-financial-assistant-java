@@ -59,7 +59,7 @@ public class User implements Serializable {
 	private Set<Integer> profiles = new HashSet<>();
 
 	public User() {
-		addProfile(Profile.FREE_USER);
+		addProfile(Profile.BASIC_USER);
 	}
 
 	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
@@ -72,7 +72,7 @@ public class User implements Serializable {
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
 		this.active = active;
-		addProfile(Profile.FREE_USER);
+		addProfile(Profile.BASIC_USER);
 	}
 
 	public Long getId() {

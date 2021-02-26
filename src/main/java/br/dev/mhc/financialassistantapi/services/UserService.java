@@ -1,5 +1,6 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
@@ -44,6 +46,9 @@ public class UserService {
 
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private S3Service s3Service;
 
 	@Transactional
 	public User insert(User obj) {
@@ -120,5 +125,9 @@ public class UserService {
 		User user = new User(null, objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
 				true);
 		return user;
+	}
+	
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		return s3Service.uploadFile(multipartFile);		
 	}
 }
