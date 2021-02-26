@@ -52,6 +52,7 @@ public class User implements Serializable {
 
 	private Instant registrationMoment;
 	private Instant lastAccess;
+	private String imageUrl;
 	private boolean active;
 
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -59,11 +60,11 @@ public class User implements Serializable {
 	private Set<Integer> profiles = new HashSet<>();
 
 	public User() {
-		addProfile(Profile.FREE_USER);
+		addProfile(Profile.BASIC_USER);
 	}
 
 	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
-			boolean active) {
+			String imageUrl, boolean active) {
 		super();
 		this.id = id;
 		this.nickname = nickname;
@@ -71,8 +72,9 @@ public class User implements Serializable {
 		this.password = password;
 		this.registrationMoment = registrationMoment;
 		this.lastAccess = lastAccess;
+		this.imageUrl = imageUrl;
 		this.active = active;
-		addProfile(Profile.FREE_USER);
+		addProfile(Profile.BASIC_USER);
 	}
 
 	public Long getId() {
@@ -122,6 +124,14 @@ public class User implements Serializable {
 
 	public void setLastAccess(Instant lastAccess) {
 		this.lastAccess = lastAccess;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public boolean isActive() {

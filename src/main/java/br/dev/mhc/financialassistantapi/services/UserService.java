@@ -1,10 +1,13 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
@@ -30,7 +34,7 @@ public class UserService {
 
 	public static UserSpringSecurity authenticated() {
 		try {
-		return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		} catch (Exception e) {
 			return null;
 		}
@@ -44,6 +48,18 @@ public class UserService {
 
 	@Autowired
 	private EmailService emailService;
+
+	@Autowired
+	private S3Service s3Service;
+	
+	@Autowired
+	private imageService imageService;
+	
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
+	
+	@Value("${img.profile.size}")
+	private Integer size;
 
 	@Transactional
 	public User insert(User obj) {
@@ -59,7 +75,7 @@ public class UserService {
 	@Transactional
 	public User update(User obj) {
 		UserSpringSecurity userSS = UserService.authenticated();
-		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
+		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
 
@@ -75,7 +91,7 @@ public class UserService {
 
 	public void delete(Long id) {
 		UserSpringSecurity userSS = UserService.authenticated();
-		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
+		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
 
@@ -98,10 +114,10 @@ public class UserService {
 
 	public User findById(Long id) {
 		UserSpringSecurity userSS = UserService.authenticated();
-		if(userSS==null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
+		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
 			throw new AuthorizationException("Access denied");
 		}
-		
+
 		Optional<User> obj = repository.findById(id);
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
@@ -113,12 +129,33 @@ public class UserService {
 
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
-				objDto.getLastAccess(), objDto.isActive());
+				objDto.getLastAccess(), objDto.getImageUrl(), objDto.isActive());
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
 		User user = new User(null, objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
-				true);
+				null, true);
 		return user;
+	}
+
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		UserSpringSecurity userSS = UserService.authenticated();
+		if (userSS == null) {
+			throw new AuthorizationException("Access denied");
+		}
+				
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		jpgImage = imageService.cropSquare(jpgImage);
+		jpgImage = imageService.resize(jpgImage, size);
+		
+		String fileName = prefix + userSS.getId() + ".jpg";
+		
+		URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+
+		User user = findById(userSS.getId());
+		user.setImageUrl(uri.toString());
+		repository.save(user);
+		
+		return uri;
 	}
 }
