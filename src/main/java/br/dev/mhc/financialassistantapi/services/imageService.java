@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,32 +18,31 @@ import br.dev.mhc.financialassistantapi.services.exceptions.FileException;
 
 @Service
 public class imageService {
-	
+
 	public BufferedImage getJpgImageFromFile(MultipartFile uploadedFile) {
 		String ext = FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
 		if (!"png".equals(ext) && !"jpg".equals(ext)) {
 			throw new FileException("Only 'jpg' and 'png' files are allowed");
 		}
-		
+
 		try {
 			BufferedImage img = ImageIO.read(uploadedFile.getInputStream());
-			if("png".equals(ext)) {
+			if ("png".equals(ext)) {
 				img = pngToJpg(img);
 			}
 			return img;
 		} catch (IOException e) {
 			throw new FileException("Error reading file");
 		}
-		
+
 	}
 
 	public BufferedImage pngToJpg(BufferedImage img) {
-		BufferedImage jpgImage = new BufferedImage(img.getWidth(), img.getHeight(),
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage jpgImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
 		jpgImage.createGraphics().drawImage(img, 0, 0, Color.WHITE, null);
 		return jpgImage;
 	}
-	
+
 	public InputStream getInputStream(BufferedImage img, String extension) {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -53,4 +53,13 @@ public class imageService {
 		}
 	}
 
+	public BufferedImage cropSquare(BufferedImage sourceImg) {
+		int min = (sourceImg.getHeight() <= sourceImg.getWidth()) ? sourceImg.getHeight() : sourceImg.getWidth();
+		return Scalr.crop(sourceImg, (sourceImg.getWidth() / 2) - (min / 2), (sourceImg.getHeight() / 2) - (min / 2),
+				min, min);
+	}
+
+	public BufferedImage resize(BufferedImage sourceImg, int size) {
+		return Scalr.resize(sourceImg, Scalr.Method.ULTRA_QUALITY, size);
+	}
 }

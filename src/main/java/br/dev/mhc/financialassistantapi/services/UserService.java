@@ -57,6 +57,9 @@ public class UserService {
 	
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
+	
+	@Value("${img.profile.size}")
+	private Integer size;
 
 	@Transactional
 	public User insert(User obj) {
@@ -140,8 +143,11 @@ public class UserService {
 		if (userSS == null) {
 			throw new AuthorizationException("Access denied");
 		}
-		
+				
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		jpgImage = imageService.cropSquare(jpgImage);
+		jpgImage = imageService.resize(jpgImage, size);
+		
 		String fileName = prefix + userSS.getId() + ".jpg";
 		
 		URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
