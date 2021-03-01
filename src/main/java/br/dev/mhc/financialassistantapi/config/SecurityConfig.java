@@ -61,10 +61,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(PUBLIC_MATCHERS).permitAll()
 				.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
 				.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-				.anyRequest().authenticated();
-		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
-		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.anyRequest().authenticated()
+				.and().oauth2Login();
+//		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+//		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
+//		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 	@Override
