@@ -36,23 +36,22 @@ public class UserDTO implements Serializable {
 	private String email;
 
 	private Instant registrationMoment;
-	private Instant lastAccess;
 	private String imageUrl;
 	private boolean active;
-	
+
 	private List<Profile> profiles = new ArrayList<>();
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, Instant lastAccess, String imageUrl, boolean active) {
+	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, String imageUrl,
+			boolean active) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.registrationMoment = registrationMoment;
-		this.lastAccess = lastAccess;
 		this.imageUrl = imageUrl;
 		this.active = active;
 	}
@@ -63,7 +62,6 @@ public class UserDTO implements Serializable {
 		this.nickname = obj.getNickname();
 		this.email = obj.getEmail();
 		this.registrationMoment = obj.getRegistrationMoment();
-		this.lastAccess = obj.getLastAccess();
 		this.imageUrl = obj.getImageUrl();
 		this.active = obj.isActive();
 		this.profiles = obj.getProfiles().stream().collect(Collectors.toList());
@@ -76,7 +74,7 @@ public class UserDTO implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -115,14 +113,6 @@ public class UserDTO implements Serializable {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
-	}
-
-	public Instant getLastAccess() {
-		return lastAccess;
-	}
-
-	public void setLastAccess(Instant lastAccess) {
-		this.lastAccess = lastAccess;
 	}
 
 	public boolean isActive() {

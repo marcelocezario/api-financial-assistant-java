@@ -55,7 +55,6 @@ public class User implements Serializable {
 	private String password;
 
 	private Instant registrationMoment;
-	private Instant lastAccess;
 	private String imageUrl;
 	private boolean active;
 
@@ -68,7 +67,7 @@ public class User implements Serializable {
 	}
 
 	public User(Long id, String name, String nickname, String email, String password, Instant registrationMoment,
-			Instant lastAccess, String imageUrl, boolean active) {
+			String imageUrl, boolean active) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -76,7 +75,6 @@ public class User implements Serializable {
 		this.email = email;
 		this.password = password;
 		this.registrationMoment = registrationMoment;
-		this.lastAccess = lastAccess;
 		this.imageUrl = imageUrl;
 		this.active = active;
 		addProfile(Profile.BASIC_USER);
@@ -129,14 +127,6 @@ public class User implements Serializable {
 
 	public void setRegistrationMoment(Instant registrationMoment) {
 		this.registrationMoment = registrationMoment;
-	}
-
-	public Instant getLastAccess() {
-		return lastAccess;
-	}
-
-	public void setLastAccess(Instant lastAccess) {
-		this.lastAccess = lastAccess;
 	}
 
 	public String getImageUrl() {

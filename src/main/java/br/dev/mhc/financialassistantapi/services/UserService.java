@@ -51,13 +51,13 @@ public class UserService {
 
 	@Autowired
 	private S3Service s3Service;
-	
+
 	@Autowired
 	private imageService imageService;
-	
+
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
-	
+
 	@Value("${img.profile.size}")
 	private Integer size;
 
@@ -65,7 +65,6 @@ public class UserService {
 	public User insert(User obj) {
 		obj.setActive(true);
 		obj.setRegistrationMoment(Instant.now());
-		obj.setLastAccess(obj.getRegistrationMoment());
 		obj = repository.save(obj);
 //		emailService.sendUserConfirmationEmail(obj);
 		emailService.sendUserConfirmationHtmlEmail(obj);
@@ -128,16 +127,16 @@ public class UserService {
 	}
 
 	public User fromDTO(UserDTO objDto) {
-		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
-				objDto.getLastAccess(), objDto.getImageUrl(), objDto.isActive());
+		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
+				objDto.getRegistrationMoment(), objDto.getImageUrl(), objDto.isActive());
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
-		if(objDTO.getNickname() == null || objDTO.getNickname().equals("")) {
-			objDTO.setNickname(objDTO.getName().split(" ")[0]);						
+		if (objDTO.getNickname() == null || objDTO.getNickname().equals("")) {
+			objDTO.setNickname(objDTO.getName().split(" ")[0]);
 		}
-		User user = new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
-				null, true);
+		User user = new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
+				pe.encode(objDTO.getPassword()), null, null, true);
 		return user;
 	}
 
@@ -146,19 +145,19 @@ public class UserService {
 		if (userSS == null) {
 			throw new AuthorizationException("Access denied");
 		}
-				
+
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
 		jpgImage = imageService.cropSquare(jpgImage);
 		jpgImage = imageService.resize(jpgImage, size);
-		
+
 		String fileName = prefix + userSS.getId() + ".jpg";
-		
+
 		URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 
 		User user = findById(userSS.getId());
 		user.setImageUrl(uri.toString());
 		repository.save(user);
-		
+
 		return uri;
 	}
 }
