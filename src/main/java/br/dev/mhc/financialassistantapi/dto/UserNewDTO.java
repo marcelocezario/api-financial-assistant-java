@@ -16,7 +16,10 @@ public class UserNewDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@NotEmpty(message = "Required field")
-	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
+	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
+	private String name;
+
+	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
 	@NotEmpty(message = "Required field")
@@ -26,8 +29,28 @@ public class UserNewDTO implements Serializable{
 	
 	@NotEmpty(message = "Required field")
 	private String password;
-	
+
 	public UserNewDTO() {
+	}
+	
+	public UserNewDTO(
+			@NotEmpty(message = "Required field") @Length(max = 80, message = "Maximum number of 80 characters exceeded") String name,
+			@Length(max = 80, message = "Maximum number of 80 characters exceeded") String nickname,
+			@NotEmpty(message = "Required field") @Email(message = "Invalid email adress") String email,
+			@NotEmpty(message = "Required field") String password) {
+		super();
+		this.name = name;
+		this.nickname = nickname;
+		this.email = email;
+		this.password = password;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getNickname() {

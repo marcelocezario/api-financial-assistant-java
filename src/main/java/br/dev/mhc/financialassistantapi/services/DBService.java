@@ -23,19 +23,19 @@ public class DBService {
 
 	public void instantiateTestDatabase() throws ParseException {
 
-		User u1 = new User(null, "Marcelo", "marcelocezario@gmail.com", pe.encode("111111"),
+		User u1 = new User(null, "Henrique Cezário", "Henrique", "marcelocezario@gmail.com", pe.encode("111111"),
 				Instant.parse("2021-02-01T10:00:00Z"), Instant.parse("2021-02-01T10:01:00Z"), null, true);
 		u1.addProfile(Profile.ADMIN);
-		
-		User u2 = new User(null, "Jenni", "jenni@gmail.com", pe.encode("222222"), Instant.parse("2021-02-02T10:00:00Z"),
-				Instant.parse("2021-02-02T10:01:00Z"), null, true);
-		User u3 = new User(null, "Dekhan", "dekhan@gmail.com", pe.encode("333333"),
+
+		User u2 = new User(null, "Jennifer", "Jenn", "jenni@gmail.com", pe.encode("222222"),
+				Instant.parse("2021-02-02T10:00:00Z"), Instant.parse("2021-02-02T10:01:00Z"), null, true);
+		User u3 = new User(null, "Niele Angela", "Dekhan", "dekhan@gmail.com", pe.encode("333333"),
 				Instant.parse("2021-02-03T10:00:00Z"), Instant.parse("2021-02-03T10:01:00Z"), null, true);
-		User u4 = new User(null, "blk", "blk@gmail.com", pe.encode("444444"), Instant.parse("2021-02-04T10:00:00Z"),
-				Instant.parse("2021-02-04T10:01:00Z"), null, true);
-		User u5 = new User(null, "Bruno", "bruno@gmail.com", pe.encode("555555"), Instant.parse("2021-02-05T10:00:00Z"),
-				Instant.parse("2021-02-05T10:01:00Z"), null, true);
-		User u6 = new User(null, "Carlos", "carlos@gmail.com", pe.encode("666666"),
+		User u4 = new User(null, "Bruno Rafael", "blk", "blk@gmail.com", pe.encode("444444"),
+				Instant.parse("2021-02-04T10:00:00Z"), Instant.parse("2021-02-04T10:01:00Z"), null, true);
+		User u5 = new User(null, "Bruno Cezario", "Bruno", "bruno@gmail.com", pe.encode("555555"),
+				Instant.parse("2021-02-05T10:00:00Z"), Instant.parse("2021-02-05T10:01:00Z"), null, true);
+		User u6 = new User(null, "Carlos José Cezario", "Carlos", "carlos@gmail.com", pe.encode("666666"),
 				Instant.parse("2021-02-06T10:00:00Z"), Instant.parse("2021-02-06T10:01:00Z"), null, true);
 
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));

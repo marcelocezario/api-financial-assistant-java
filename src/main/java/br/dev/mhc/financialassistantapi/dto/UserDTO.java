@@ -24,7 +24,10 @@ public class UserDTO implements Serializable {
 	private Long id;
 
 	@NotEmpty(message = "Required field")
-	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
+	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
+	private String name;
+
+	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
 	@NotEmpty(message = "Required field")
@@ -42,9 +45,10 @@ public class UserDTO implements Serializable {
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String nickname, String email, Instant registrationMoment, Instant lastAccess, String imageUrl, boolean active) {
+	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, Instant lastAccess, String imageUrl, boolean active) {
 		super();
 		this.id = id;
+		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.registrationMoment = registrationMoment;
@@ -55,6 +59,7 @@ public class UserDTO implements Serializable {
 
 	public UserDTO(User obj) {
 		this.id = obj.getId();
+		this.name = obj.getName();
 		this.nickname = obj.getNickname();
 		this.email = obj.getEmail();
 		this.registrationMoment = obj.getRegistrationMoment();
@@ -70,6 +75,14 @@ public class UserDTO implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getNickname() {

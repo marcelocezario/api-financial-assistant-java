@@ -128,12 +128,15 @@ public class UserService {
 	}
 
 	public User fromDTO(UserDTO objDto) {
-		return new User(objDto.getId(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
+		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
 				objDto.getLastAccess(), objDto.getImageUrl(), objDto.isActive());
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
-		User user = new User(null, objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
+		if(objDTO.getNickname() == null || objDTO.getNickname().equals("")) {
+			objDTO.setNickname(objDTO.getName().split(" ")[0]);						
+		}
+		User user = new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
 				null, true);
 		return user;
 	}
