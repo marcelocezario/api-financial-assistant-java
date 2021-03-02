@@ -63,7 +63,6 @@ public class UserService {
 
 	@Transactional
 	public User insert(User obj) {
-		obj.setActive(true);
 		obj.setRegistrationMoment(Instant.now());
 		obj = repository.save(obj);
 //		emailService.sendUserConfirmationEmail(obj);
@@ -128,7 +127,7 @@ public class UserService {
 
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
-				objDto.getRegistrationMoment(), objDto.getImageUrl(), objDto.isActive());
+				objDto.getRegistrationMoment(), objDto.getImageUrl());
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
@@ -136,7 +135,7 @@ public class UserService {
 			objDTO.setNickname(objDTO.getName().split(" ")[0]);
 		}
 		User user = new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
-				pe.encode(objDTO.getPassword()), null, null, true);
+				pe.encode(objDTO.getPassword()), null, null);
 		return user;
 	}
 
