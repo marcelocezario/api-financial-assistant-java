@@ -23,29 +23,27 @@ public class UserDTO implements Serializable {
 
 	private Long id;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's name is a required field")
 	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String name;
 
 	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's email is a required field")
 	@Email(message = "Invalid email adress")
 	@Column(unique = true)
 	private String email;
 
 	private Instant registrationMoment;
 	private String imageUrl;
-	private boolean active;
 
 	private List<Profile> profiles = new ArrayList<>();
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, String imageUrl,
-			boolean active) {
+	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, String imageUrl) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -53,7 +51,6 @@ public class UserDTO implements Serializable {
 		this.email = email;
 		this.registrationMoment = registrationMoment;
 		this.imageUrl = imageUrl;
-		this.active = active;
 	}
 
 	public UserDTO(User obj) {
@@ -63,7 +60,6 @@ public class UserDTO implements Serializable {
 		this.email = obj.getEmail();
 		this.registrationMoment = obj.getRegistrationMoment();
 		this.imageUrl = obj.getImageUrl();
-		this.active = obj.isActive();
 		this.profiles = obj.getProfiles().stream().collect(Collectors.toList());
 	}
 
@@ -113,14 +109,6 @@ public class UserDTO implements Serializable {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
 	}
 
 	public List<Profile> getProfiles() {

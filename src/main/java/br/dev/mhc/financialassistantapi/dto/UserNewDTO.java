@@ -15,14 +15,14 @@ public class UserNewDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's name is a required field")
 	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String name;
 
 	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's email is a required field")
 	@Email(message = "Invalid email adress")
 	@Column(unique = true)
 	private String email;

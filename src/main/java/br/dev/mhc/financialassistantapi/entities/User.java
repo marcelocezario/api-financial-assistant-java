@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -37,37 +39,39 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's name is a required field")
 	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String name;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's nickname is a required field")
 	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's email is a required field")
 	@Email(message = "Invalid email adress")
 	@Column(unique = true)
 	private String email;
 
-	@NotEmpty(message = "Required field")
+	@NotEmpty(message = "The user's password is a required field")
 	@JsonIgnore
 	private String password;
 
 	private Instant registrationMoment;
 	private String imageUrl;
-	private boolean active;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "tb_profiles")
 	private Set<Integer> profiles = new HashSet<>();
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<Account> accounts = new HashSet<>();
 
 	public User() {
 		addProfile(Profile.BASIC_USER);
 	}
 
 	public User(Long id, String name, String nickname, String email, String password, Instant registrationMoment,
-			String imageUrl, boolean active) {
+			String imageUrl) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -76,7 +80,6 @@ public class User implements Serializable {
 		this.password = password;
 		this.registrationMoment = registrationMoment;
 		this.imageUrl = imageUrl;
-		this.active = active;
 		addProfile(Profile.BASIC_USER);
 	}
 
@@ -137,12 +140,12 @@ public class User implements Serializable {
 		this.imageUrl = imageUrl;
 	}
 
-	public boolean isActive() {
-		return active;
+	public Set<Account> getAccounts() {
+		return accounts;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void addAccount(Account account) {
+		accounts.add(account);
 	}
 
 	public Set<Profile> getProfiles() {
