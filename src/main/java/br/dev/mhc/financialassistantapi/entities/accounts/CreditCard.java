@@ -2,27 +2,46 @@ package br.dev.mhc.financialassistantapi.entities.accounts;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
 @Entity
 @Table(name = "tb_credit_card")
+@JsonTypeName("creditCard")
 public class CreditCard extends Account {
 
 	private static final long serialVersionUID = 1L;
 
+	@NotNull(message = "Closing day is a required field")
+	@Min(value = 1, message = "Choose a day between 1 and 31")
+	@Max(value = 31, message = "Choose a day between 1 and 31")
 	private Integer closingDay;
+
+	@NotNull(message = "Due day is a required field")
+	@Min(value = 1, message = "Choose a day between 1 and 31")
+	@Max(value = 31, message = "Choose a day between 1 and 31")
 	private Integer dueDay;
-	private Double limitValue;
+
+	@NotNull(message = "Limit value is a required field")
+	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
+	private Double limitValueCard;
 
 	public CreditCard() {
+		this.setAccountType(AccountType.CREDIT_CARD);
 	}
 
-	public CreditCard(Long id, String name, Double balance, Integer closignDay, Integer dueDay, Double limitValue) {
-		super(id, name, balance);
+	public CreditCard(Long id, String name, Double balance, Integer closignDay, Integer dueDay, Double limitValueCard) {
+		super(id, name, balance, AccountType.CREDIT_CARD);
 		this.closingDay = closignDay;
 		this.dueDay = dueDay;
-		this.limitValue = limitValue;
+		this.limitValueCard = limitValueCard;
 	}
 
 	public Integer getClosingDay() {
@@ -41,11 +60,11 @@ public class CreditCard extends Account {
 		this.dueDay = dueDay;
 	}
 
-	public Double getLimitValue() {
-		return limitValue;
+	public Double getLimitValueCard() {
+		return limitValueCard;
 	}
 
-	public void setLimitValue(Double limitValue) {
-		this.limitValue = limitValue;
+	public void setLimitValueCard(Double limitValueCard) {
+		this.limitValueCard = limitValueCard;
 	}
 }

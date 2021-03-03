@@ -2,25 +2,37 @@ package br.dev.mhc.financialassistantapi.entities.accounts;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
 @Entity
 @Table(name = "tb_bank_account")
+@JsonTypeName("bankAccount")
 public class BankAccount extends Account {
-	
+
 	private static final long serialVersionUID = 1L;
 
+	@NotNull(message = "Bank interest rate is a required field")
+	@PositiveOrZero(message = "The bank interest rate must be greater than or equal to zero")
 	private Double bankInterestRate;
-	private Double valueLimit;
-	
+
+	@NotNull(message = "Limit value is a required field")
+	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
+	private Double limitValueBankAccount;
+
 	public BankAccount() {
+		this.setAccountType(AccountType.BANK_ACCOUNT);
 	}
 
-	public BankAccount(Long id, String name, Double balance, Double bankInterestRate, Double valueLimit) {
-		super(id, name, balance);
+	public BankAccount(Long id, String name, Double balance, Double bankInterestRate, Double limitValueBankAccount) {
+		super(id, name, balance, AccountType.BANK_ACCOUNT);
 		this.bankInterestRate = bankInterestRate;
-		this.valueLimit = valueLimit;
+		this.limitValueBankAccount = limitValueBankAccount;
 	}
 
 	public Double getBankInterestRate() {
@@ -31,11 +43,11 @@ public class BankAccount extends Account {
 		this.bankInterestRate = bankInterestRate;
 	}
 
-	public Double getValueLimit() {
-		return valueLimit;
+	public Double getLimitValueBankAccount() {
+		return limitValueBankAccount;
 	}
 
-	public void setValueLimit(Double valueLimit) {
-		this.valueLimit = valueLimit;
+	public void setLimitValue(Double limitValueBankAccount) {
+		this.limitValueBankAccount = limitValueBankAccount;
 	}
 }

@@ -18,9 +18,14 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
+
 @Entity
 @Table(name = "tb_account")
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class Account implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -37,6 +42,8 @@ public abstract class Account implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+	
+	private Integer accountType;
 
 	@OneToMany(mappedBy = "account")
 	private Set<Entry> entries = new HashSet<>();
@@ -45,7 +52,7 @@ public abstract class Account implements Serializable {
 		balance = 0.0;
 	}
 
-	public Account(Long id, String name, Double balance) {
+	public Account(Long id, String name, Double balance, AccountType accountType) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -54,6 +61,7 @@ public abstract class Account implements Serializable {
 		} else {
 			this.balance = balance;
 		}
+		this.accountType = accountType.getCod();
 	}
 
 	public Long getId() {
@@ -86,6 +94,14 @@ public abstract class Account implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public AccountType getAccountType() {
+		return AccountType.toEnum(accountType);
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType.getCod();
 	}
 
 	public Set<Entry> getEntries() {
