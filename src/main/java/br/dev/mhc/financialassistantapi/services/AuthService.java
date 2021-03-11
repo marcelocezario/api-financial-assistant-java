@@ -39,9 +39,13 @@ public class AuthService {
 	}
 
 	/**
-	 * It receives as a parameter the id of the user who is authorized (not to be
-	 * confused with the user already authenticated) and the type of authorization.
-	 * If the user is not authorized, they will receive an AuthorizationException.
+	 * En: It receives as parameter the id of the user who is authorized (not to be
+	 * confused with an authenticated user) and the type of authorization. If the
+	 * user is not authorized, the method will return an AuthorizationException.
+	 * 
+	 * Pt: Recebe como parametro o id do usuário que é autorizado (não confundir com
+	 * usuário já autenticado) e o tipo de autorização. Se o usuário não for
+	 * autorizado, o método retornará uma AuthorizationException.
 	 * 
 	 * @param authorizedUserId
 	 * @param authorizationType
