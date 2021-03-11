@@ -41,7 +41,7 @@ public class AccountResource {
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping
 	public ResponseEntity<List<AccountDTO>> findAllByUser() {
-		List<Account> list = service.findAllByUser();
+		List<Account> list = service.findByUser();
 		List<AccountDTO> listDTO = list.stream().map(x -> new AccountDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
 	}
