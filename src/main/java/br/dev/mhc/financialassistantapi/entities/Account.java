@@ -42,7 +42,7 @@ public abstract class Account implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	private Integer accountType;
 
 	@OneToMany(mappedBy = "account")

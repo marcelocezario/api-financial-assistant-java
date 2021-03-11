@@ -2,10 +2,12 @@ package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
 
-import br.dev.mhc.financialassistantapi.entities.User;
+import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
+import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
-public class AccountDTO implements Serializable{
+public class AccountDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -13,7 +15,6 @@ public class AccountDTO implements Serializable{
 	private Long id;
 	private String name;
 	private Double balance;
-	private User user;
 	private AccountType accountType;
 
 	// BankAccount
@@ -31,19 +32,45 @@ public class AccountDTO implements Serializable{
 	public AccountDTO() {
 	}
 
-	public AccountDTO(Long id, String name, Double balance, User user, AccountType accountType, Double bankInterestRate,
-			Double limitValueBankAccount, Integer closingDay, Integer dueDay, Double limitValueCard) {
+	public AccountDTO(Long id, String name, Double balance, AccountType accountType,
+			Double bankInterestRate, Double limitValueBankAccount, Integer closingDay, Integer dueDay,
+			Double limitValueCard) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.balance = balance;
-		this.user = user;
 		this.accountType = accountType;
 		this.bankInterestRate = bankInterestRate;
 		this.limitValueBankAccount = limitValueBankAccount;
 		this.closingDay = closingDay;
 		this.dueDay = dueDay;
 		this.limitValueCard = limitValueCard;
+	}
+
+	public AccountDTO(Account obj) {
+		this.id = obj.getId();
+		this.name = obj.getName();
+		this.balance = obj.getBalance();
+		this.accountType = obj.getAccountType();
+
+		switch (obj.getAccountType()) {
+
+		case WALLET:
+			break;
+
+		case BANK_ACCOUNT:
+			BankAccount bankAccount = (BankAccount) obj;
+			this.bankInterestRate = bankAccount.getBankInterestRate();
+			this.limitValueBankAccount = bankAccount.getLimitValueBankAccount();
+			break;
+
+		case CREDIT_CARD:
+			CreditCard creditCard = (CreditCard) obj;
+			this.closingDay = creditCard.getClosingDay();
+			this.dueDay = creditCard.getDueDay();
+			this.limitValueCard = creditCard.getLimitValueCard();
+			break;
+		}
 	}
 
 	public Long getId() {
@@ -68,14 +95,6 @@ public class AccountDTO implements Serializable{
 
 	public void setBalance(Double balance) {
 		this.balance = balance;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	public AccountType getAccountType() {
@@ -125,33 +144,4 @@ public class AccountDTO implements Serializable{
 	public void setLimitValueCard(Double limitValueCard) {
 		this.limitValueCard = limitValueCard;
 	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AccountDTO [id=");
-		builder.append(id);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", balance=");
-		builder.append(balance);
-		builder.append(", user=");
-		builder.append(user);
-		builder.append(", accountType=");
-		builder.append(accountType);
-		builder.append(", bankInterestRate=");
-		builder.append(bankInterestRate);
-		builder.append(", limitValueBankAccount=");
-		builder.append(limitValueBankAccount);
-		builder.append(", closingDay=");
-		builder.append(closingDay);
-		builder.append(", dueDay=");
-		builder.append(dueDay);
-		builder.append(", limitValueCard=");
-		builder.append(limitValueCard);
-		builder.append("]");
-		return builder.toString();
-	}
-	
-	
 }
