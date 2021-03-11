@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -25,17 +27,22 @@ public class Category implements Serializable {
 	private String name;
 	private String iconUrl;
 
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	@OneToMany(mappedBy = "id.category")
 	private Set<EntryCategory> entriesCategories = new HashSet<>();
 
 	public Category() {
 	}
 
-	public Category(Long id, String name, String iconUrl) {
+	public Category(Long id, String name, String iconUrl, User user) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.iconUrl = iconUrl;
+		this.user = user;
 	}
 
 	public List<Entry> getEntries() {
@@ -68,6 +75,14 @@ public class Category implements Serializable {
 
 	public void setIconUrl(String iconUrl) {
 		this.iconUrl = iconUrl;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Set<EntryCategory> getEntriesCategories() {
