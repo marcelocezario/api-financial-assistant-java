@@ -38,11 +38,11 @@ public class AccountService {
 		return obj;
 	}
 
-	public List<Account> findAllByUser() {
+	public List<Account> findByUser() {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
-		return repository.findAllByUser(userService.findById(userSS.getId()));
+		return repository.findByUser(userService.findById(userSS.getId()));
 	}
 
 	public Account findById(Long id) {

@@ -15,5 +15,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	@Transactional(readOnly = true)
 	@Query("SELECT a FROM Account a WHERE a.user = :user")
-	List<Account> findAllByUser(User user);
+	List<Account> findByUser(User user);
 }
