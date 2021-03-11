@@ -30,7 +30,7 @@ public class AuthService {
 
 	private Random rand = new Random();
 
-	public static UserSpringSecurity authenticatedUser() {
+	public static UserSpringSecurity getAuthenticatedUserSpringSecurity() {
 		try {
 			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		} catch (Exception e) {
@@ -38,8 +38,16 @@ public class AuthService {
 		}
 	}
 
-	public static boolean validatesUserAuthorization(Long idUser, AuthorizationType authorizationType) {
-		UserSpringSecurity userSS = authenticatedUser();
+	/**
+	 * It receives as a parameter the id of the user who is authorized (not to be
+	 * confused with the user already authenticated) and the type of authorization.
+	 * If the user is not authorized, they will receive an AuthorizationException.
+	 * 
+	 * @param authorizedUserId
+	 * @param authorizationType
+	 */
+	public static void validatesUserAuthorization(Long authorizedUserId, AuthorizationType authorizationType) {
+		UserSpringSecurity userSS = getAuthenticatedUserSpringSecurity();
 
 		switch (authorizationType) {
 		case ADMIN_ONLY:
@@ -49,13 +57,13 @@ public class AuthService {
 			break;
 
 		case USER_ONLY:
-			if (userSS == null || !idUser.equals(userSS.getId())) {
+			if (userSS == null || !authorizedUserId.equals(userSS.getId())) {
 				throw new AuthorizationException("Access denied");
 			}
 			break;
 
 		case USER_OR_ADMIN:
-			if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !idUser.equals(userSS.getId())) {
+			if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !authorizedUserId.equals(userSS.getId())) {
 				throw new AuthorizationException("Access denied");
 			}
 			break;
@@ -63,7 +71,6 @@ public class AuthService {
 		default:
 			throw new AuthorizationException("Access denied");
 		}
-		return true;
 	}
 
 	public void sendNewPassword(String email) {

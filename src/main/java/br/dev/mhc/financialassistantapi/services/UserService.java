@@ -122,7 +122,7 @@ public class UserService {
 	}
 
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		UserSpringSecurity userSS = AuthService.authenticatedUser();
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
