@@ -12,7 +12,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,24 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
 import br.dev.mhc.financialassistantapi.entities.User;
-import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
+import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.email.EmailService;
-import br.dev.mhc.financialassistantapi.services.exceptions.AuthorizationException;
 import br.dev.mhc.financialassistantapi.services.exceptions.DataIntegrityException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class UserService {
-
-	public static UserSpringSecurity authenticated() {
-		try {
-			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		} catch (Exception e) {
-			return null;
-		}
-	}
 
 	@Autowired
 	private BCryptPasswordEncoder pe;
@@ -72,10 +62,7 @@ public class UserService {
 
 	@Transactional
 	public User update(User obj) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
-			throw new AuthorizationException("Access denied");
-		}
+		AuthService.validatesUserAuthorization(obj.getId(), AuthorizationType.USER_ONLY);
 
 		User newObj = findById(obj.getId());
 		updateData(newObj, obj);
@@ -83,15 +70,13 @@ public class UserService {
 	}
 
 	public void updateData(User newObj, User obj) {
+		newObj.setName(obj.getName());
 		newObj.setNickname(obj.getNickname());
 		newObj.setEmail(obj.getEmail());
 	}
 
 	public void delete(Long id) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
-			throw new AuthorizationException("Access denied");
-		}
+		AuthService.validatesUserAuthorization(id, AuthorizationType.USER_OR_ADMIN);
 
 		findById(id);
 		try {
@@ -111,10 +96,7 @@ public class UserService {
 	}
 
 	public User findById(Long id) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
-			throw new AuthorizationException("Access denied");
-		}
+		AuthService.validatesUserAuthorization(id, AuthorizationType.USER_OR_ADMIN);
 
 		Optional<User> obj = repository.findById(id);
 		return obj.orElseThrow(
@@ -140,10 +122,8 @@ public class UserService {
 	}
 
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null) {
-			throw new AuthorizationException("Access denied");
-		}
+		UserSpringSecurity userSS = AuthService.authenticatedUser();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
 		jpgImage = imageService.cropSquare(jpgImage);
