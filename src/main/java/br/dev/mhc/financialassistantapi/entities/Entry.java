@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
+import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
+
 @Entity
 @Table(name = "tb_entry")
 public class Entry implements Serializable {
@@ -45,6 +47,8 @@ public class Entry implements Serializable {
 	@NotEmpty(message = "Number installments total is a required field")
 	private Integer numberInstallmentsTotal;
 
+	private Integer entryType;
+
 	@ManyToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
@@ -55,8 +59,12 @@ public class Entry implements Serializable {
 	public Entry() {
 	}
 
-	public Entry(Long id, Instant moment, Double value, String description, Instant dueDate, Integer installmentNumber,
-			Integer numberInstallmentsTotal) {
+	public Entry(Long id, @NotEmpty(message = "Entry moment is a required field") Instant moment,
+			@NotEmpty(message = "Entry value is a required field") @Positive(message = "Value must be positive") Double value,
+			String description, @NotEmpty(message = "Due date is a required field") Instant dueDate,
+			@NotEmpty(message = "Installment number is a required field") Integer installmentNumber,
+			@NotEmpty(message = "Number installments total is a required field") Integer numberInstallmentsTotal,
+			EntryType entryType, Account account) {
 		super();
 		this.id = id;
 		this.moment = moment;
@@ -65,6 +73,8 @@ public class Entry implements Serializable {
 		this.dueDate = dueDate;
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
+		this.entryType = entryType.getCod();
+		this.account = account;
 	}
 
 	public List<Category> getCategories() {
@@ -129,6 +139,26 @@ public class Entry implements Serializable {
 
 	public void setNumberInstallmentsTotal(Integer numberInstallmentsTotal) {
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
+	}
+
+	public EntryType getEntryType() {
+		return EntryType.toEnum(entryType);
+	}
+
+	public void setEntryType(EntryType entryType) {
+		this.entryType = entryType.getCod();
+	}
+
+	public void setEntryType(Integer entryType) {
+		this.entryType = entryType;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 	public Set<EntryCategory> getEntriesCategories() {

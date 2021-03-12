@@ -84,15 +84,15 @@ public class AccountService {
 	public Account fromDTO(AccountDTO objDTO) {
 		switch (objDTO.getAccountType()) {
 		case WALLET:
-			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance());
+			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), null);
 
 		case BANK_ACCOUNT:
 			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getBankInterestRate(),
-					objDTO.getLimitValueBankAccount());
+					objDTO.getLimitValueBankAccount(), null);
 
 		case CREDIT_CARD:
 			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getClosingDay(),
-					objDTO.getDueDay(), objDTO.getLimitValueCard());
+					objDTO.getDueDay(), objDTO.getLimitValueCard(), null);
 
 		default:
 			return null;
