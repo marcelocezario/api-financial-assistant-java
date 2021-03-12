@@ -60,6 +60,18 @@ public class AccountService {
 		updateData(newObj, obj);
 		return repository.save(newObj);
 	}
+	
+	public void increaseBalanceAccount(Long idAccount, Double valueEntry) {
+		Account account = findById(idAccount);
+		account.increaseBalance(valueEntry);
+		update(account);
+	}
+	
+	public void decreaseBalanceAccount(Long idAccount, Double valueEntry) {
+		Account account = findById(idAccount);
+		account.decreaseBalance(valueEntry);
+		update(account);
+	}
 
 	private void updateData(Account newObj, Account obj) {
 		newObj.setName(obj.getName());

@@ -15,7 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
@@ -29,37 +30,55 @@ public class Entry implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Instant moment;
-
-	@Positive(message = "Value must be positive")
+	@NotNull
+	private Instant criationMoment;
+	
+	@NotNull
+	@PositiveOrZero
 	private Double value;
-
+	
 	private String description;
+
+	@NotNull
 	private Instant dueDate;
+
+	private Instant paymentMoment;
+	
+	@NotNull
+	@PositiveOrZero
 	private Integer installmentNumber;
+
+	@NotNull
+	@PositiveOrZero
 	private Integer numberInstallmentsTotal;
+	
+	@NotNull
 	private Integer entryType;
 
 	@ManyToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "account_id")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@OneToMany(mappedBy = "id.entry")
 	private Set<EntryCategory> entriesCategories = new HashSet<>();
+	
+	public Entry() {
+	}
 
-	public Entry(Long id, Instant moment, @Positive(message = "Value must be positive") Double value,
-			String description, Instant dueDate, Integer installmentNumber, Integer numberInstallmentsTotal,
-			EntryType entryType, Account account, User user, Set<EntryCategory> entriesCategories) {
+	public Entry(Long id, Instant criationMoment, Double value, String description, Instant dueDate,
+			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
+			Account account, User user, Set<EntryCategory> entriesCategories) {
 		super();
 		this.id = id;
-		this.moment = moment;
+		this.criationMoment = criationMoment;
 		this.value = value;
 		this.description = description;
 		this.dueDate = dueDate;
+		this.paymentMoment = paymentMoment;
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType.getCod();
@@ -84,12 +103,12 @@ public class Entry implements Serializable {
 		this.id = id;
 	}
 
-	public Instant getMoment() {
-		return moment;
+	public Instant getCriationMoment() {
+		return criationMoment;
 	}
 
-	public void setMoment(Instant moment) {
-		this.moment = moment;
+	public void setCriationMoment(Instant criationMoment) {
+		this.criationMoment = criationMoment;
 	}
 
 	public Double getValue() {
@@ -114,6 +133,14 @@ public class Entry implements Serializable {
 
 	public void setDueDate(Instant dueDate) {
 		this.dueDate = dueDate;
+	}
+
+	public Instant getPaymentMoment() {
+		return paymentMoment;
+	}
+
+	public void setPaymentMoment(Instant paymentMoment) {
+		this.paymentMoment = paymentMoment;
 	}
 
 	public Integer getInstallmentNumber() {

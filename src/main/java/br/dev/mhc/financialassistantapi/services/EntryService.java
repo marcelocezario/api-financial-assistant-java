@@ -1,6 +1,8 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import br.dev.mhc.financialassistantapi.dto.EntryDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Entry;
+import br.dev.mhc.financialassistantapi.entities.User;
+import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 import br.dev.mhc.financialassistantapi.repositories.EntryRepository;
+import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
@@ -25,35 +30,34 @@ public class EntryService {
 	@Autowired
 	private AccountService accountService;
 
+	@Autowired
+	private UserService userService;
+
 	@Transactional
 	public Entry insert(Entry obj) {
-		AuthService.validatesUserAuthorization(obj.getAccount().getUser().getId(), AuthorizationType.USER_ONLY);
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		obj.setUser(userService.findById(userSS.getId()));
+		Long idUserAccount = (obj.getAccount() == null) ? userSS.getId() : obj.getAccount().getUser().getId();
+		AuthService.validatesUserAuthorization(idUserAccount, AuthorizationType.USER_ONLY);
+
+		if (obj.getAccount() != null && obj.getPaymentMoment() != null) {
+			if (obj.getEntryType() == EntryType.CREDIT) {
+				accountService.increaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+			} else {
+				accountService.decreaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+			}
+		}
 		obj.setId(null);
+		obj.setCriationMoment(Instant.now());
 		obj = repository.save(obj);
 		return obj;
 	}
 
-	/*
-	 * En: For now not using this method, there is no need to search for Entry only
-	 * by Id without Account Pt: Por enquanto não utilizar esse método, não há
-	 * necessidade de buscar Entry apenas por Id sem Account
-	 * 
-	 * private Entry findById(Long id) { Optional<Entry> obj =
-	 * repository.findById(id); Entry entry = obj.orElseThrow( () -> new
-	 * ObjectNotFoundException("Object not found! Id: " + id + ", Type: " +
-	 * Entry.class.getName()));
-	 * AuthService.validatesUserAuthorization(entry.getAccount().getUser().getId(),
-	 * AuthorizationType.USER_ONLY); return entry; }
-	 */
-
-	public Entry findByIdAndIdAccount(Long idEntry, Long idAccount) {
-		Account account = accountService.findById(idAccount);
-		Entry entry = repository.findByIdAndAccount(idEntry, account);
-		if (entry == null) {
-			throw new ObjectNotFoundException("Object not found! Id: " + idEntry + ", Type: " + Entry.class.getName());
-		}
-
-		AuthService.validatesUserAuthorization(entry.getAccount().getUser().getId(), AuthorizationType.USER_ONLY);
+	public Entry findById(Long id) {
+		Optional<Entry> obj = repository.findById(id);
+		Entry entry = obj.orElseThrow(
+				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + Entry.class.getName()));
+		AuthService.validatesUserAuthorization(entry.getUser().getId(), AuthorizationType.USER_ONLY);
 		return entry;
 	}
 
@@ -61,7 +65,22 @@ public class EntryService {
 		Account account = accountService.findById(idAccount);
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 
-		return repository.findByAccountOrderByMomentDesc(account);
+		return repository.findByAccountOrderByPaymentMomentDesc(account);
+	}
+
+	public List<Entry> findByUserWithoutAccount() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		User user = userService.findById(userSS.getId());
+		return repository.findByUserAndAccountIsNullOrderByDueDateDesc(user);
+	}
+
+	public Page<Entry> findPageWithoutAccount(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		User user = userService.findById(userSS.getId());
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findByUserAndAccountIsNull(user, pageRequest);
 	}
 
 	public Page<Entry> findPageByAccount(Long idAccount, Integer page, Integer linesPerPage, String orderBy,
@@ -74,27 +93,45 @@ public class EntryService {
 	}
 
 	@Transactional
-	public Entry update(Entry obj, Long idAccount) {
-		Entry newObj = findByIdAndIdAccount(obj.getId(), idAccount);
-		AuthService.validatesUserAuthorization(newObj.getAccount().getUser().getId(), AuthorizationType.USER_ONLY);
-		updateData(newObj, obj);
-		return repository.save(newObj);
+	public Entry update(Entry obj) {
+		Entry objAux = findById(obj.getId());
+		AuthService.validatesUserAuthorization(objAux.getAccount().getUser().getId(), AuthorizationType.USER_ONLY);
+
+		if (objAux.getAccount() != null && objAux.getPaymentMoment() != null) {
+			if (objAux.getEntryType() == EntryType.CREDIT) {
+				accountService.decreaseBalanceAccount(objAux.getAccount().getId(), objAux.getValue());
+			} else {
+				accountService.increaseBalanceAccount(objAux.getAccount().getId(), objAux.getValue());
+			}
+		}
+
+		if (obj.getAccount() != null && obj.getPaymentMoment() != null) {
+			if (obj.getEntryType() == EntryType.CREDIT) {
+				accountService.increaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+			} else {
+				accountService.decreaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+			}
+		}
+		updateData(objAux, obj);
+		return repository.save(objAux);
 	}
 
 	private void updateData(Entry newObj, Entry obj) {
-		newObj.setMoment(obj.getMoment());
 		newObj.setValue(obj.getValue());
-		newObj.setEntryType(obj.getEntryType());
 		newObj.setDescription(obj.getDescription());
 		newObj.setDueDate(obj.getDueDate());
+		newObj.setPaymentMoment(obj.getPaymentMoment());
 		newObj.setInstallmentNumber(obj.getInstallmentNumber());
 		newObj.setNumberInstallmentsTotal(obj.getNumberInstallmentsTotal());
+		newObj.setEntryType(obj.getEntryType());
+		newObj.setAccount(obj.getAccount());
 	}
 
 	public Entry fromDTO(EntryDTO objDTO) {
-		Entry entry = new Entry(objDTO.getId(), objDTO.getMoment(), objDTO.getValue(), objDTO.getDescription(),
-				objDTO.getDueDate(), objDTO.getInstallmentNumber(), objDTO.getNumberInstallmentsTotal(),
-				objDTO.getEntryType(), null, null, null);
+		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
+				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
+				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(),
+				accountService.findById(objDTO.getAccount().getId()), null, null);
 		return entry;
 	}
 }

@@ -87,8 +87,12 @@ public abstract class Account implements Serializable {
 		return balance;
 	}
 
-	public void setBalance(Double balance) {
-		this.balance = balance;
+	public void increaseBalance(Double value) {
+		this.balance += value;
+	}
+
+	public void decreaseBalance(Double value) {
+		this.balance -= value;
 	}
 
 	public User getUser() {

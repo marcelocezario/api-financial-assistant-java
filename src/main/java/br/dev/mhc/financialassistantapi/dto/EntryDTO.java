@@ -6,57 +6,76 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
+@br.dev.mhc.financialassistantapi.services.validation.Entry
 public class EntryDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	private Instant moment;
-
-	@Positive(message = "Value must be positive")
+	private Instant criationMoment;
+	
+	@NotNull
+	@PositiveOrZero
 	private Double value;
-
 	private String description;
 	private Instant dueDate;
+	private Instant paymentMoment;
+	
+	@NotNull
+	@PositiveOrZero
 	private Integer installmentNumber;
+	
+	@NotNull
+	@PositiveOrZero
 	private Integer numberInstallmentsTotal;
+	
+	@NotNull
 	private EntryType entryType;
+	
+	private AccountDTO account;
 
-	private List<CategoryDTO> categories = new ArrayList<>();
+//	private List<CategoryDTO> categories = new ArrayList<>();
 
 	public EntryDTO() {
 	}
-
-	public EntryDTO(Long id, Instant moment, @Positive(message = "Value must be positive") Double value,
-			String description, Instant dueDate, Integer installmentNumber, Integer numberInstallmentsTotal,
-			EntryType entryType, List<CategoryDTO> categories) {
+ 
+	public EntryDTO(Long id, Instant criationMoment, Double value, String description, Instant dueDate,
+			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
+			AccountDTO account, List<CategoryDTO> categories) {
 		super();
 		this.id = id;
-		this.moment = moment;
+		this.criationMoment = criationMoment;
 		this.value = value;
 		this.description = description;
 		this.dueDate = dueDate;
+		this.paymentMoment = paymentMoment;
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType;
-		this.categories = categories;
+		this.account = account;
+//		this.categories = categories;
 	}
 
 	public EntryDTO(Entry obj) {
 		this.id = obj.getId();
-		this.moment = obj.getMoment();
+		this.criationMoment = obj.getCriationMoment();
 		this.value = obj.getValue();
 		this.description = obj.getDescription();
 		this.dueDate = obj.getDueDate();
+		this.paymentMoment = obj.getPaymentMoment();
 		this.installmentNumber = obj.getInstallmentNumber();
 		this.numberInstallmentsTotal = obj.getNumberInstallmentsTotal();
 		this.entryType = obj.getEntryType();
-		this.categories = obj.getCategories().stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
+		this.account = new AccountDTO(obj.getAccount());
+//		this.categories = obj.getCategories().stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
 	}
 
 	public Long getId() {
@@ -67,12 +86,12 @@ public class EntryDTO implements Serializable {
 		this.id = id;
 	}
 
-	public Instant getMoment() {
-		return moment;
+	public Instant getCriationMoment() {
+		return criationMoment;
 	}
 
-	public void setMoment(Instant moment) {
-		this.moment = moment;
+	public void setCriationMoment(Instant criationMoment) {
+		this.criationMoment = criationMoment;
 	}
 
 	public Double getValue() {
@@ -99,6 +118,14 @@ public class EntryDTO implements Serializable {
 		this.dueDate = dueDate;
 	}
 
+	public Instant getPaymentMoment() {
+		return paymentMoment;
+	}
+
+	public void setPaymentMoment(Instant paymentMoment) {
+		this.paymentMoment = paymentMoment;
+	}
+
 	public Integer getInstallmentNumber() {
 		return installmentNumber;
 	}
@@ -123,7 +150,19 @@ public class EntryDTO implements Serializable {
 		this.entryType = entryType;
 	}
 
-	public List<CategoryDTO> getCategories() {
-		return categories;
+	public AccountDTO getAccount() {
+		return account;
 	}
+
+	public void setAccount(AccountDTO account) {
+		this.account = account;
+	}
+
+//	public List<CategoryDTO> getCategories() {
+//		return categories;
+//	}
+//
+//	public void setCategories(List<CategoryDTO> categories) {
+//		this.categories = categories;
+//	}
 }
