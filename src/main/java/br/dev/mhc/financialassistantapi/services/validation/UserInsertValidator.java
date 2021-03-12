@@ -16,7 +16,7 @@ import br.dev.mhc.financialassistantapi.services.UserService;
 public class UserInsertValidator implements ConstraintValidator<UserInsert, UserNewDTO> {
 
 	@Autowired
-	private UserService repository;
+	private UserService service;
 
 	@Override
 	public void initialize(UserInsert ann) {
@@ -27,7 +27,7 @@ public class UserInsertValidator implements ConstraintValidator<UserInsert, User
 
 		List<FieldMessage> list = new ArrayList<>();
 
-		User aux = repository.findByEmail(objDTO.getEmail());
+		User aux = service.findByEmail(objDTO.getEmail());
 		if (aux != null) {
 			list.add(new FieldMessage("email", "E-mail already registered"));
 		}
