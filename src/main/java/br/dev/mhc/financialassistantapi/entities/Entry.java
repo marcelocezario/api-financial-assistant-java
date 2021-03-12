@@ -43,13 +43,17 @@ public class Entry implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
+	
+	@ManyToOne
+	@JoinColumn(name = "account_id")
+	private User user;
 
 	@OneToMany(mappedBy = "id.entry")
 	private Set<EntryCategory> entriesCategories = new HashSet<>();
 
 	public Entry(Long id, Instant moment, @Positive(message = "Value must be positive") Double value,
 			String description, Instant dueDate, Integer installmentNumber, Integer numberInstallmentsTotal,
-			EntryType entryType, Account account, Set<EntryCategory> entriesCategories) {
+			EntryType entryType, Account account, User user, Set<EntryCategory> entriesCategories) {
 		super();
 		this.id = id;
 		this.moment = moment;
@@ -60,6 +64,7 @@ public class Entry implements Serializable {
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType.getCod();
 		this.account = account;
+		this.user = user;
 		this.entriesCategories = entriesCategories;
 	}
 
@@ -145,6 +150,14 @@ public class Entry implements Serializable {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Set<EntryCategory> getEntriesCategories() {

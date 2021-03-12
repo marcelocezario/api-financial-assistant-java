@@ -94,7 +94,7 @@ public class EntryService {
 	public Entry fromDTO(EntryDTO objDTO) {
 		Entry entry = new Entry(objDTO.getId(), objDTO.getMoment(), objDTO.getValue(), objDTO.getDescription(),
 				objDTO.getDueDate(), objDTO.getInstallmentNumber(), objDTO.getNumberInstallmentsTotal(),
-				objDTO.getEntryType(), null, null);
+				objDTO.getEntryType(), null, null, null);
 		return entry;
 	}
 }
