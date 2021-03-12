@@ -8,6 +8,7 @@ import javax.validation.constraints.PositiveOrZero;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
 @Entity
@@ -29,8 +30,9 @@ public class BankAccount extends Account {
 		this.setAccountType(AccountType.BANK_ACCOUNT);
 	}
 
-	public BankAccount(Long id, String name, Double balance, Double bankInterestRate, Double limitValueBankAccount) {
-		super(id, name, balance, AccountType.BANK_ACCOUNT);
+	public BankAccount(Long id, String name, Double balance, Double bankInterestRate, Double limitValueBankAccount,
+			User user) {
+		super(id, name, balance, AccountType.BANK_ACCOUNT, user);
 		this.bankInterestRate = bankInterestRate;
 		this.limitValueBankAccount = limitValueBankAccount;
 	}

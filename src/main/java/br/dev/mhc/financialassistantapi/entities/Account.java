@@ -52,7 +52,7 @@ public abstract class Account implements Serializable {
 		balance = 0.0;
 	}
 
-	public Account(Long id, String name, Double balance, AccountType accountType) {
+	public Account(Long id, String name, Double balance, AccountType accountType, User user) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -62,6 +62,7 @@ public abstract class Account implements Serializable {
 			this.balance = balance;
 		}
 		this.accountType = accountType.getCod();
+		this.user = user;
 	}
 
 	public Long getId() {

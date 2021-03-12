@@ -6,6 +6,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
 @Entity
@@ -19,7 +20,7 @@ public class Wallet extends Account {
 		this.setAccountType(AccountType.WALLET);
 	}
 
-	public Wallet(Long id, String name, Double balance) {
-		super(id, name, balance, AccountType.WALLET);
+	public Wallet(Long id, String name, Double balance, User user) {
+		super(id, name, balance, AccountType.WALLET, user);
 	}
 }
