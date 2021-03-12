@@ -2,28 +2,54 @@ package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import org.hibernate.validator.constraints.Length;
+
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
+@br.dev.mhc.financialassistantapi.services.validation.Account
 public class AccountDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	// Account
 	private Long id;
+	
+	@NotEmpty(message = "The account's name is a required field")
+	@Length(max = 50, message = "Maximum number of 50 characters exceeded")
 	private String name;
 	private Double balance;
+	
+	@NotNull(message = "Entrytype cannot be null")
 	private AccountType accountType;
 
 	// BankAccount
+	@NotNull(message = "Bank interest rate is a required field")
+	@PositiveOrZero(message = "The bank interest rate must be greater than or equal to zero")
 	private Double bankInterestRate;
+	@NotNull(message = "Limit value is a required field")
+	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
 	private Double limitValueBankAccount;
 
 	// CreditCard
+	@NotNull(message = "Closing day is a required field")
+	@Min(value = 1, message = "Choose a day between 1 and 31")
+	@Max(value = 31, message = "Choose a day between 1 and 31")
 	private Integer closingDay;
+	@NotNull(message = "Due day is a required field")
+	@Min(value = 1, message = "Choose a day between 1 and 31")
+	@Max(value = 31, message = "Choose a day between 1 and 31")
 	private Integer dueDay;
+	@NotNull(message = "Limit value is a required field")
+	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
 	private Double limitValueCard;
 
 	// Wallet

@@ -63,7 +63,6 @@ public class UserService {
 	@Transactional
 	public User update(User obj) {
 		AuthService.validatesUserAuthorization(obj.getId(), AuthorizationType.USER_ONLY);
-
 		User newObj = findById(obj.getId());
 		updateData(newObj, obj);
 		return repository.save(newObj);

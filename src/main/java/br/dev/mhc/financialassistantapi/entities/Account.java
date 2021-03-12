@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -43,6 +44,7 @@ public abstract class Account implements Serializable {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	@NotNull(message = "Entrytype cannot be null")
 	private Integer accountType;
 
 	@OneToMany(mappedBy = "account")
