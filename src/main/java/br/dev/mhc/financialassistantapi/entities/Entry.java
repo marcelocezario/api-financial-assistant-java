@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
@@ -30,23 +29,15 @@ public class Entry implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotEmpty(message = "Entry moment is a required field")
 	private Instant moment;
 
-	@NotEmpty(message = "Entry value is a required field")
 	@Positive(message = "Value must be positive")
 	private Double value;
+
 	private String description;
-
-	@NotEmpty(message = "Due date is a required field")
 	private Instant dueDate;
-
-	@NotEmpty(message = "Installment number is a required field")
 	private Integer installmentNumber;
-
-	@NotEmpty(message = "Number installments total is a required field")
 	private Integer numberInstallmentsTotal;
-
 	private Integer entryType;
 
 	@ManyToOne
@@ -56,15 +47,9 @@ public class Entry implements Serializable {
 	@OneToMany(mappedBy = "id.entry")
 	private Set<EntryCategory> entriesCategories = new HashSet<>();
 
-	public Entry() {
-	}
-
-	public Entry(Long id, @NotEmpty(message = "Entry moment is a required field") Instant moment,
-			@NotEmpty(message = "Entry value is a required field") @Positive(message = "Value must be positive") Double value,
-			String description, @NotEmpty(message = "Due date is a required field") Instant dueDate,
-			@NotEmpty(message = "Installment number is a required field") Integer installmentNumber,
-			@NotEmpty(message = "Number installments total is a required field") Integer numberInstallmentsTotal,
-			EntryType entryType, Account account) {
+	public Entry(Long id, Instant moment, @Positive(message = "Value must be positive") Double value,
+			String description, Instant dueDate, Integer installmentNumber, Integer numberInstallmentsTotal,
+			EntryType entryType, Account account, Set<EntryCategory> entriesCategories) {
 		super();
 		this.id = id;
 		this.moment = moment;
@@ -75,6 +60,7 @@ public class Entry implements Serializable {
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType.getCod();
 		this.account = account;
+		this.entriesCategories = entriesCategories;
 	}
 
 	public List<Category> getCategories() {

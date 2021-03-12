@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 import br.dev.mhc.financialassistantapi.entities.Entry;
@@ -17,37 +16,25 @@ public class EntryDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-
-	@NotEmpty(message = "Entry moment is a required field")
 	private Instant moment;
 
-	@NotEmpty(message = "Entry value is a required field")
 	@Positive(message = "Value must be positive")
 	private Double value;
+
 	private String description;
-
-	@NotEmpty(message = "Due date is a required field")
 	private Instant dueDate;
-
-	@NotEmpty(message = "Installment number is a required field")
 	private Integer installmentNumber;
-
-	@NotEmpty(message = "Number installments total is a required field")
 	private Integer numberInstallmentsTotal;
-
 	private EntryType entryType;
-	
+
 	private List<CategoryDTO> categories = new ArrayList<>();
 
 	public EntryDTO() {
 	}
 
-	public EntryDTO(Long id, @NotEmpty(message = "Entry moment is a required field") Instant moment,
-			@NotEmpty(message = "Entry value is a required field") @Positive(message = "Value must be positive") Double value,
-			String description, @NotEmpty(message = "Due date is a required field") Instant dueDate,
-			@NotEmpty(message = "Installment number is a required field") Integer installmentNumber,
-			@NotEmpty(message = "Number installments total is a required field") Integer numberInstallmentsTotal,
-			EntryType entryType) {
+	public EntryDTO(Long id, Instant moment, @Positive(message = "Value must be positive") Double value,
+			String description, Instant dueDate, Integer installmentNumber, Integer numberInstallmentsTotal,
+			EntryType entryType, List<CategoryDTO> categories) {
 		super();
 		this.id = id;
 		this.moment = moment;
@@ -57,6 +44,7 @@ public class EntryDTO implements Serializable {
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType;
+		this.categories = categories;
 	}
 
 	public EntryDTO(Entry obj) {
