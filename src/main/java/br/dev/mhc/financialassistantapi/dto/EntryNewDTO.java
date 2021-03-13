@@ -10,7 +10,8 @@ import javax.validation.constraints.PositiveOrZero;
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
-public class EntryDTO implements Serializable {
+@br.dev.mhc.financialassistantapi.services.validation.Entry
+public class EntryNewDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,15 +35,17 @@ public class EntryDTO implements Serializable {
 
 	@NotNull
 	private EntryType entryType;
+	
+	private AccountDTO account;
 
 //	private List<CategoryDTO> categories = new ArrayList<>();
 
-	public EntryDTO() {
+	public EntryNewDTO() {
 	}
 
-	public EntryDTO(Long id, Instant criationMoment, Double value, String description, Instant dueDate,
+	public EntryNewDTO(Long id, Instant criationMoment, Double value, String description, Instant dueDate,
 			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
-			List<CategoryDTO> categories) {
+			AccountDTO account, List<CategoryDTO> categories) {
 		super();
 		this.id = id;
 		this.criationMoment = criationMoment;
@@ -53,10 +56,11 @@ public class EntryDTO implements Serializable {
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType;
+		this.account = account;
 //		this.categories = categories;
 	}
 
-	public EntryDTO(Entry obj) {
+	public EntryNewDTO(Entry obj) {
 		this.id = obj.getId();
 		this.criationMoment = obj.getCriationMoment();
 		this.value = obj.getValue();
@@ -66,6 +70,7 @@ public class EntryDTO implements Serializable {
 		this.installmentNumber = obj.getInstallmentNumber();
 		this.numberInstallmentsTotal = obj.getNumberInstallmentsTotal();
 		this.entryType = obj.getEntryType();
+		this.account = new AccountDTO(obj.getAccount());
 //		this.categories = obj.getCategories().stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
 	}
 
@@ -139,6 +144,14 @@ public class EntryDTO implements Serializable {
 
 	public void setEntryType(EntryType entryType) {
 		this.entryType = entryType;
+	}
+
+	public AccountDTO getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountDTO account) {
+		this.account = account;
 	}
 
 //	public List<CategoryDTO> getCategories() {

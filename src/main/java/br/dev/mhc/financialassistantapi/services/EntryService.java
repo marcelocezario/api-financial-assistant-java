@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.dev.mhc.financialassistantapi.dto.EntryDTO;
+import br.dev.mhc.financialassistantapi.dto.EntryNewDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.User;
@@ -32,6 +33,11 @@ public class EntryService {
 
 	@Autowired
 	private UserService userService;
+	
+	/*
+	 * CREATE
+	 */
+	
 
 	@Transactional
 	public Entry insert(Entry obj) {
@@ -53,6 +59,10 @@ public class EntryService {
 		return obj;
 	}
 
+	/*
+	 * READ
+	 */
+	
 	public Entry findById(Long id) {
 		Optional<Entry> obj = repository.findById(id);
 		Entry entry = obj.orElseThrow(
@@ -60,6 +70,11 @@ public class EntryService {
 		AuthService.validatesUserAuthorization(entry.getUser().getId(), AuthorizationType.USER_ONLY);
 		return entry;
 	}
+	
+	/*
+	 * READ
+	 * LISTS
+	 */
 
 	public List<Entry> findByAccount(Long idAccount) {
 		Account account = accountService.findById(idAccount);
@@ -72,7 +87,35 @@ public class EntryService {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 		User user = userService.findById(userSS.getId());
-		return repository.findByUserAndAccountIsNullOrderByDueDateDesc(user);
+		return repository.findByUserAndAccountIsNullOrderByDueDateAsc(user);
+	}
+
+	public List<Entry> findUnpaidByUser() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		User user = userService.findById(userSS.getId());
+		return repository.findByUserAndPaymentMomentIsNullOrderByDueDateAsc(user);
+	}
+	
+	/*
+	 * READ
+	 * PAGE
+	 */
+	public Page<Entry> findPageByAccount(Long idAccount, Integer page, Integer linesPerPage, String orderBy,
+			String direction) {
+		Account account = accountService.findById(idAccount);
+		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
+
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findByAccount(account, pageRequest);
+	}
+	
+	public Page<Entry> findPageByUserWithoutAccount(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		User user = userService.findById(userSS.getId());
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findByUserAndAccountIsNull(user, pageRequest);
 	}
 
 	public Page<Entry> findPageWithoutAccount(Integer page, Integer linesPerPage, String orderBy, String direction) {
@@ -82,15 +125,10 @@ public class EntryService {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findByUserAndAccountIsNull(user, pageRequest);
 	}
-
-	public Page<Entry> findPageByAccount(Long idAccount, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		Account account = accountService.findById(idAccount);
-		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
-
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findByAccount(account, pageRequest);
-	}
+	
+	/*
+	 * UPDATE
+	 */
 
 	@Transactional
 	public Entry update(Entry obj) {
@@ -115,6 +153,10 @@ public class EntryService {
 		updateData(objAux, obj);
 		return repository.save(objAux);
 	}
+	
+	/*
+	 * UTILS
+	 */
 
 	private void updateData(Entry newObj, Entry obj) {
 		newObj.setValue(obj.getValue());
@@ -130,8 +172,16 @@ public class EntryService {
 	public Entry fromDTO(EntryDTO objDTO) {
 		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
 				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
-				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(),
-				accountService.findById(objDTO.getAccount().getId()), null, null);
+				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), null, null, null);
+		return entry;
+	}
+
+	public Entry fromDTO(EntryNewDTO objDTO) {
+		Account account = (objDTO.getAccount() == null) ? null : accountService.findById(objDTO.getAccount().getId());
+
+		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
+				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
+				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), account, null, null);
 		return entry;
 	}
 }

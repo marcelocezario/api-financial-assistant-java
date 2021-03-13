@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.dev.mhc.financialassistantapi.dto.EntryDTO;
+import br.dev.mhc.financialassistantapi.dto.EntryNewDTO;
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.services.EntryService;
 
@@ -33,7 +34,7 @@ public class EntryResource {
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@Valid @RequestBody EntryDTO objDTO) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody EntryNewDTO objDTO) {
 		Entry obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -75,4 +76,33 @@ public class EntryResource {
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
+
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@GetMapping(value = "/account/without")
+	public ResponseEntity<List<EntryDTO>> findByUserWithoutAccount() {
+		List<Entry> list = service.findByUserWithoutAccount();
+		List<EntryDTO> listDTO = list.stream().map(x -> new EntryDTO(x)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDTO);
+	}
+
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@GetMapping(value = "/account/without/page")
+	public ResponseEntity<Page<EntryDTO>> findPageWithoutAccount(
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "dueDate") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+		Page<Entry> list = service.findPageWithoutAccount(page, linesPerPage, orderBy, direction);
+		Page<EntryDTO> listDTO = list.map(x -> new EntryDTO(x));
+		return ResponseEntity.ok().body(listDTO);
+	}
+
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@GetMapping(value = "/unpaid")
+	public ResponseEntity<List<EntryDTO>> findUnpaidByUser() {
+		List<Entry> list = service.findUnpaidByUser();
+		List<EntryDTO> listDTO = list.stream().map(x -> new EntryDTO(x)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDTO);
+	}
+
 }

@@ -75,20 +75,17 @@ public class AccountService {
 
 	private void updateData(Account newObj, Account obj) {
 		newObj.setName(obj.getName());
-
 		switch (obj.getAccountType()) {
 		case WALLET:
 			break;
-
 		case BANK_ACCOUNT:
-			((BankAccount) newObj).setBankInterestRate(((BankAccount) obj).getBankInterestRate());
-			((BankAccount) newObj).setLimitValue(((BankAccount) obj).getLimitValueBankAccount());
+			((BankAccount)newObj).setBankInterestRate(((BankAccount)obj).getBankInterestRate());
+			((BankAccount)newObj).setLimitValue(((BankAccount)obj).getLimitValueBankAccount());
 			break;
-
 		case CREDIT_CARD:
-			((CreditCard) newObj).setClosingDay(((CreditCard) obj).getClosingDay());
-			((CreditCard) newObj).setDueDay(((CreditCard) obj).getDueDay());
-			((CreditCard) newObj).setLimitValueCard(((CreditCard) obj).getLimitValueCard());
+			((CreditCard)newObj).setClosingDay(((CreditCard)obj).getClosingDay());
+			((CreditCard)newObj).setDueDay(((CreditCard)obj).getDueDay());
+			((CreditCard)newObj).setLimitValueCard(((CreditCard)obj).getLimitValueCard());
 			break;
 		}
 	}
@@ -97,15 +94,12 @@ public class AccountService {
 		switch (objDTO.getAccountType()) {
 		case WALLET:
 			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), null);
-
 		case BANK_ACCOUNT:
 			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getBankInterestRate(),
 					objDTO.getLimitValueBankAccount(), null);
-
 		case CREDIT_CARD:
 			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getClosingDay(),
 					objDTO.getDueDay(), objDTO.getLimitValueCard(), null);
-
 		default:
 			return null;
 		}

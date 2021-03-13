@@ -6,17 +6,17 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import br.dev.mhc.financialassistantapi.dto.EntryDTO;
+import br.dev.mhc.financialassistantapi.dto.EntryNewDTO;
 import br.dev.mhc.financialassistantapi.resources.exceptions.FieldMessage;
 
-public class EntryValidator implements ConstraintValidator<Entry, EntryDTO> {
+public class EntryValidator implements ConstraintValidator<Entry, EntryNewDTO> {
 
 	@Override
 	public void initialize(Entry ann) {
 	}
 
 	@Override
-	public boolean isValid(EntryDTO objDTO, ConstraintValidatorContext context) {
+	public boolean isValid(EntryNewDTO objDTO, ConstraintValidatorContext context) {
 
 		List<FieldMessage> list = new ArrayList<>();
 

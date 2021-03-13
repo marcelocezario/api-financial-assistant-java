@@ -22,6 +22,7 @@ import org.hibernate.validator.constraints.Length;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
+import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
 @Entity
 @Table(name = "tb_account")
@@ -116,6 +117,11 @@ public abstract class Account implements Serializable {
 	}
 
 	public void addEntry(Entry entry) {
+		if (entry.getEntryType() == EntryType.CREDIT) {
+			increaseBalance(entry.getValue());
+		} else {
+			decreaseBalance(entry.getValue());
+		}
 		entries.add(entry);
 	}
 

@@ -72,20 +72,31 @@ public class DBService {
 		Category c5 = new Category(null, "Combustível", "icon-vehicle.svg", u2);
 		Category c6 = new Category(null, "Trabalho", "icon-work.svg", u2);
 		
-		Entry e1 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a2, u2, null);
-		Entry e2 = new Entry(null, Instant.now(), 15.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a2, u2, null);
-		Entry e3 = new Entry(null, Instant.now(), 20.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a2, u2, null);
-		Entry e4 = new Entry(null, Instant.now(), 25.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a2, u2, null);
-		Entry e5 = new Entry(null, Instant.now(), 30.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a2, u2, null);
-		Entry e6 = new Entry(null, Instant.now(), 50.0, "Dinheiro recebido", Instant.now(), Instant.now(), 1, 1, EntryType.CREDIT, a2, u2, null);
-		Entry e7 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a2, u2, null);
+		Entry e1 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e2 = new Entry(null, Instant.now(), 15.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e3 = new Entry(null, Instant.now(), 20.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e4 = new Entry(null, Instant.now(), 25.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e5 = new Entry(null, Instant.now(), 30.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e6 = new Entry(null, Instant.now(), 50.0, "Dinheiro recebido", Instant.now(), Instant.now(), 1, 1, EntryType.CREDIT, a4, u2, null);
+		Entry e7 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
+		
+		Entry e8 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
+		Entry e9 = new Entry(null, Instant.now(), 15.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
+		Entry e10 = new Entry(null, Instant.now(), 16.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
+		Entry e11 = new Entry(null, Instant.now(), 17.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
+		Entry e12 = new Entry(null, Instant.now(), 20.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
+		
+		a4.addEntry(e1);
+		a4.addEntry(e2);
+		a4.addEntry(e3);
+		a4.addEntry(e4);
+		a4.addEntry(e5);
+		a4.addEntry(e6);
+		a4.addEntry(e7);
 		
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
 		categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6));
-		entryRepository.saveAll(Arrays.asList(e1, e2, e3, e4, e5, e6, e7));
-		
-
+		entryRepository.saveAll(Arrays.asList(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12));
 	}
-
 }

@@ -78,23 +78,18 @@ public class AccountDTO implements Serializable {
 		this.name = obj.getName();
 		this.balance = obj.getBalance();
 		this.accountType = obj.getAccountType();
-
+		
 		switch (obj.getAccountType()) {
-
 		case WALLET:
 			break;
-
 		case BANK_ACCOUNT:
-			BankAccount bankAccount = (BankAccount) obj;
-			this.bankInterestRate = bankAccount.getBankInterestRate();
-			this.limitValueBankAccount = bankAccount.getLimitValueBankAccount();
+			this.bankInterestRate = ((BankAccount)obj).getBankInterestRate();
+			this.limitValueBankAccount = ((BankAccount)obj).getLimitValueBankAccount();
 			break;
-
 		case CREDIT_CARD:
-			CreditCard creditCard = (CreditCard) obj;
-			this.closingDay = creditCard.getClosingDay();
-			this.dueDay = creditCard.getDueDay();
-			this.limitValueCard = creditCard.getLimitValueCard();
+			this.closingDay = ((CreditCard)obj).getClosingDay();
+			this.dueDay = ((CreditCard)obj).getDueDay();
+			this.limitValueCard = ((CreditCard)obj).getLimitValueCard();
 			break;
 		}
 	}

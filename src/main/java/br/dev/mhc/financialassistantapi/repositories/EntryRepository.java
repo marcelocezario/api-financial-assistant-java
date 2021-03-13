@@ -22,8 +22,14 @@ public interface EntryRepository extends JpaRepository<Entry, Long> {
 	Page<Entry> findByAccount(Account account, Pageable pageRequest);
 
 	@Transactional(readOnly = true)
-	List<Entry> findByUserAndAccountIsNullOrderByDueDateDesc(User user);
+	List<Entry> findByUserAndAccountIsNullOrderByDueDateAsc(User user);
 
 	@Transactional(readOnly = true)
 	Page<Entry> findByUserAndAccountIsNull(User user, Pageable pageRequest);
+	
+	@Transactional(readOnly = true)
+	List<Entry> findByUserAndPaymentMomentIsNullOrderByDueDateAsc(User user);
+
+	@Transactional(readOnly = true)
+	Page<Entry> findByUserAndPaymentMomentIsNull(User user, Pageable pageRequest);
 }
