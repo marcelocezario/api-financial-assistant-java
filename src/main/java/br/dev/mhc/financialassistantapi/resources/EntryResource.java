@@ -49,8 +49,17 @@ public class EntryResource {
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@PutMapping(value = "/{idEntry}")
+	public ResponseEntity<Void> update(@Valid @RequestBody EntryDTO objDTO, @PathVariable Long idEntry) {
+		Entry obj = service.fromDTO(objDTO);
+		obj.setId(idEntry);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping(value = "/account/{idAccount}")
-	public ResponseEntity<List<EntryDTO>> findAllEntriesByAccount(@PathVariable Long idAccount) {
+	public ResponseEntity<List<EntryDTO>> findByAccount(@PathVariable Long idAccount) {
 		List<Entry> list = service.findByAccount(idAccount);
 		List<EntryDTO> listDTO = list.stream().map(x -> new EntryDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
@@ -58,7 +67,7 @@ public class EntryResource {
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping(value = "/account/{idAccount}/page")
-	public ResponseEntity<Page<EntryDTO>> findAllEntriesPageByAccount(@PathVariable Long idAccount,
+	public ResponseEntity<Page<EntryDTO>> findPageByAccount(@PathVariable Long idAccount,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "paymentMoment") String orderBy,
@@ -66,15 +75,6 @@ public class EntryResource {
 		Page<Entry> list = service.findPageByAccount(idAccount, page, linesPerPage, orderBy, direction);
 		Page<EntryDTO> listDTO = list.map(x -> new EntryDTO(x));
 		return ResponseEntity.ok().body(listDTO);
-	}
-
-	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@PutMapping(value = "/{idEntry}")
-	public ResponseEntity<Void> update(@Valid @RequestBody EntryDTO objDTO, @PathVariable Long idEntry) {
-		Entry obj = service.fromDTO(objDTO);
-		obj.setId(idEntry);
-		obj = service.update(obj);
-		return ResponseEntity.noContent().build();
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
@@ -87,12 +87,12 @@ public class EntryResource {
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping(value = "/account/without/page")
-	public ResponseEntity<Page<EntryDTO>> findPageWithoutAccount(
+	public ResponseEntity<Page<EntryDTO>> findPageByUserWithoutAccount(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "dueDate") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-		Page<Entry> list = service.findPageWithoutAccount(page, linesPerPage, orderBy, direction);
+		Page<Entry> list = service.findPageByUserWithoutAccount(page, linesPerPage, orderBy, direction);
 		Page<EntryDTO> listDTO = list.map(x -> new EntryDTO(x));
 		return ResponseEntity.ok().body(listDTO);
 	}
@@ -105,4 +105,15 @@ public class EntryResource {
 		return ResponseEntity.ok().body(listDTO);
 	}
 
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@GetMapping(value = "/unpaid/page")
+	public ResponseEntity<Page<EntryDTO>> findPageUnpaidByUser(
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "dueDate") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+		Page<Entry> list = service.findPageUnpaidByUser(page, linesPerPage, orderBy, direction);
+		Page<EntryDTO> listDTO = list.map(x -> new EntryDTO(x));
+		return ResponseEntity.ok().body(listDTO);
+	}
 }

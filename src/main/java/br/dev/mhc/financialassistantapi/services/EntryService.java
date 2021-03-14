@@ -33,11 +33,10 @@ public class EntryService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	/*
 	 * CREATE
 	 */
-	
 
 	@Transactional
 	public Entry insert(Entry obj) {
@@ -62,7 +61,7 @@ public class EntryService {
 	/*
 	 * READ
 	 */
-	
+
 	public Entry findById(Long id) {
 		Optional<Entry> obj = repository.findById(id);
 		Entry entry = obj.orElseThrow(
@@ -70,16 +69,14 @@ public class EntryService {
 		AuthService.validatesUserAuthorization(entry.getUser().getId(), AuthorizationType.USER_ONLY);
 		return entry;
 	}
-	
+
 	/*
-	 * READ
-	 * LISTS
+	 * READ LISTS
 	 */
 
 	public List<Entry> findByAccount(Long idAccount) {
 		Account account = accountService.findById(idAccount);
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
-
 		return repository.findByAccountOrderByPaymentMomentDesc(account);
 	}
 
@@ -96,21 +93,20 @@ public class EntryService {
 		User user = userService.findById(userSS.getId());
 		return repository.findByUserAndPaymentMomentIsNullOrderByDueDateAsc(user);
 	}
-	
+
 	/*
-	 * READ
-	 * PAGE
+	 * READ PAGE
 	 */
 	public Page<Entry> findPageByAccount(Long idAccount, Integer page, Integer linesPerPage, String orderBy,
 			String direction) {
 		Account account = accountService.findById(idAccount);
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
-
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findByAccount(account, pageRequest);
 	}
-	
-	public Page<Entry> findPageByUserWithoutAccount(Integer page, Integer linesPerPage, String orderBy, String direction) {
+
+	public Page<Entry> findPageByUserWithoutAccount(Integer page, Integer linesPerPage, String orderBy,
+			String direction) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 		User user = userService.findById(userSS.getId());
@@ -118,14 +114,14 @@ public class EntryService {
 		return repository.findByUserAndAccountIsNull(user, pageRequest);
 	}
 
-	public Page<Entry> findPageWithoutAccount(Integer page, Integer linesPerPage, String orderBy, String direction) {
+	public Page<Entry> findPageUnpaidByUser(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 		User user = userService.findById(userSS.getId());
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findByUserAndAccountIsNull(user, pageRequest);
+		return repository.findByUserAndPaymentMomentIsNull(user, pageRequest);
 	}
-	
+
 	/*
 	 * UPDATE
 	 */
@@ -153,7 +149,7 @@ public class EntryService {
 		updateData(objAux, obj);
 		return repository.save(objAux);
 	}
-	
+
 	/*
 	 * UTILS
 	 */
