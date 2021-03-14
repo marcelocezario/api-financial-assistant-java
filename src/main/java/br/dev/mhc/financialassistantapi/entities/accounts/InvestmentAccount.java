@@ -8,16 +8,16 @@ import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
 @Entity
-@Table(name = "tb_wallet")
-public class Wallet extends Account {
+@Table(name = "tb_investment_account")
+public class InvestmentAccount extends Account {
 
 	private static final long serialVersionUID = 1L;
 
-	public Wallet() {
-		this.setAccountType(AccountType.WALLET);
+	public InvestmentAccount() {
+		this.setAccountType(AccountType.INVESTMENT_ACCOUNT);
 	}
 
-	public Wallet(Long id, String name, Double balance, User user) {
-		super(id, name, balance, AccountType.WALLET, user);
+	public InvestmentAccount(Long id, String name, Double balance, User user) {
+		super(id, name, balance, AccountType.INVESTMENT_ACCOUNT, user);
 	}
 }

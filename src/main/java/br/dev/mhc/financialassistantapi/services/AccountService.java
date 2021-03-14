@@ -11,6 +11,7 @@ import br.dev.mhc.financialassistantapi.dto.AccountDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
+import br.dev.mhc.financialassistantapi.entities.accounts.InvestmentAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.Wallet;
 import br.dev.mhc.financialassistantapi.repositories.AccountRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
@@ -87,6 +88,8 @@ public class AccountService {
 			((CreditCard)newObj).setDueDay(((CreditCard)obj).getDueDay());
 			((CreditCard)newObj).setLimitValueCard(((CreditCard)obj).getLimitValueCard());
 			break;
+		case INVESTMENT_ACCOUNT:
+			break;
 		}
 	}
 
@@ -100,8 +103,9 @@ public class AccountService {
 		case CREDIT_CARD:
 			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getClosingDay(),
 					objDTO.getDueDay(), objDTO.getLimitValueCard(), null);
-		default:
-			return null;
+		case INVESTMENT_ACCOUNT:
+			return new InvestmentAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), null);
 		}
+		return null;
 	}
 }

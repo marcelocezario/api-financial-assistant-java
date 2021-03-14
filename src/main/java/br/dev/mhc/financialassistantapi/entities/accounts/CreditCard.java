@@ -7,15 +7,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
 @Entity
 @Table(name = "tb_credit_card")
-@JsonTypeName("creditCard")
 public class CreditCard extends Account {
 
 	private static final long serialVersionUID = 1L;

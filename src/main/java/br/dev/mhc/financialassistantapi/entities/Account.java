@@ -19,15 +19,12 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
 @Entity
 @Table(name = "tb_account")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class Account implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -31,6 +31,9 @@ public class AccountDTO implements Serializable {
 	@NotNull(message = "Entrytype cannot be null")
 	private AccountType accountType;
 
+	// Wallet
+	// Não possui atributos exclusivos
+
 	// BankAccount
 	@NotNull(message = "Bank interest rate is a required field")
 	@PositiveOrZero(message = "The bank interest rate must be greater than or equal to zero")
@@ -52,7 +55,7 @@ public class AccountDTO implements Serializable {
 	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
 	private Double limitValueCard;
 
-	// Wallet
+	// InvestmentAccount
 	// Não possui atributos exclusivos
 
 	public AccountDTO() {
@@ -90,6 +93,8 @@ public class AccountDTO implements Serializable {
 			this.closingDay = ((CreditCard)obj).getClosingDay();
 			this.dueDay = ((CreditCard)obj).getDueDay();
 			this.limitValueCard = ((CreditCard)obj).getLimitValueCard();
+			break;
+		case INVESTMENT_ACCOUNT:
 			break;
 		}
 	}

@@ -3,8 +3,9 @@ package br.dev.mhc.financialassistantapi.entities.enums;
 public enum AccountType {
 	
 	WALLET(1, "Wallet"),
-	BANK_ACCOUNT(2, "Bank Account"),
-	CREDIT_CARD(3, "Credit card");
+	BANK_ACCOUNT(2, "Bank account"),
+	CREDIT_CARD(3, "Credit card"),
+	INVESTMENT_ACCOUNT(4, "Investment account");
 	
 	private int cod;
 	private String description;
