@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Category;
 import br.dev.mhc.financialassistantapi.entities.Entry;
+import br.dev.mhc.financialassistantapi.entities.EntryCategory;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
@@ -20,6 +21,7 @@ import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 import br.dev.mhc.financialassistantapi.repositories.AccountRepository;
 import br.dev.mhc.financialassistantapi.repositories.CategoryRepository;
+import br.dev.mhc.financialassistantapi.repositories.EntryCategoryRepository;
 import br.dev.mhc.financialassistantapi.repositories.EntryRepository;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 
@@ -40,6 +42,9 @@ public class DBService {
 
 	@Autowired
 	private EntryRepository entryRepository;
+
+	@Autowired
+	private EntryCategoryRepository entryCategoryRepository;
 
 	public void instantiateTestDatabase() throws ParseException {
 
@@ -78,30 +83,30 @@ public class DBService {
 		Category c6 = new Category(null, "Trabalho", "icon-work.svg", u2);
 
 		Entry e1 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),
-				1, 1, EntryType.DEBIT, a4, u2, null);
+				1, 1, EntryType.DEBIT, a4, u2);
 		Entry e2 = new Entry(null, Instant.now(), new BigDecimal("15.0"), "Compra lanche", Instant.now(), Instant.now(),
-				1, 1, EntryType.DEBIT, a4, u2, null);
+				1, 1, EntryType.DEBIT, a4, u2);
 		Entry e3 = new Entry(null, Instant.now(), new BigDecimal("20.0"), "Compra lanche", Instant.now(), Instant.now(),
-				1, 1, EntryType.DEBIT, a4, u2, null);
+				1, 1, EntryType.DEBIT, a4, u2);
 		Entry e4 = new Entry(null, Instant.now(), new BigDecimal("25.0"), "Compra lanche", Instant.now(), Instant.now(),
-				1, 1, EntryType.DEBIT, a4, u2, null);
+				1, 1, EntryType.DEBIT, a4, u2);
 		Entry e5 = new Entry(null, Instant.now(), new BigDecimal("30.0"), "Compra lanche", Instant.now(), Instant.now(),
-				1, 1, EntryType.DEBIT, a4, u2, null);
+				1, 1, EntryType.DEBIT, a4, u2);
 		Entry e6 = new Entry(null, Instant.now(), new BigDecimal("50.0"), "Dinheiro recebido", Instant.now(),
-				Instant.now(), 1, 1, EntryType.CREDIT, a4, u2, null);
+				Instant.now(), 1, 1, EntryType.CREDIT, a4, u2);
 		Entry e7 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),
-				1, 1, EntryType.DEBIT, a4, u2, null);
+				1, 1, EntryType.DEBIT, a4, u2);
 
 		Entry e8 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), null, 1, 1,
-				EntryType.DEBIT, null, u2, null);
+				EntryType.DEBIT, null, u2);
 		Entry e9 = new Entry(null, Instant.now(), new BigDecimal("15.0"), "Compra lanche", Instant.now(), null, 1, 1,
-				EntryType.DEBIT, null, u2, null);
+				EntryType.DEBIT, null, u2);
 		Entry e10 = new Entry(null, Instant.now(), new BigDecimal("16.0"), "Compra lanche", Instant.now(), null, 1, 1,
-				EntryType.DEBIT, null, u2, null);
+				EntryType.DEBIT, null, u2);
 		Entry e11 = new Entry(null, Instant.now(), new BigDecimal("17.0"), "Compra lanche", Instant.now(), null, 1, 1,
-				EntryType.DEBIT, null, u2, null);
+				EntryType.DEBIT, null, u2);
 		Entry e12 = new Entry(null, Instant.now(), new BigDecimal("20.0"), "Compra lanche", Instant.now(), null, 1, 1,
-				EntryType.DEBIT, null, u2, null);
+				EntryType.DEBIT, null, u2);
 
 		a4.addEntry(e1);
 		a4.addEntry(e2);
@@ -110,10 +115,28 @@ public class DBService {
 		a4.addEntry(e5);
 		a4.addEntry(e6);
 		a4.addEntry(e7);
+		
+		EntryCategory ec1 = new EntryCategory(e1, c1, new BigDecimal("10.00"));
+		EntryCategory ec2 = new EntryCategory(e2, c1, new BigDecimal("15.00"));
+		EntryCategory ec3 = new EntryCategory(e3, c1, new BigDecimal("20.00"));
+		EntryCategory ec4 = new EntryCategory(e4, c1, new BigDecimal("15.00"));
+		EntryCategory ec5 = new EntryCategory(e5, c1, new BigDecimal("30.00"));
+		EntryCategory ec6 = new EntryCategory(e6, c3, new BigDecimal("50.00"));
+		EntryCategory ec7 = new EntryCategory(e7, c1, new BigDecimal("10.00"));
+		EntryCategory ec8 = new EntryCategory(e8, c1, new BigDecimal("10.00"));
+		EntryCategory ec9 = new EntryCategory(e9, c1, new BigDecimal("15.00"));
+		
+		EntryCategory ec10 = new EntryCategory(e10, c1, new BigDecimal("10.00"));
+		EntryCategory ec11 = new EntryCategory(e10, c2, new BigDecimal("6.00"));
+		
+		EntryCategory ec12 = new EntryCategory(e11, c1, new BigDecimal("17.00"));
+		EntryCategory ec13 = new EntryCategory(e12, c1, new BigDecimal("20.00"));
+
 
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
 		categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6));
 		entryRepository.saveAll(Arrays.asList(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12));
+		entryCategoryRepository.saveAll(Arrays.asList(ec1, ec2, ec3, ec4, ec5, ec6, ec7, ec8, ec9, ec10, ec11, ec12, ec13));
 	}
 }

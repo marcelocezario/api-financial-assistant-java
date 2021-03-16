@@ -3,7 +3,9 @@ package br.dev.mhc.financialassistantapi.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -36,17 +38,17 @@ public class EntryNewDTO implements Serializable {
 
 	@NotNull
 	private EntryType entryType;
-	
+
 	private AccountDTO account;
 
-//	private List<CategoryDTO> categories = new ArrayList<>();
+	private List<EntryCategoryDTO> categories = new ArrayList<>();
 
 	public EntryNewDTO() {
 	}
 
 	public EntryNewDTO(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
 			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
-			AccountDTO account, List<CategoryDTO> categories) {
+			AccountDTO account, List<EntryCategoryDTO> entriesCategories) {
 		super();
 		this.id = id;
 		this.criationMoment = criationMoment;
@@ -58,7 +60,7 @@ public class EntryNewDTO implements Serializable {
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType;
 		this.account = account;
-//		this.categories = categories;
+		this.categories = entriesCategories;
 	}
 
 	public EntryNewDTO(Entry obj) {
@@ -72,7 +74,8 @@ public class EntryNewDTO implements Serializable {
 		this.numberInstallmentsTotal = obj.getNumberInstallmentsTotal();
 		this.entryType = obj.getEntryType();
 		this.account = new AccountDTO(obj.getAccount());
-//		this.categories = obj.getCategories().stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
+		this.categories = obj.getCategories().stream().map(x -> new EntryCategoryDTO(x))
+				.collect(Collectors.toList());
 	}
 
 	public Long getId() {
@@ -155,7 +158,11 @@ public class EntryNewDTO implements Serializable {
 		this.account = account;
 	}
 
-//	public List<CategoryDTO> getCategories() {
-//		return categories;
-//	}
+	public List<EntryCategoryDTO> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<EntryCategoryDTO> categories) {
+		this.categories = categories;
+	}
 }

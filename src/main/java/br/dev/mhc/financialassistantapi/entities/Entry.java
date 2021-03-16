@@ -3,9 +3,7 @@ package br.dev.mhc.financialassistantapi.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -34,18 +32,18 @@ public class Entry implements Serializable {
 
 	@NotNull
 	private Instant criationMoment;
-	
+
 	@NotNull
 	@PositiveOrZero
 	private BigDecimal value;
-	
+
 	private String description;
 
 	@NotNull
 	private Instant dueDate;
 
 	private Instant paymentMoment;
-	
+
 	@NotNull
 	@PositiveOrZero
 	private Integer installmentNumber;
@@ -53,7 +51,7 @@ public class Entry implements Serializable {
 	@NotNull
 	@PositiveOrZero
 	private Integer numberInstallmentsTotal;
-	
+
 	@NotNull
 	private Integer entryType;
 
@@ -65,15 +63,15 @@ public class Entry implements Serializable {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@OneToMany(mappedBy = "id.entry")
-	private Set<EntryCategory> entriesCategories = new HashSet<>();
-	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "id.entry")
+	private Set<EntryCategory> categories = new HashSet<>();
+
 	public Entry() {
 	}
 
 	public Entry(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
 			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
-			Account account, User user, Set<EntryCategory> entriesCategories) {
+			Account account, User user) {
 		super();
 		this.id = id;
 		this.criationMoment = criationMoment;
@@ -86,15 +84,6 @@ public class Entry implements Serializable {
 		this.entryType = entryType.getCod();
 		this.account = account;
 		this.user = user;
-		this.entriesCategories = entriesCategories;
-	}
-
-	public List<Category> getCategories() {
-		List<Category> list = new ArrayList<>();
-		for (EntryCategory x : entriesCategories) {
-			list.add(x.getCategory());
-		}
-		return list;
 	}
 
 	public Long getId() {
@@ -189,12 +178,12 @@ public class Entry implements Serializable {
 		this.user = user;
 	}
 
-	public Set<EntryCategory> getEntriesCategories() {
-		return entriesCategories;
+	public Set<EntryCategory> getCategories() {
+		return categories;
 	}
 
-	public void setCategories(Set<EntryCategory> entriesCategories) {
-		this.entriesCategories = entriesCategories;
+	public void addCategory(EntryCategory entryCategory) {
+		this.categories.add(entryCategory);
 	}
 
 	@Override

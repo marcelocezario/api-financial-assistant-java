@@ -3,7 +3,9 @@ package br.dev.mhc.financialassistantapi.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -36,14 +38,14 @@ public class EntryDTO implements Serializable {
 	@NotNull
 	private EntryType entryType;
 
-//	private List<CategoryDTO> categories = new ArrayList<>();
+	private List<EntryCategoryDTO> categories = new ArrayList<>();
 
 	public EntryDTO() {
 	}
 
 	public EntryDTO(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
 			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
-			List<CategoryDTO> categories) {
+			List<EntryCategoryDTO> categories) {
 		super();
 		this.id = id;
 		this.criationMoment = criationMoment;
@@ -54,7 +56,7 @@ public class EntryDTO implements Serializable {
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType;
-//		this.categories = categories;
+		this.categories = categories;
 	}
 
 	public EntryDTO(Entry obj) {
@@ -67,7 +69,7 @@ public class EntryDTO implements Serializable {
 		this.installmentNumber = obj.getInstallmentNumber();
 		this.numberInstallmentsTotal = obj.getNumberInstallmentsTotal();
 		this.entryType = obj.getEntryType();
-//		this.categories = obj.getCategories().stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
+		this.categories = obj.getCategories().stream().map(x -> new EntryCategoryDTO(x)).collect(Collectors.toList());
 	}
 
 	public Long getId() {
@@ -142,7 +144,7 @@ public class EntryDTO implements Serializable {
 		this.entryType = entryType;
 	}
 
-//	public List<CategoryDTO> getCategories() {
-//		return categories;
-//	}
+	public List<EntryCategoryDTO> getCategories() {
+		return categories;
+	}
 }

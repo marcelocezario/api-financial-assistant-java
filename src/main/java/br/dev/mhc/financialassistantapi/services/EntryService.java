@@ -11,12 +11,15 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.dev.mhc.financialassistantapi.dto.EntryCategoryDTO;
 import br.dev.mhc.financialassistantapi.dto.EntryDTO;
 import br.dev.mhc.financialassistantapi.dto.EntryNewDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Entry;
+import br.dev.mhc.financialassistantapi.entities.EntryCategory;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
+import br.dev.mhc.financialassistantapi.repositories.EntryCategoryRepository;
 import br.dev.mhc.financialassistantapi.repositories.EntryRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
@@ -33,6 +36,12 @@ public class EntryService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private CategoryService categoryService;
+
+	@Autowired
+	private EntryCategoryRepository entryCategoryRepository;
 
 	/*
 	 * CREATE
@@ -55,6 +64,7 @@ public class EntryService {
 		obj.setId(null);
 		obj.setCriationMoment(Instant.now());
 		obj = repository.save(obj);
+		entryCategoryRepository.saveAll(obj.getCategories());
 		return obj;
 	}
 
@@ -168,7 +178,7 @@ public class EntryService {
 	public Entry fromDTO(EntryDTO objDTO) {
 		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
 				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
-				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), null, null, null);
+				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), null, null);
 		return entry;
 	}
 
@@ -177,7 +187,11 @@ public class EntryService {
 
 		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
 				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
-				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), account, null, null);
+				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), account, null);
+
+		for (EntryCategoryDTO x : objDTO.getCategories()) {
+			entry.addCategory(new EntryCategory(entry, categoryService.fromDTO(x.getCategory()), x.getValue()));
+		}
 		return entry;
 	}
 }

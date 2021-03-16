@@ -77,5 +77,4 @@ public class CategoryService {
 		Category category = new Category(objDTO.getId(), objDTO.getName(), objDTO.getIconUrl(), null);
 		return category;
 	}
-
 }
