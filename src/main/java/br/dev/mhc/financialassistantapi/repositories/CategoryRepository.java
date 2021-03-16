@@ -15,8 +15,8 @@ import br.dev.mhc.financialassistantapi.entities.User;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	@Transactional(readOnly = true)
-	List<Category> findByUserOrderByNameAsc(User user);
+	List<Category> findByUserOrUserIsNullOrderByNameAsc(User user);
 
 	@Transactional(readOnly = true)
-	Page<Category> findByUser(User user, Pageable pageRequest);
+	Page<Category> findByUserOrUserIsNull(User user, Pageable pageRequest);
 }

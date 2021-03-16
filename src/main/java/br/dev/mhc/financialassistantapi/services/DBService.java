@@ -73,14 +73,27 @@ public class DBService {
 				new BigDecimal("500.0"), u2);
 		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), 10, 20, new BigDecimal("500.0"),
 				u2);
+		
+		Category c1 = new Category(null, "Alimentação", "", null);
+		Category c2 = new Category(null, "Automotivo", "", null);
+		Category c3 = new Category(null, "Cartão de crédito", "", null);
+		Category c4 = new Category(null, "Doações/Presentes", "", null);
+		Category c5 = new Category(null, "Educação", "", null);
+		Category c6 = new Category(null, "Impostos/Tributos", "", null);
+		Category c7 = new Category(null, "Investimento", "", null);
+		Category c8 = new Category(null, "Lazer", "", null);
+		Category c9 = new Category(null, "Moradia", "", null);
+		Category c10 = new Category(null, "Pet", "", null);
+		Category c11 = new Category(null, "Produtos de Limpeza", "", null);
+		Category c12 = new Category(null, "Saque", "", null);
+		Category c13 = new Category(null, "Saúde", "", null);
+		Category c14 = new Category(null, "Seguros", "", null);
+		Category c15 = new Category(null, "Tarifas Bancárias", "", null);
+		Category c16 = new Category(null, "Trabalho", "", null);
+		Category c17 = new Category(null, "Transporte", "", null);
+		Category c18 = new Category(null, "Vestuário", "", null);
+		Category c19 = new Category(null, "Viagens", "", null);
 
-		Category c1 = new Category(null, "Alimentação", "icon-alim.svg", u1);
-		Category c2 = new Category(null, "Combustível", "icon-vehicle.svg", u1);
-		Category c3 = new Category(null, "Trabalho", "icon-work.svg", u1);
-
-		Category c4 = new Category(null, "Alimentação", "icon-alim.svg", u2);
-		Category c5 = new Category(null, "Combustível", "icon-vehicle.svg", u2);
-		Category c6 = new Category(null, "Trabalho", "icon-work.svg", u2);
 
 		Entry e1 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),
 				1, 1, EntryType.DEBIT, a4, u2);
@@ -135,7 +148,7 @@ public class DBService {
 
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
-		categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6));
+		categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19));
 		entryRepository.saveAll(Arrays.asList(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12));
 		entryCategoryRepository.saveAll(Arrays.asList(ec1, ec2, ec3, ec4, ec5, ec6, ec7, ec8, ec9, ec10, ec11, ec12, ec13));
 	}

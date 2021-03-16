@@ -15,6 +15,7 @@ import br.dev.mhc.financialassistantapi.entities.Category;
 import br.dev.mhc.financialassistantapi.repositories.CategoryRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
+import br.dev.mhc.financialassistantapi.services.exceptions.AuthorizationException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -41,14 +42,16 @@ public class CategoryService {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
-		return repository.findByUserOrderByNameAsc(userService.findById(userSS.getId()));
+		return repository.findByUserOrUserIsNullOrderByNameAsc(userService.findById(userSS.getId()));
 	}
 
 	public Category findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
 		Category category = obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Object not found! Id: " + id + ", Type: " + Category.class.getName()));
-		AuthService.validatesUserAuthorization(category.getUser().getId(), AuthorizationType.USER_ONLY);
+		if (category.getUser() != null) {
+			AuthService.validatesUserAuthorization(category.getUser().getId(), AuthorizationType.USER_ONLY);
+		}
 		return category;
 	}
 
@@ -57,15 +60,18 @@ public class CategoryService {
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findByUser(userService.findById(userSS.getId()), pageRequest);
+		return repository.findByUserOrUserIsNull(userService.findById(userSS.getId()), pageRequest);
 	}
 
 	@Transactional
 	public Category update(Category obj) {
 		Category newObj = findById(obj.getId());
-		AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
-		updateData(newObj, obj);
-		return repository.save(newObj);
+		if (newObj.getUser() != null) {
+			AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
+			updateData(newObj, obj);
+			return repository.save(newObj);
+		}
+		throw new AuthorizationException("Access denied");
 	}
 
 	private void updateData(Category newObj, Category obj) {
