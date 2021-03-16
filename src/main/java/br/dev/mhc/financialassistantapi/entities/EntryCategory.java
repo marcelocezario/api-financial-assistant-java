@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -10,22 +11,22 @@ import javax.validation.constraints.Positive;
 @Entity
 @Table(name = "tb_entry_category")
 public class EntryCategory implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private EntryCategoryPK id = new EntryCategoryPK();
 
 	@Positive(message = "Value must be positive")
-	private Double value;
+	private BigDecimal value;
 
 	public EntryCategory() {
 	}
 
-	public EntryCategory(Entry entry, Category category, Double value) {
+	public EntryCategory(Entry entry, Category category, BigDecimal value) {
 		super();
-		id.setEntry(entry);
-		id.setCategory(category);
+		this.id.setEntry(entry);
+		this.id.setCategory(category);
 		this.value = value;
 	}
 
@@ -45,11 +46,11 @@ public class EntryCategory implements Serializable {
 		this.id = id;
 	}
 
-	public Double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 

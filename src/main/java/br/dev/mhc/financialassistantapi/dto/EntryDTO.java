@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class EntryDTO implements Serializable {
 
 	@NotNull
 	@PositiveOrZero
-	private Double value;
+	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
 	private Instant paymentMoment;
@@ -40,7 +41,7 @@ public class EntryDTO implements Serializable {
 	public EntryDTO() {
 	}
 
-	public EntryDTO(Long id, Instant criationMoment, Double value, String description, Instant dueDate,
+	public EntryDTO(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
 			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
 			List<CategoryDTO> categories) {
 		super();
@@ -85,11 +86,11 @@ public class EntryDTO implements Serializable {
 		this.criationMoment = criationMoment;
 	}
 
-	public Double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 

@@ -1,5 +1,7 @@
 package br.dev.mhc.financialassistantapi.entities.accounts;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
@@ -29,13 +31,13 @@ public class CreditCard extends Account {
 
 	@NotNull(message = "Limit value is a required field")
 	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
-	private Double limitValueCard;
+	private BigDecimal limitValueCard;
 
 	public CreditCard() {
 		this.setAccountType(AccountType.CREDIT_CARD);
 	}
 
-	public CreditCard(Long id, String name, Double balance, Integer closignDay, Integer dueDay, Double limitValueCard,
+	public CreditCard(Long id, String name, BigDecimal balance, Integer closignDay, Integer dueDay, BigDecimal limitValueCard,
 			User user) {
 		super(id, name, balance, AccountType.CREDIT_CARD, user);
 		this.closingDay = closignDay;
@@ -59,11 +61,11 @@ public class CreditCard extends Account {
 		this.dueDay = dueDay;
 	}
 
-	public Double getLimitValueCard() {
+	public BigDecimal getLimitValueCard() {
 		return limitValueCard;
 	}
 
-	public void setLimitValueCard(Double limitValueCard) {
+	public void setLimitValueCard(BigDecimal limitValueCard) {
 		this.limitValueCard = limitValueCard;
 	}
 }

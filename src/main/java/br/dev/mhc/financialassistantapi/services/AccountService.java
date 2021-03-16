@@ -1,5 +1,6 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,14 +62,14 @@ public class AccountService {
 		updateData(newObj, obj);
 		return repository.save(newObj);
 	}
-	
-	public void increaseBalanceAccount(Long idAccount, Double valueEntry) {
+
+	public void increaseBalanceAccount(Long idAccount, BigDecimal valueEntry) {
 		Account account = findById(idAccount);
 		account.increaseBalance(valueEntry);
 		update(account);
 	}
-	
-	public void decreaseBalanceAccount(Long idAccount, Double valueEntry) {
+
+	public void decreaseBalanceAccount(Long idAccount, BigDecimal valueEntry) {
 		Account account = findById(idAccount);
 		account.decreaseBalance(valueEntry);
 		update(account);
@@ -80,13 +81,13 @@ public class AccountService {
 		case WALLET:
 			break;
 		case BANK_ACCOUNT:
-			((BankAccount)newObj).setBankInterestRate(((BankAccount)obj).getBankInterestRate());
-			((BankAccount)newObj).setLimitValue(((BankAccount)obj).getLimitValueBankAccount());
+			((BankAccount) newObj).setBankInterestRate(((BankAccount) obj).getBankInterestRate());
+			((BankAccount) newObj).setLimitValue(((BankAccount) obj).getLimitValueBankAccount());
 			break;
 		case CREDIT_CARD:
-			((CreditCard)newObj).setClosingDay(((CreditCard)obj).getClosingDay());
-			((CreditCard)newObj).setDueDay(((CreditCard)obj).getDueDay());
-			((CreditCard)newObj).setLimitValueCard(((CreditCard)obj).getLimitValueCard());
+			((CreditCard) newObj).setClosingDay(((CreditCard) obj).getClosingDay());
+			((CreditCard) newObj).setDueDay(((CreditCard) obj).getDueDay());
+			((CreditCard) newObj).setLimitValueCard(((CreditCard) obj).getLimitValueCard());
 			break;
 		case INVESTMENT_ACCOUNT:
 			break;

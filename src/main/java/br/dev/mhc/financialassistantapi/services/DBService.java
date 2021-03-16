@@ -1,5 +1,6 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class DBService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-	
+
 	@Autowired
 	private EntryRepository entryRepository;
 
@@ -57,12 +58,16 @@ public class DBService {
 		User u6 = new User(null, "Carlos José Cezario", "Carlos", "carlos@gmail.com", pe.encode("666666"),
 				Instant.parse("2021-02-06T10:00:00Z"), null);
 
-		Account a1 = new Wallet(null, "Carteira", 0.0, u1);
-		Account a2 = new BankAccount(null, "Conta corrente", 0.0, 8.0, 1000.0, u1);
-		Account a3 = new CreditCard(null, "Cartão de crédito", 0.0, 15, 25, 200.0, u1);
-		Account a4 = new Wallet(null, "Carteira", 0.0, u2);
-		Account a5 = new BankAccount(null, "Conta corrente", 0.0, 10.0, 500.0, u2);
-		Account a6 = new CreditCard(null, "Cartão de crédito", 0.0, 10, 20, 500.0, u2);
+		Account a1 = new Wallet(null, "Carteira", new BigDecimal("0"), u1);
+		Account a2 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), new BigDecimal("8.0"),
+				new BigDecimal("1000.0"), u1);
+		Account a3 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), 15, 25, new BigDecimal("200.0"),
+				u1);
+		Account a4 = new Wallet(null, "Carteira", new BigDecimal("0"), u2);
+		Account a5 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), new BigDecimal("10.0"),
+				new BigDecimal("500.0"), u2);
+		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), 10, 20, new BigDecimal("500.0"),
+				u2);
 
 		Category c1 = new Category(null, "Alimentação", "icon-alim.svg", u1);
 		Category c2 = new Category(null, "Combustível", "icon-vehicle.svg", u1);
@@ -71,21 +76,33 @@ public class DBService {
 		Category c4 = new Category(null, "Alimentação", "icon-alim.svg", u2);
 		Category c5 = new Category(null, "Combustível", "icon-vehicle.svg", u2);
 		Category c6 = new Category(null, "Trabalho", "icon-work.svg", u2);
-		
-		Entry e1 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
-		Entry e2 = new Entry(null, Instant.now(), 15.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
-		Entry e3 = new Entry(null, Instant.now(), 20.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
-		Entry e4 = new Entry(null, Instant.now(), 25.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
-		Entry e5 = new Entry(null, Instant.now(), 30.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
-		Entry e6 = new Entry(null, Instant.now(), 50.0, "Dinheiro recebido", Instant.now(), Instant.now(), 1, 1, EntryType.CREDIT, a4, u2, null);
-		Entry e7 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), Instant.now(), 1, 1, EntryType.DEBIT, a4, u2, null);
-		
-		Entry e8 = new Entry(null, Instant.now(), 10.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
-		Entry e9 = new Entry(null, Instant.now(), 15.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
-		Entry e10 = new Entry(null, Instant.now(), 16.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
-		Entry e11 = new Entry(null, Instant.now(), 17.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
-		Entry e12 = new Entry(null, Instant.now(), 20.0, "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT, null, u2, null);
-		
+
+		Entry e1 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),
+				1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e2 = new Entry(null, Instant.now(), new BigDecimal("15.0"), "Compra lanche", Instant.now(), Instant.now(),
+				1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e3 = new Entry(null, Instant.now(), new BigDecimal("20.0"), "Compra lanche", Instant.now(), Instant.now(),
+				1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e4 = new Entry(null, Instant.now(), new BigDecimal("25.0"), "Compra lanche", Instant.now(), Instant.now(),
+				1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e5 = new Entry(null, Instant.now(), new BigDecimal("30.0"), "Compra lanche", Instant.now(), Instant.now(),
+				1, 1, EntryType.DEBIT, a4, u2, null);
+		Entry e6 = new Entry(null, Instant.now(), new BigDecimal("50.0"), "Dinheiro recebido", Instant.now(),
+				Instant.now(), 1, 1, EntryType.CREDIT, a4, u2, null);
+		Entry e7 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),
+				1, 1, EntryType.DEBIT, a4, u2, null);
+
+		Entry e8 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), null, 1, 1,
+				EntryType.DEBIT, null, u2, null);
+		Entry e9 = new Entry(null, Instant.now(), new BigDecimal("15.0"), "Compra lanche", Instant.now(), null, 1, 1,
+				EntryType.DEBIT, null, u2, null);
+		Entry e10 = new Entry(null, Instant.now(), new BigDecimal("16.0"), "Compra lanche", Instant.now(), null, 1, 1,
+				EntryType.DEBIT, null, u2, null);
+		Entry e11 = new Entry(null, Instant.now(), new BigDecimal("17.0"), "Compra lanche", Instant.now(), null, 1, 1,
+				EntryType.DEBIT, null, u2, null);
+		Entry e12 = new Entry(null, Instant.now(), new BigDecimal("20.0"), "Compra lanche", Instant.now(), null, 1, 1,
+				EntryType.DEBIT, null, u2, null);
+
 		a4.addEntry(e1);
 		a4.addEntry(e2);
 		a4.addEntry(e3);
@@ -93,7 +110,7 @@ public class DBService {
 		a4.addEntry(e5);
 		a4.addEntry(e6);
 		a4.addEntry(e7);
-		
+
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
 		categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6));

@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ public class Entry implements Serializable {
 	
 	@NotNull
 	@PositiveOrZero
-	private Double value;
+	private BigDecimal value;
 	
 	private String description;
 
@@ -70,7 +71,7 @@ public class Entry implements Serializable {
 	public Entry() {
 	}
 
-	public Entry(Long id, Instant criationMoment, Double value, String description, Instant dueDate,
+	public Entry(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
 			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
 			Account account, User user, Set<EntryCategory> entriesCategories) {
 		super();
@@ -112,11 +113,11 @@ public class Entry implements Serializable {
 		this.criationMoment = criationMoment;
 	}
 
-	public Double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 

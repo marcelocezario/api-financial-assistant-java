@@ -1,5 +1,7 @@
 package br.dev.mhc.financialassistantapi.entities.accounts;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -17,7 +19,7 @@ public class InvestmentAccount extends Account {
 		this.setAccountType(AccountType.INVESTMENT_ACCOUNT);
 	}
 
-	public InvestmentAccount(Long id, String name, Double balance, User user) {
+	public InvestmentAccount(Long id, String name, BigDecimal balance, User user) {
 		super(id, name, balance, AccountType.INVESTMENT_ACCOUNT, user);
 	}
 }

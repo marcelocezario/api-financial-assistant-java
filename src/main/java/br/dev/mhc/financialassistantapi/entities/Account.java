@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public abstract class Account implements Serializable {
 	@NotEmpty(message = "The account's name is a required field")
 	@Length(max = 50, message = "Maximum number of 50 characters exceeded")
 	private String name;
-	private Double balance;
+	private BigDecimal balance;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -49,15 +50,15 @@ public abstract class Account implements Serializable {
 	private Set<Entry> entries = new HashSet<>();
 
 	public Account() {
-		balance = 0.0;
+		balance = new BigDecimal("0");
 	}
 
-	public Account(Long id, String name, Double balance, AccountType accountType, User user) {
+	public Account(Long id, String name, BigDecimal balance, AccountType accountType, User user) {
 		super();
 		this.id = id;
 		this.name = name;
 		if (balance == null) {
-			this.balance = 0.0;
+			this.balance = new BigDecimal("0");
 		} else {
 			this.balance = balance;
 		}
@@ -81,16 +82,16 @@ public abstract class Account implements Serializable {
 		this.name = name;
 	}
 
-	public Double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void increaseBalance(Double value) {
-		this.balance += value;
+	public void increaseBalance(BigDecimal value) {
+		this.balance = this.balance.add(value);
 	}
 
-	public void decreaseBalance(Double value) {
-		this.balance -= value;
+	public void decreaseBalance(BigDecimal value) {
+		this.balance = this.balance.subtract(value);
 	}
 
 	public User getUser() {

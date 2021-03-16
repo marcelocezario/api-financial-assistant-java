@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -26,7 +27,7 @@ public class AccountDTO implements Serializable {
 	@NotEmpty(message = "The account's name is a required field")
 	@Length(max = 50, message = "Maximum number of 50 characters exceeded")
 	private String name;
-	private Double balance;
+	private BigDecimal balance;
 	
 	@NotNull(message = "Entrytype cannot be null")
 	private AccountType accountType;
@@ -37,10 +38,10 @@ public class AccountDTO implements Serializable {
 	// BankAccount
 	@NotNull(message = "Bank interest rate is a required field")
 	@PositiveOrZero(message = "The bank interest rate must be greater than or equal to zero")
-	private Double bankInterestRate;
+	private BigDecimal bankInterestRate;
 	@NotNull(message = "Limit value is a required field")
 	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
-	private Double limitValueBankAccount;
+	private BigDecimal limitValueBankAccount;
 
 	// CreditCard
 	@NotNull(message = "Closing day is a required field")
@@ -53,7 +54,7 @@ public class AccountDTO implements Serializable {
 	private Integer dueDay;
 	@NotNull(message = "Limit value is a required field")
 	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
-	private Double limitValueCard;
+	private BigDecimal limitValueCard;
 
 	// InvestmentAccount
 	// Não possui atributos exclusivos
@@ -61,9 +62,9 @@ public class AccountDTO implements Serializable {
 	public AccountDTO() {
 	}
 
-	public AccountDTO(Long id, String name, Double balance, AccountType accountType,
-			Double bankInterestRate, Double limitValueBankAccount, Integer closingDay, Integer dueDay,
-			Double limitValueCard) {
+	public AccountDTO(Long id, String name, BigDecimal balance, AccountType accountType,
+			BigDecimal bankInterestRate, BigDecimal limitValueBankAccount, Integer closingDay, Integer dueDay,
+			BigDecimal limitValueCard) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -115,11 +116,11 @@ public class AccountDTO implements Serializable {
 		this.name = name;
 	}
 
-	public Double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(Double balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 
@@ -131,19 +132,19 @@ public class AccountDTO implements Serializable {
 		this.accountType = accountType;
 	}
 
-	public Double getBankInterestRate() {
+	public BigDecimal getBankInterestRate() {
 		return bankInterestRate;
 	}
 
-	public void setBankInterestRate(Double bankInterestRate) {
+	public void setBankInterestRate(BigDecimal bankInterestRate) {
 		this.bankInterestRate = bankInterestRate;
 	}
 
-	public Double getLimitValueBankAccount() {
+	public BigDecimal getLimitValueBankAccount() {
 		return limitValueBankAccount;
 	}
 
-	public void setLimitValueBankAccount(Double limitValueBankAccount) {
+	public void setLimitValueBankAccount(BigDecimal limitValueBankAccount) {
 		this.limitValueBankAccount = limitValueBankAccount;
 	}
 
@@ -163,11 +164,11 @@ public class AccountDTO implements Serializable {
 		this.dueDay = dueDay;
 	}
 
-	public Double getLimitValueCard() {
+	public BigDecimal getLimitValueCard() {
 		return limitValueCard;
 	}
 
-	public void setLimitValueCard(Double limitValueCard) {
+	public void setLimitValueCard(BigDecimal limitValueCard) {
 		this.limitValueCard = limitValueCard;
 	}
 }
