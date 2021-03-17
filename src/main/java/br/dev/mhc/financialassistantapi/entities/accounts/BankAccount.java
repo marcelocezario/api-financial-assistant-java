@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
@@ -29,9 +30,9 @@ public class BankAccount extends Account {
 		this.setAccountType(AccountType.BANK_ACCOUNT);
 	}
 
-	public BankAccount(Long id, String name, BigDecimal balance, BigDecimal bankInterestRate, BigDecimal limitValueBankAccount,
-			User user) {
-		super(id, name, balance, AccountType.BANK_ACCOUNT, user);
+	public BankAccount(Long id, String name, BigDecimal balance, CurrencyType currencyType, BigDecimal bankInterestRate,
+			BigDecimal limitValueBankAccount, User user) {
+		super(id, name, balance, AccountType.BANK_ACCOUNT, currencyType, user);
 		this.bankInterestRate = bankInterestRate;
 		this.limitValueBankAccount = limitValueBankAccount;
 	}

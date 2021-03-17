@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
@@ -19,7 +20,7 @@ public class InvestmentAccount extends Account {
 		this.setAccountType(AccountType.INVESTMENT_ACCOUNT);
 	}
 
-	public InvestmentAccount(Long id, String name, BigDecimal balance, User user) {
-		super(id, name, balance, AccountType.INVESTMENT_ACCOUNT, user);
+	public InvestmentAccount(Long id, String name, BigDecimal balance, CurrencyType currencyType, User user) {
+		super(id, name, balance, AccountType.INVESTMENT_ACCOUNT, currencyType, user);
 	}
 }

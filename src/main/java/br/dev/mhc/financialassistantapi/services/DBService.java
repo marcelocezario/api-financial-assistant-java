@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Category;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.EntryCategory;
 import br.dev.mhc.financialassistantapi.entities.User;
@@ -21,6 +22,7 @@ import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 import br.dev.mhc.financialassistantapi.repositories.AccountRepository;
 import br.dev.mhc.financialassistantapi.repositories.CategoryRepository;
+import br.dev.mhc.financialassistantapi.repositories.CurrencyTypeRepository;
 import br.dev.mhc.financialassistantapi.repositories.EntryCategoryRepository;
 import br.dev.mhc.financialassistantapi.repositories.EntryRepository;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
@@ -46,34 +48,43 @@ public class DBService {
 	@Autowired
 	private EntryCategoryRepository entryCategoryRepository;
 
+	@Autowired
+	private CurrencyTypeRepository currencyUserRepository;
+
 	public void instantiateTestDatabase() throws ParseException {
 
+		CurrencyType real = new CurrencyType(null, "BRL", "Real", "R$", 2);
+		CurrencyType dollar = new CurrencyType(null, "USD", "Dollar", "US$", 2);
+		CurrencyType euro = new CurrencyType(null, "EUR", "Euro", "€", 2);
+		CurrencyType dollarCad = new CurrencyType(null, "CAD", "Dollar Canadense", "C$", 2);
+		CurrencyType bitcoin = new CurrencyType(null, "BTC", "Bitcoin", "₿", 5);
+		
 		User u1 = new User(null, "Henrique Cezário", "Henrique", "marcelocezario@gmail.com", pe.encode("111111"),
-				Instant.parse("2021-02-01T10:00:00Z"), null);
+				Instant.parse("2021-02-01T10:00:00Z"), null, dollar);
 		u1.addProfile(Profile.ADMIN);
 
 		User u2 = new User(null, "Jennifer", "Jenn", "jenni@gmail.com", pe.encode("222222"),
-				Instant.parse("2021-02-02T10:00:00Z"), null);
+				Instant.parse("2021-02-02T10:00:00Z"), null, real);
 		User u3 = new User(null, "Niele Angela", "Dekhan", "dekhan@gmail.com", pe.encode("333333"),
-				Instant.parse("2021-02-03T10:00:00Z"), null);
+				Instant.parse("2021-02-03T10:00:00Z"), null, real);
 		User u4 = new User(null, "Bruno Rafael", "blk", "blk@gmail.com", pe.encode("444444"),
-				Instant.parse("2021-02-04T10:00:00Z"), null);
+				Instant.parse("2021-02-04T10:00:00Z"), null, real);
 		User u5 = new User(null, "Bruno Cezario", "Bruno", "bruno@gmail.com", pe.encode("555555"),
-				Instant.parse("2021-02-05T10:00:00Z"), null);
+				Instant.parse("2021-02-05T10:00:00Z"), null, real);
 		User u6 = new User(null, "Carlos José Cezario", "Carlos", "carlos@gmail.com", pe.encode("666666"),
-				Instant.parse("2021-02-06T10:00:00Z"), null);
+				Instant.parse("2021-02-06T10:00:00Z"), null, real);
 
-		Account a1 = new Wallet(null, "Carteira", new BigDecimal("0"), u1);
-		Account a2 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), new BigDecimal("8.0"),
+		Account a1 = new Wallet(null, "Carteira", new BigDecimal("0"), real, u1);
+		Account a2 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), real, new BigDecimal("8.0"),
 				new BigDecimal("1000.0"), u1);
-		Account a3 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), 15, 25, new BigDecimal("200.0"),
+		Account a3 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), real, 15, 25, new BigDecimal("200.0"),
 				u1);
-		Account a4 = new Wallet(null, "Carteira", new BigDecimal("0"), u2);
-		Account a5 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), new BigDecimal("10.0"),
+		Account a4 = new Wallet(null, "Carteira", new BigDecimal("0"), real, u2);
+		Account a5 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), real, new BigDecimal("10.0"),
 				new BigDecimal("500.0"), u2);
-		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), 10, 20, new BigDecimal("500.0"),
+		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), real, 10, 20, new BigDecimal("500.0"),
 				u2);
-		
+
 		Category c1 = new Category(null, "Alimentação", "", u2, true);
 		Category c2 = new Category(null, "Automotivo", "", u2, true);
 		Category c3 = new Category(null, "Cartão de crédito", "", u2, true);
@@ -93,7 +104,6 @@ public class DBService {
 		Category c17 = new Category(null, "Transporte", "", u1, true);
 		Category c18 = new Category(null, "Vestuário", "", u1, true);
 		Category c19 = new Category(null, "Viagens", "", u1, true);
-
 
 		Entry e1 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),
 				1, 1, EntryType.DEBIT, a4, u2);
@@ -128,7 +138,7 @@ public class DBService {
 		a4.addEntry(e5);
 		a4.addEntry(e6);
 		a4.addEntry(e7);
-		
+
 		EntryCategory ec1 = new EntryCategory(e1, c1, new BigDecimal("10.00"));
 		EntryCategory ec2 = new EntryCategory(e2, c1, new BigDecimal("15.00"));
 		EntryCategory ec3 = new EntryCategory(e3, c1, new BigDecimal("20.00"));
@@ -138,18 +148,20 @@ public class DBService {
 		EntryCategory ec7 = new EntryCategory(e7, c1, new BigDecimal("10.00"));
 		EntryCategory ec8 = new EntryCategory(e8, c1, new BigDecimal("10.00"));
 		EntryCategory ec9 = new EntryCategory(e9, c1, new BigDecimal("15.00"));
-		
+
 		EntryCategory ec10 = new EntryCategory(e10, c1, new BigDecimal("10.00"));
 		EntryCategory ec11 = new EntryCategory(e10, c2, new BigDecimal("6.00"));
-		
+
 		EntryCategory ec12 = new EntryCategory(e11, c1, new BigDecimal("17.00"));
 		EntryCategory ec13 = new EntryCategory(e12, c1, new BigDecimal("20.00"));
 
-
+		currencyUserRepository.saveAll(Arrays.asList(real, dollar, euro, dollarCad, bitcoin));
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
-		categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19));
+		categoryRepository.saveAll(
+				Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19));
 		entryRepository.saveAll(Arrays.asList(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12));
-		entryCategoryRepository.saveAll(Arrays.asList(ec1, ec2, ec3, ec4, ec5, ec6, ec7, ec8, ec9, ec10, ec11, ec12, ec13));
+		entryCategoryRepository
+				.saveAll(Arrays.asList(ec1, ec2, ec3, ec4, ec5, ec6, ec7, ec8, ec9, ec10, ec11, ec12, ec13));
 	}
 }

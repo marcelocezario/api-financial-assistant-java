@@ -18,6 +18,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -59,10 +61,14 @@ public class User implements Serializable {
 	private Instant registrationMoment;
 	private String imageUrl;
 
+	@ManyToOne
+	@JoinColumn(name = "default_currency_type_id")
+	private CurrencyType defaultCurrencyType;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "tb_profiles")
 	private Set<Integer> profiles = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<Account> accounts = new HashSet<>();
 
@@ -71,7 +77,7 @@ public class User implements Serializable {
 	}
 
 	public User(Long id, String name, String nickname, String email, String password, Instant registrationMoment,
-			String imageUrl) {
+			String imageUrl, CurrencyType defaultCurrencyType) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -80,6 +86,7 @@ public class User implements Serializable {
 		this.password = password;
 		this.registrationMoment = registrationMoment;
 		this.imageUrl = imageUrl;
+		this.defaultCurrencyType = defaultCurrencyType;
 		addProfile(Profile.BASIC_USER);
 	}
 
@@ -138,6 +145,14 @@ public class User implements Serializable {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public CurrencyType getDefaultCurrencyType() {
+		return defaultCurrencyType;
+	}
+
+	public void setDefaultCurrencyType(CurrencyType defaultCurrencyType) {
+		this.defaultCurrencyType = defaultCurrencyType;
 	}
 
 	public Set<Account> getAccounts() {

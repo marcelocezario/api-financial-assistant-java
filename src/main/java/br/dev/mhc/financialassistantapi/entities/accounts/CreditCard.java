@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 
@@ -37,9 +38,9 @@ public class CreditCard extends Account {
 		this.setAccountType(AccountType.CREDIT_CARD);
 	}
 
-	public CreditCard(Long id, String name, BigDecimal balance, Integer closignDay, Integer dueDay, BigDecimal limitValueCard,
-			User user) {
-		super(id, name, balance, AccountType.CREDIT_CARD, user);
+	public CreditCard(Long id, String name, BigDecimal balance, CurrencyType currencyType, Integer closignDay,
+			Integer dueDay, BigDecimal limitValueCard, User user) {
+		super(id, name, balance, AccountType.CREDIT_CARD, currencyType, user);
 		this.closingDay = closignDay;
 		this.dueDay = dueDay;
 		this.limitValueCard = limitValueCard;

@@ -45,6 +45,9 @@ public class UserService {
 	@Autowired
 	private imageService imageService;
 
+	@Autowired
+	private CurrencyTypeService currencyService;
+
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
 
@@ -108,7 +111,8 @@ public class UserService {
 
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
-				objDto.getRegistrationMoment(), objDto.getImageUrl());
+				objDto.getRegistrationMoment(), objDto.getImageUrl(),
+				currencyService.fromDTO(objDto.getDefaultCurrencyType()));
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
@@ -116,7 +120,7 @@ public class UserService {
 			objDTO.setNickname(objDTO.getName().split(" ")[0]);
 		}
 		User user = new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
-				pe.encode(objDTO.getPassword()), null, null);
+				pe.encode(objDTO.getPassword()), null, null, currencyService.fromDTO(objDTO.getDefaultCurrencyType()));
 		return user;
 	}
 

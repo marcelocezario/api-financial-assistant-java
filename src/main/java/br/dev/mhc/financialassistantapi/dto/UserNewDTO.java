@@ -29,6 +29,8 @@ public class UserNewDTO implements Serializable{
 	
 	@NotEmpty(message = "Required field")
 	private String password;
+	
+	private CurrencyTypeDTO defaultCurrencyType;
 
 	public UserNewDTO() {
 	}
@@ -37,12 +39,13 @@ public class UserNewDTO implements Serializable{
 			@NotEmpty(message = "Required field") @Length(max = 80, message = "Maximum number of 80 characters exceeded") String name,
 			@Length(max = 80, message = "Maximum number of 80 characters exceeded") String nickname,
 			@NotEmpty(message = "Required field") @Email(message = "Invalid email adress") String email,
-			@NotEmpty(message = "Required field") String password) {
+			@NotEmpty(message = "Required field") String password, CurrencyTypeDTO defaultCurrencyType) {
 		super();
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
+		this.defaultCurrencyType = defaultCurrencyType;
 	}
 
 	public String getName() {
@@ -75,5 +78,13 @@ public class UserNewDTO implements Serializable{
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public CurrencyTypeDTO getDefaultCurrencyType() {
+		return defaultCurrencyType;
+	}
+
+	public void setDefaultCurrencyType(CurrencyTypeDTO defaultCurrencyType) {
+		this.defaultCurrencyType = defaultCurrencyType;
 	}
 }

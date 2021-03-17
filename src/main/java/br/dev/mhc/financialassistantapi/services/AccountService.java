@@ -33,6 +33,9 @@ public class AccountService {
 	@Autowired
 	private EntryService entryService;
 
+	@Autowired
+	private CurrencyTypeService currencyService;
+
 	@Transactional
 	public Account insert(Account obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
@@ -115,15 +118,19 @@ public class AccountService {
 	public Account fromDTO(AccountDTO objDTO) {
 		switch (objDTO.getAccountType()) {
 		case WALLET:
-			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), null);
+			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
+					currencyService.fromDTO(objDTO.getCurrencyType()), null);
 		case BANK_ACCOUNT:
-			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getBankInterestRate(),
+			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
+					currencyService.fromDTO(objDTO.getCurrencyType()), objDTO.getBankInterestRate(),
 					objDTO.getLimitValueBankAccount(), null);
 		case CREDIT_CARD:
-			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), objDTO.getClosingDay(),
-					objDTO.getDueDay(), objDTO.getLimitValueCard(), null);
+			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
+					currencyService.fromDTO(objDTO.getCurrencyType()), objDTO.getClosingDay(), objDTO.getDueDay(),
+					objDTO.getLimitValueCard(), null);
 		case INVESTMENT_ACCOUNT:
-			return new InvestmentAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), null);
+			return new InvestmentAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
+					currencyService.fromDTO(objDTO.getCurrencyType()), null);
 		}
 		return null;
 	}

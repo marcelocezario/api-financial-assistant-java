@@ -46,6 +46,10 @@ public abstract class Account implements Serializable {
 	@NotNull(message = "Entrytype cannot be null")
 	private Integer accountType;
 
+	@ManyToOne
+	@JoinColumn(name = "currency_type_id")
+	private CurrencyType currencyType;
+
 	@OneToMany(mappedBy = "account")
 	private Set<Entry> entries = new HashSet<>();
 
@@ -53,7 +57,8 @@ public abstract class Account implements Serializable {
 		balance = new BigDecimal("0");
 	}
 
-	public Account(Long id, String name, BigDecimal balance, AccountType accountType, User user) {
+	public Account(Long id, String name, BigDecimal balance, AccountType accountType, CurrencyType currencyType,
+			User user) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -63,6 +68,7 @@ public abstract class Account implements Serializable {
 			this.balance = balance;
 		}
 		this.accountType = accountType.getCod();
+		this.currencyType = currencyType;
 		this.user = user;
 	}
 
@@ -108,6 +114,14 @@ public abstract class Account implements Serializable {
 
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType.getCod();
+	}
+
+	public CurrencyType getCurrencyType() {
+		return currencyType;
+	}
+
+	public void setCurrencyType(CurrencyType currencyType) {
+		this.currencyType = currencyType;
 	}
 
 	public Set<Entry> getEntries() {

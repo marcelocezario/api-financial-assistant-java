@@ -37,13 +37,14 @@ public class UserDTO implements Serializable {
 
 	private Instant registrationMoment;
 	private String imageUrl;
+	private CurrencyTypeDTO defaultCurrencyType;
 
 	private List<Profile> profiles = new ArrayList<>();
 
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, String imageUrl) {
+	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, String imageUrl, CurrencyTypeDTO defaultCurrencyType) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -51,6 +52,7 @@ public class UserDTO implements Serializable {
 		this.email = email;
 		this.registrationMoment = registrationMoment;
 		this.imageUrl = imageUrl;
+		this.defaultCurrencyType = defaultCurrencyType;
 	}
 
 	public UserDTO(User obj) {
@@ -60,6 +62,7 @@ public class UserDTO implements Serializable {
 		this.email = obj.getEmail();
 		this.registrationMoment = obj.getRegistrationMoment();
 		this.imageUrl = obj.getImageUrl();
+		this.defaultCurrencyType = new CurrencyTypeDTO(obj.getDefaultCurrencyType());
 		this.profiles = obj.getProfiles().stream().collect(Collectors.toList());
 	}
 
@@ -109,6 +112,14 @@ public class UserDTO implements Serializable {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public CurrencyTypeDTO getDefaultCurrencyType() {
+		return defaultCurrencyType;
+	}
+
+	public void setDefaultCurrencyType(CurrencyTypeDTO defaultCurrencyType) {
+		this.defaultCurrencyType = defaultCurrencyType;
 	}
 
 	public List<Profile> getProfiles() {

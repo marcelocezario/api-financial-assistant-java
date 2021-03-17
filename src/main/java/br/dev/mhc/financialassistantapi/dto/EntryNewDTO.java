@@ -7,38 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
-@br.dev.mhc.financialassistantapi.services.validation.Entry
 public class EntryNewDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	private Instant criationMoment;
-
-	@NotNull
-	@PositiveOrZero
 	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
 	private Instant paymentMoment;
-
-	@NotNull
-	@PositiveOrZero
 	private Integer installmentNumber;
-
-	@NotNull
-	@PositiveOrZero
 	private Integer numberInstallmentsTotal;
-
-	@NotNull
 	private EntryType entryType;
-
 	private AccountDTO account;
 
 	private List<EntryCategoryDTO> categories = new ArrayList<>();
@@ -74,8 +58,7 @@ public class EntryNewDTO implements Serializable {
 		this.numberInstallmentsTotal = obj.getNumberInstallmentsTotal();
 		this.entryType = obj.getEntryType();
 		this.account = new AccountDTO(obj.getAccount());
-		this.categories = obj.getCategories().stream().map(x -> new EntryCategoryDTO(x))
-				.collect(Collectors.toList());
+		this.categories = obj.getCategories().stream().map(x -> new EntryCategoryDTO(x)).collect(Collectors.toList());
 	}
 
 	public Long getId() {
