@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.dev.mhc.financialassistantapi.dto.AccountDTO;
+import br.dev.mhc.financialassistantapi.dto.AccountBalanceDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.services.AccountService;
 
 @RestController
@@ -60,5 +62,17 @@ public class AccountResource {
 		obj.setId(id);
 		obj = accountService.update(obj);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@PostMapping(value = "/{id}/adjustBalance")
+	public ResponseEntity<Void> adjustBalance(@Valid @RequestBody AccountBalanceDTO objDTO, @PathVariable Long id) {
+		Account account = accountService.findById(id);
+		if(account.getBalance() == objDTO.getBalance()) {
+			return ResponseEntity.noContent().build();
+		}
+		Entry entryAdjust = accountService.adjustBalance(account, objDTO.getBalance());
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entryAdjust.getId()).toUri();
+		return ResponseEntity.created(uri).build();
 	}
 }

@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.dev.mhc.financialassistantapi.dto.AccountDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
 import br.dev.mhc.financialassistantapi.entities.accounts.InvestmentAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.Wallet;
+import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 import br.dev.mhc.financialassistantapi.repositories.AccountRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
@@ -27,6 +29,9 @@ public class AccountService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private EntryService entryService;
 
 	@Transactional
 	public Account insert(Account obj) {
@@ -63,16 +68,29 @@ public class AccountService {
 		return repository.save(newObj);
 	}
 
-	public void increaseBalanceAccount(Long idAccount, BigDecimal valueEntry) {
-		Account account = findById(idAccount);
-		account.increaseBalance(valueEntry);
-		update(account);
+	public Entry adjustBalance(Account account, BigDecimal newBalance) {
+		BigDecimal valueEntry = newBalance.subtract(account.getBalance());
+		if (valueEntry.compareTo(BigDecimal.ZERO) < 0) {
+			return entryService.createAdjustEntry(account, valueEntry.abs(), EntryType.DEBIT);
+		} else {
+			return entryService.createAdjustEntry(account, valueEntry.abs(), EntryType.CREDIT);
+		}
 	}
 
-	public void decreaseBalanceAccount(Long idAccount, BigDecimal valueEntry) {
+	@Transactional
+	public Account increaseBalanceAccount(Long idAccount, BigDecimal valueEntry) {
 		Account account = findById(idAccount);
+		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
+		account.increaseBalance(valueEntry);
+		return repository.save(account);
+	}
+
+	@Transactional
+	public Account decreaseBalanceAccount(Long idAccount, BigDecimal valueEntry) {
+		Account account = findById(idAccount);
+		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		account.decreaseBalance(valueEntry);
-		update(account);
+		return repository.save(account);
 	}
 
 	private void updateData(Account newObj, Account obj) {

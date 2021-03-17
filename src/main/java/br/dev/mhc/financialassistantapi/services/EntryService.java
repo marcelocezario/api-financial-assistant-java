@@ -1,5 +1,6 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -56,9 +57,9 @@ public class EntryService {
 
 		if (obj.getAccount() != null && obj.getPaymentMoment() != null) {
 			if (obj.getEntryType() == EntryType.CREDIT) {
-				accountService.increaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+				obj.setAccount(accountService.increaseBalanceAccount(obj.getAccount().getId(), obj.getValue()));
 			} else {
-				accountService.decreaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+				obj.setAccount(accountService.decreaseBalanceAccount(obj.getAccount().getId(), obj.getValue()));
 			}
 		}
 		obj.setId(null);
@@ -194,4 +195,11 @@ public class EntryService {
 		}
 		return entry;
 	}
+
+	public Entry createAdjustEntry(Account account, BigDecimal valueEntry, EntryType entryType) {
+		Entry entry = new Entry(null, Instant.now(), valueEntry, "Ajuste de saldo", Instant.now(), Instant.now(), 1, 1,
+				entryType, account, null);
+		return insert(entry);
+	}
+
 }
