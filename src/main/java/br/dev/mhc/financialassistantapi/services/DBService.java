@@ -74,25 +74,25 @@ public class DBService {
 		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), 10, 20, new BigDecimal("500.0"),
 				u2);
 		
-		Category c1 = new Category(null, "Alimentação", "", null);
-		Category c2 = new Category(null, "Automotivo", "", null);
-		Category c3 = new Category(null, "Cartão de crédito", "", null);
-		Category c4 = new Category(null, "Doações/Presentes", "", null);
-		Category c5 = new Category(null, "Educação", "", null);
-		Category c6 = new Category(null, "Impostos/Tributos", "", null);
-		Category c7 = new Category(null, "Investimento", "", null);
-		Category c8 = new Category(null, "Lazer", "", null);
-		Category c9 = new Category(null, "Moradia", "", null);
-		Category c10 = new Category(null, "Pet", "", null);
-		Category c11 = new Category(null, "Produtos de Limpeza", "", null);
-		Category c12 = new Category(null, "Saque", "", null);
-		Category c13 = new Category(null, "Saúde", "", null);
-		Category c14 = new Category(null, "Seguros", "", null);
-		Category c15 = new Category(null, "Tarifas Bancárias", "", null);
-		Category c16 = new Category(null, "Trabalho", "", null);
-		Category c17 = new Category(null, "Transporte", "", null);
-		Category c18 = new Category(null, "Vestuário", "", null);
-		Category c19 = new Category(null, "Viagens", "", null);
+		Category c1 = new Category(null, "Alimentação", "", u2, true);
+		Category c2 = new Category(null, "Automotivo", "", u2, true);
+		Category c3 = new Category(null, "Cartão de crédito", "", u2, true);
+		Category c4 = new Category(null, "Doações/Presentes", "", u2, true);
+		Category c5 = new Category(null, "Educação", "", u1, true);
+		Category c6 = new Category(null, "Impostos/Tributos", "", u1, true);
+		Category c7 = new Category(null, "Investimento", "", u1, true);
+		Category c8 = new Category(null, "Lazer", "", u1, true);
+		Category c9 = new Category(null, "Moradia", "", u1, true);
+		Category c10 = new Category(null, "Pet", "", u1, true);
+		Category c11 = new Category(null, "Produtos de Limpeza", "", u1, true);
+		Category c12 = new Category(null, "Saque", "", u1, true);
+		Category c13 = new Category(null, "Saúde", "", u1, true);
+		Category c14 = new Category(null, "Seguros", "", u1, true);
+		Category c15 = new Category(null, "Tarifas Bancárias", "", u1, true);
+		Category c16 = new Category(null, "Trabalho", "", u1, true);
+		Category c17 = new Category(null, "Transporte", "", u1, true);
+		Category c18 = new Category(null, "Vestuário", "", u1, true);
+		Category c19 = new Category(null, "Viagens", "", u1, true);
 
 
 		Entry e1 = new Entry(null, Instant.now(), new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(),

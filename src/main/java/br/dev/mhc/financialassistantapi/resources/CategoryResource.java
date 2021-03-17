@@ -39,11 +39,22 @@ public class CategoryResource {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PostMapping(value = "/default")
+	public ResponseEntity<Void> insertDefaultCategory(@Valid @RequestBody CategoryDTO objDTO) {
+		Category obj = service.fromDTO(objDTO);
+		obj.setDefaultForAllUsers(true);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+	
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping
 	public ResponseEntity<List<CategoryDTO>> findAllByUser() {
-		List<Category> list = service.findByUser();
+		List<Category> list = service.findByUserAndDefault();
 		List<CategoryDTO> listDTO = list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
 	}
@@ -55,7 +66,7 @@ public class CategoryResource {
 		return ResponseEntity.ok().body(new CategoryDTO(obj));
 	}
 
-	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@PreAuthorize("hasAnyRole('BASIC_USER') or hasAnyRole('ADMIN')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody CategoryDTO objDTO, @PathVariable Long id) {
 		Category obj = service.fromDTO(objDTO);
@@ -70,7 +81,7 @@ public class CategoryResource {
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-		Page<Category> list = service.findPageByUser(page, linesPerPage, orderBy, direction);
+		Page<Category> list = service.findPageByUserAndDefault(page, linesPerPage, orderBy, direction);
 		Page<CategoryDTO> listDTO = list.map(x -> new CategoryDTO(x));
 		return ResponseEntity.ok().body(listDTO);
 	}

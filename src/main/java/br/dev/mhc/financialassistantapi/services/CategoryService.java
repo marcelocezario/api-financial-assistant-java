@@ -15,7 +15,6 @@ import br.dev.mhc.financialassistantapi.entities.Category;
 import br.dev.mhc.financialassistantapi.repositories.CategoryRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
-import br.dev.mhc.financialassistantapi.services.exceptions.AuthorizationException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -30,7 +29,7 @@ public class CategoryService {
 	@Transactional
 	public Category insert(Category obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
 
 		obj.setId(null);
 		obj.setUser(userService.findById(userSS.getId()));
@@ -38,40 +37,46 @@ public class CategoryService {
 		return obj;
 	}
 
-	public List<Category> findByUser() {
+	public List<Category> findByUserAndDefault() {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
-		return repository.findByUserOrUserIsNullOrderByNameAsc(userService.findById(userSS.getId()));
+		return repository.findByUserOrDefaultForAllUsersTrueOrderByNameAsc(userService.findById(userSS.getId()));
 	}
 
 	public Category findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
 		Category category = obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Object not found! Id: " + id + ", Type: " + Category.class.getName()));
-		if (category.getUser() != null) {
+		if (!category.isDefaultForAllUsers()) {
 			AuthService.validatesUserAuthorization(category.getUser().getId(), AuthorizationType.USER_ONLY);
 		}
 		return category;
 	}
 
-	public Page<Category> findPageByUser(Integer page, Integer linesPerPage, String orderBy, String direction) {
+	public Page<Category> findPageByUserAndDefault(Integer page, Integer linesPerPage, String orderBy,
+			String direction) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findByUserOrUserIsNull(userService.findById(userSS.getId()), pageRequest);
+		return repository.findByUserOrDefaultForAllUsersTrue(userService.findById(userSS.getId()), pageRequest);
 	}
 
 	@Transactional
 	public Category update(Category obj) {
 		Category newObj = findById(obj.getId());
-		if (newObj.getUser() != null) {
+		if (newObj.isDefaultForAllUsers()) {
+			UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+			AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+			updateData(newObj, obj);
+			newObj.setUser(userService.findById(userSS.getId()));
+			return repository.save(newObj);
+		} else {
 			AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
 			updateData(newObj, obj);
 			return repository.save(newObj);
 		}
-		throw new AuthorizationException("Access denied");
 	}
 
 	private void updateData(Category newObj, Category obj) {

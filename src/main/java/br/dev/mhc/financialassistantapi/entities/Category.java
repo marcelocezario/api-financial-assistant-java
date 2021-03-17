@@ -32,6 +32,7 @@ public class Category implements Serializable {
 	@Length(max = 50, message = "Maximum number of 50 characters exceeded")
 	private String name;
 	private String iconUrl;
+	private boolean defaultForAllUsers;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -41,6 +42,7 @@ public class Category implements Serializable {
 	private Set<EntryCategory> entriesCategories = new HashSet<>();
 
 	public Category() {
+		this.defaultForAllUsers = false;
 	}
 
 	public Category(Long id, String name, String iconUrl, User user) {
@@ -49,6 +51,16 @@ public class Category implements Serializable {
 		this.name = name;
 		this.iconUrl = iconUrl;
 		this.user = user;
+		this.defaultForAllUsers = false;
+	}
+	
+	public Category(Long id, String name, String iconUrl, User user, boolean defaultForAllUsers) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.iconUrl = iconUrl;
+		this.user = user;
+		this.defaultForAllUsers = defaultForAllUsers;
 	}
 
 	public List<Entry> getEntries() {
@@ -81,6 +93,14 @@ public class Category implements Serializable {
 
 	public void setIconUrl(String iconUrl) {
 		this.iconUrl = iconUrl;
+	}
+
+	public boolean isDefaultForAllUsers() {
+		return defaultForAllUsers;
+	}
+
+	public void setDefaultForAllUsers(boolean defaultForAllUsers) {
+		this.defaultForAllUsers = defaultForAllUsers;
 	}
 
 	public User getUser() {
