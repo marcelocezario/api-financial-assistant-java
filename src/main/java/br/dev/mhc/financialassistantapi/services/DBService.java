@@ -3,7 +3,9 @@ package br.dev.mhc.financialassistantapi.services;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,41 +51,62 @@ public class DBService {
 	private EntryCategoryRepository entryCategoryRepository;
 
 	@Autowired
-	private CurrencyTypeRepository currencyUserRepository;
+	private CurrencyTypeRepository currencyTypeRepository;
+
+	
+	@SuppressWarnings("unused")
+	@Autowired
+	private CurrencyTypeService currencyService;
 
 	public void instantiateTestDatabase() throws ParseException {
-
-		CurrencyType real = new CurrencyType(null, "BRL", "Real", "R$", 2);
-		CurrencyType dollar = new CurrencyType(null, "USD", "Dollar", "US$", 2);
-		CurrencyType euro = new CurrencyType(null, "EUR", "Euro", "€", 2);
-		CurrencyType dollarCad = new CurrencyType(null, "CAD", "Dollar Canadense", "C$", 2);
-		CurrencyType bitcoin = new CurrencyType(null, "BTC", "Bitcoin", "₿", 5);
+		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		System.out.println("Database test");
+		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		
+		Instant momentUpdate = Instant.now().minusMillis(300000L);
+		List<CurrencyType> currencies = new ArrayList<>();
+		currencies.add(new CurrencyType(1, "BRL", "Real", "R$", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(2, "USD", "Dólar Americano", "US$", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(3, "EUR", "Euro", "€", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(4, "GBP", "Libra Esterlina", "£", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(5, "ARS", "Peso Argentino", "ARS", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(6, "CAD", "Dólar Canadense", "C$", 2, BigDecimal.ZERO, momentUpdate));
+//		currencies.add(new CurrencyType(8, "AUD", "Dólar Australiano", "AU$", 2, BigDecimal.ZERO, momentUpdate));
+//		currencies.add(new CurrencyType(9, "JPY", "Iene", "¥", 0, BigDecimal.ZERO, momentUpdate));
+//		currencies.add(new CurrencyType(10, "CNY", "Renminbi", "CN¥", 1, BigDecimal.ZERO, momentUpdate));
+//		currencies.add(new CurrencyType(11, "BTC", "Bitcoin", "₿", 5, BigDecimal.ZERO, momentUpdate));
+		
+		currencyTypeRepository.saveAll(currencies);
+		
+		CurrencyType brl = null;
+		CurrencyType usd = null;
+		
 		
 		User u1 = new User(null, "Henrique Cezário", "Henrique", "marcelocezario@gmail.com", pe.encode("111111"),
-				Instant.parse("2021-02-01T10:00:00Z"), null, dollar);
+				Instant.parse("2021-02-01T10:00:00Z"), null, usd);
 		u1.addProfile(Profile.ADMIN);
 
 		User u2 = new User(null, "Jennifer", "Jenn", "jenni@gmail.com", pe.encode("222222"),
-				Instant.parse("2021-02-02T10:00:00Z"), null, real);
+				Instant.parse("2021-02-02T10:00:00Z"), null, brl);
 		User u3 = new User(null, "Niele Angela", "Dekhan", "dekhan@gmail.com", pe.encode("333333"),
-				Instant.parse("2021-02-03T10:00:00Z"), null, real);
+				Instant.parse("2021-02-03T10:00:00Z"), null, brl);
 		User u4 = new User(null, "Bruno Rafael", "blk", "blk@gmail.com", pe.encode("444444"),
-				Instant.parse("2021-02-04T10:00:00Z"), null, real);
+				Instant.parse("2021-02-04T10:00:00Z"), null, brl);
 		User u5 = new User(null, "Bruno Cezario", "Bruno", "bruno@gmail.com", pe.encode("555555"),
-				Instant.parse("2021-02-05T10:00:00Z"), null, real);
+				Instant.parse("2021-02-05T10:00:00Z"), null, brl);
 		User u6 = new User(null, "Carlos José Cezario", "Carlos", "carlos@gmail.com", pe.encode("666666"),
-				Instant.parse("2021-02-06T10:00:00Z"), null, real);
+				Instant.parse("2021-02-06T10:00:00Z"), null, brl);
 
-		Account a1 = new Wallet(null, "Carteira", new BigDecimal("0"), real, u1);
-		Account a2 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), real, new BigDecimal("8.0"),
+		Account a1 = new Wallet(null, "Carteira", new BigDecimal("0"), brl, u1);
+		Account a2 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), brl, new BigDecimal("8.0"),
 				new BigDecimal("1000.0"), u1);
-		Account a3 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), real, 15, 25, new BigDecimal("200.0"),
-				u1);
-		Account a4 = new Wallet(null, "Carteira", new BigDecimal("0"), real, u2);
-		Account a5 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), real, new BigDecimal("10.0"),
+		Account a3 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), brl, 15, 25,
+				new BigDecimal("200.0"), u1);
+		Account a4 = new Wallet(null, "Carteira", new BigDecimal("0"), brl, u2);
+		Account a5 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), brl, new BigDecimal("10.0"),
 				new BigDecimal("500.0"), u2);
-		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), real, 10, 20, new BigDecimal("500.0"),
-				u2);
+		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), brl, 10, 20,
+				new BigDecimal("500.0"), u2);
 
 		Category c1 = new Category(null, "Alimentação", "", u2, true);
 		Category c2 = new Category(null, "Automotivo", "", u2, true);
@@ -155,7 +178,6 @@ public class DBService {
 		EntryCategory ec12 = new EntryCategory(e11, c1, new BigDecimal("17.00"));
 		EntryCategory ec13 = new EntryCategory(e12, c1, new BigDecimal("20.00"));
 
-		currencyUserRepository.saveAll(Arrays.asList(real, dollar, euro, dollarCad, bitcoin));
 		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
 		categoryRepository.saveAll(
