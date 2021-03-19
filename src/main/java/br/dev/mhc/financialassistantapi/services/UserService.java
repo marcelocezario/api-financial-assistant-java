@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
@@ -121,9 +122,15 @@ public class UserService {
 		if (objDTO.getNickname() == null || objDTO.getNickname().equals("")) {
 			objDTO.setNickname(objDTO.getName().split(" ")[0]);
 		}
-		User user = new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
-				pe.encode(objDTO.getPassword()), null, null, currencyService.fromDTO(objDTO.getDefaultCurrencyType()));
-		return user;
+		CurrencyType currency;
+		if (objDTO.getDefaultCurrencyType() == null) {
+			currency = currencyService.findByCode("BRL");
+		} else {
+			currency = currencyService.fromDTO(objDTO.getDefaultCurrencyType());
+		}
+		
+		return new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
+				pe.encode(objDTO.getPassword()), null, null, currency);
 	}
 
 	public URI uploadProfilePicture(MultipartFile multipartFile) {

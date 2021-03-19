@@ -1,7 +1,10 @@
 package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,29 +20,37 @@ public class CurrencyType implements Serializable {
 	// dados da ISO4217
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
+	@Column(unique = true)
 	private String code;
 	private String name;
 	private String initials;
 	private Integer decimalDigits;
 
+	@Column(scale = 5)
+	private BigDecimal priceInBRL;
+	private Instant lastUpdate;
+
 	public CurrencyType() {
 	}
 
-	public CurrencyType(Long id, String code, String name, String initials, Integer decimalDigits) {
+	public CurrencyType(Integer id, String code, String name, String initials, Integer decimalDigits,
+			BigDecimal priceInBRL, Instant lastUpdate) {
 		super();
 		this.id = id;
 		this.code = code;
 		this.name = name;
 		this.initials = initials;
 		this.decimalDigits = decimalDigits;
+		this.priceInBRL = priceInBRL;
+		this.lastUpdate = (lastUpdate.compareTo(Instant.now()) < 0) ? lastUpdate : Instant.now();
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -73,5 +84,21 @@ public class CurrencyType implements Serializable {
 
 	public void setDecimalDigits(Integer decimalDigits) {
 		this.decimalDigits = decimalDigits;
+	}
+
+	public BigDecimal getPriceInBRL() {
+		return priceInBRL;
+	}
+
+	public void setPriceInBRL(BigDecimal priceInBRL) {
+		this.priceInBRL = priceInBRL;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 }
