@@ -43,7 +43,11 @@ public class CurrencyType implements Serializable {
 		this.initials = initials;
 		this.decimalDigits = decimalDigits;
 		this.priceInBRL = priceInBRL;
-		this.lastUpdate = (lastUpdate.compareTo(Instant.now()) < 0) ? lastUpdate : Instant.now();
+		if (lastUpdate != null && lastUpdate.compareTo(Instant.now()) < 0) {
+			this.lastUpdate = lastUpdate;
+		} else {
+			this.lastUpdate = Instant.now();
+		}
 	}
 
 	public Integer getId() {

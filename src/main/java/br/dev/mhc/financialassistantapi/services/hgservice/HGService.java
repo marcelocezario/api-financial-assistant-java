@@ -13,7 +13,7 @@ import br.dev.mhc.financialassistantapi.services.hgservice.model.HGModel;
 @Service
 public class HGService {
 	
-	@Value("${api.hgfinance.key}")
+	@Value("${api_hgfinance_key}")
 	private String key;
 	
 //	private String urlApi = "https://api.hgbrasil.com/finance?key=" + key;

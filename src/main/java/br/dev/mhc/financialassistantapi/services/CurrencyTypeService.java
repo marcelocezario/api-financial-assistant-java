@@ -22,7 +22,7 @@ import br.dev.mhc.financialassistantapi.services.hgservice.HGService;
 @Service
 public class CurrencyTypeService {
 
-	@Value("${api.hgfinance.limit-requests-per-day}")
+	@Value("${api_hgfinance_limit-requests-per-day}")
 	private Long limitRequestHgFinance;
 
 	@Autowired

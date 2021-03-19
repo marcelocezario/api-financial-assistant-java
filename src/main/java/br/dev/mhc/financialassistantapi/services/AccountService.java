@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.dev.mhc.financialassistantapi.dto.AccountDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
 import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
@@ -24,6 +25,9 @@ import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundExcept
 @Service
 public class AccountService {
 
+	@Autowired
+	private DefaultService defaultService;
+	
 	@Autowired
 	private AccountRepository repository;
 
@@ -116,21 +120,24 @@ public class AccountService {
 	}
 
 	public Account fromDTO(AccountDTO objDTO) {
+		CurrencyType currency;
+		if (objDTO.getCurrencyType() == null) {
+			currency = defaultService.currencyDefault();
+		} else {
+			currency = currencyService.fromDTO(objDTO.getCurrencyType());
+		}
+
 		switch (objDTO.getAccountType()) {
 		case WALLET:
-			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
-					currencyService.fromDTO(objDTO.getCurrencyType()), null);
+			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency, null);
 		case BANK_ACCOUNT:
-			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
-					currencyService.fromDTO(objDTO.getCurrencyType()), objDTO.getBankInterestRate(),
-					objDTO.getLimitValueBankAccount(), null);
+			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency,
+					objDTO.getBankInterestRate(), objDTO.getLimitValueBankAccount(), null);
 		case CREDIT_CARD:
-			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
-					currencyService.fromDTO(objDTO.getCurrencyType()), objDTO.getClosingDay(), objDTO.getDueDay(),
-					objDTO.getLimitValueCard(), null);
+			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency,
+					objDTO.getClosingDay(), objDTO.getDueDay(), objDTO.getLimitValueCard(), null);
 		case INVESTMENT_ACCOUNT:
-			return new InvestmentAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(),
-					currencyService.fromDTO(objDTO.getCurrencyType()), null);
+			return new InvestmentAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency, null);
 		}
 		return null;
 	}

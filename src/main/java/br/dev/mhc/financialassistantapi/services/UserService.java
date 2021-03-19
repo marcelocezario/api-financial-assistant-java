@@ -30,6 +30,9 @@ import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundExcept
 
 @Service
 public class UserService {
+	
+	@Autowired
+	private DefaultService defaultService;
 
 	@Autowired
 	private BCryptPasswordEncoder pe;
@@ -124,7 +127,7 @@ public class UserService {
 		}
 		CurrencyType currency;
 		if (objDTO.getDefaultCurrencyType() == null) {
-			currency = currencyService.findByCode("BRL");
+			currency = defaultService.currencyDefault();
 		} else {
 			currency = currencyService.fromDTO(objDTO.getDefaultCurrencyType());
 		}
