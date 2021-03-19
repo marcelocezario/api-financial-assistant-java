@@ -1,7 +1,5 @@
 package br.dev.mhc.financialassistantapi.services;
 
-import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +13,7 @@ import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.email.EmailService;
 import br.dev.mhc.financialassistantapi.services.exceptions.AuthorizationException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
+import br.dev.mhc.financialassistantapi.utils.Tool;
 
 @Service
 public class AuthService {
@@ -27,8 +26,6 @@ public class AuthService {
 
 	@Autowired
 	private EmailService emailService;
-
-	private Random rand = new Random();
 
 	public static UserSpringSecurity getAuthenticatedUserSpringSecurity() {
 		try {
@@ -83,35 +80,10 @@ public class AuthService {
 		if (user == null) {
 			throw new ObjectNotFoundException("Email not found");
 		}
-		String newPass = newPassword();
+		String newPass = Tool.stringGenerator(10);
 		user.setPassword(pe.encode(newPass));
 
 		userRepository.save(user);
 		emailService.sendNewPasswordEmail(user, newPass);
-	}
-
-	private String newPassword() {
-		char[] vet = new char[10];
-		for (int i = 0; i < 10; i++) {
-			vet[i] = randomChar();
-		}
-		return new String(vet);
-	}
-
-	private char randomChar() {
-		int opt = rand.nextInt(3);
-
-		// gera um digito
-		if (opt == 0) {
-			return (char) (rand.nextInt(10) + 48);
-		}
-		// gera letra maiúscula
-		else if (opt == 1) {
-			return (char) (rand.nextInt(26) + 65);
-		}
-		// gera letra minúscula
-		else {
-			return (char) (rand.nextInt(26) + 97);
-		}
 	}
 }
