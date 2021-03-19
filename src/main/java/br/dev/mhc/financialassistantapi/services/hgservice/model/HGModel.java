@@ -44,7 +44,12 @@ public class HGModel {
 		map.put("BRL", new BigDecimal("1.00"));
 		map.put("USD", results.getCurrencies().getUSD().getBuy());
 		map.put("EUR", results.getCurrencies().getEUR().getBuy());
+		map.put("GBP", results.getCurrencies().getGBP().getBuy());
+		map.put("ARS", results.getCurrencies().getARS().getBuy());
 		map.put("CAD", results.getCurrencies().getCAD().getBuy());
+		map.put("AUD", results.getCurrencies().getAUD().getBuy());
+		map.put("JPY", results.getCurrencies().getJPY().getBuy());
+		map.put("CNY", results.getCurrencies().getCNY().getBuy());
 		map.put("BTC", results.getCurrencies().getBTC().getBuy());
 
 		return map;
