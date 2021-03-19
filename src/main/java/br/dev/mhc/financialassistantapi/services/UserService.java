@@ -89,6 +89,8 @@ public class UserService {
 	}
 
 	public List<User> findAll() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
 		return repository.findAll();
 	}
 
