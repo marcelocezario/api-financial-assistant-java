@@ -48,7 +48,7 @@ public class CurrencyTypeResource {
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody CurrencyTypeDTO objDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody CurrencyTypeDTO objDTO, @PathVariable Long id) {
 		CurrencyType obj = service.fromDTO(objDTO);
 		obj.setId(id);
 		obj = service.update(obj);

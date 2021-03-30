@@ -27,7 +27,7 @@ import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
 @Service
-public class EntryService {
+public class EntryService implements CrudInterface<Entry, Long> {
 
 	@Autowired
 	private EntryRepository repository;
@@ -44,11 +44,8 @@ public class EntryService {
 	@Autowired
 	private EntryCategoryRepository entryCategoryRepository;
 
-	/*
-	 * CREATE
-	 */
-
 	@Transactional
+	@Override
 	public Entry insert(Entry obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		obj.setUser(userService.findById(userSS.getId()));
@@ -69,10 +66,44 @@ public class EntryService {
 		return obj;
 	}
 
-	/*
-	 * READ
-	 */
+	@Transactional
+	@Override
+	public Entry update(Entry obj) {
+		Entry newObj = findById(obj.getId());
+		AuthService.validatesUserAuthorization(newObj.getAccount().getUser().getId(), AuthorizationType.USER_ONLY);
+		if (newObj.getAccount() != null && newObj.getPaymentMoment() != null) {
+			if (newObj.getEntryType() == EntryType.CREDIT) {
+				accountService.decreaseBalanceAccount(newObj.getAccount().getId(), newObj.getValue());
+			} else {
+				accountService.increaseBalanceAccount(newObj.getAccount().getId(), newObj.getValue());
+			}
+		}
+		if (obj.getAccount() != null && obj.getPaymentMoment() != null) {
+			if (obj.getEntryType() == EntryType.CREDIT) {
+				accountService.increaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+			} else {
+				accountService.decreaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
+			}
+		}
+		newObj.setValue(obj.getValue());
+		newObj.setDescription(obj.getDescription());
+		newObj.setDueDate(obj.getDueDate());
+		newObj.setPaymentMoment(obj.getPaymentMoment());
+		newObj.setInstallmentNumber(obj.getInstallmentNumber());
+		newObj.setNumberInstallmentsTotal(obj.getNumberInstallmentsTotal());
+		newObj.setEntryType(obj.getEntryType());
+		newObj.setAccount(obj.getAccount());
+		return repository.save(newObj);
+	}
 
+	@Transactional
+	@Override
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public Entry findById(Long id) {
 		Optional<Entry> obj = repository.findById(id);
 		Entry entry = obj.orElseThrow(
@@ -81,9 +112,17 @@ public class EntryService {
 		return entry;
 	}
 
-	/*
-	 * READ LISTS
-	 */
+	@Override
+	public List<Entry> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Page<Entry> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	public List<Entry> findByAccount(Long idAccount) {
 		Account account = accountService.findById(idAccount);
@@ -105,9 +144,6 @@ public class EntryService {
 		return repository.findByUserAndPaymentMomentIsNullOrderByDueDateAsc(user);
 	}
 
-	/*
-	 * READ PAGE
-	 */
 	public Page<Entry> findPageByAccount(Long idAccount, Integer page, Integer linesPerPage, String orderBy,
 			String direction) {
 		Account account = accountService.findById(idAccount);
@@ -131,49 +167,6 @@ public class EntryService {
 		User user = userService.findById(userSS.getId());
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findByUserAndPaymentMomentIsNull(user, pageRequest);
-	}
-
-	/*
-	 * UPDATE
-	 */
-
-	@Transactional
-	public Entry update(Entry obj) {
-		Entry objAux = findById(obj.getId());
-		AuthService.validatesUserAuthorization(objAux.getAccount().getUser().getId(), AuthorizationType.USER_ONLY);
-
-		if (objAux.getAccount() != null && objAux.getPaymentMoment() != null) {
-			if (objAux.getEntryType() == EntryType.CREDIT) {
-				accountService.decreaseBalanceAccount(objAux.getAccount().getId(), objAux.getValue());
-			} else {
-				accountService.increaseBalanceAccount(objAux.getAccount().getId(), objAux.getValue());
-			}
-		}
-
-		if (obj.getAccount() != null && obj.getPaymentMoment() != null) {
-			if (obj.getEntryType() == EntryType.CREDIT) {
-				accountService.increaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
-			} else {
-				accountService.decreaseBalanceAccount(obj.getAccount().getId(), obj.getValue());
-			}
-		}
-		updateData(objAux, obj);
-		return repository.save(objAux);
-	}
-
-	/*
-	 * UTILS
-	 */
-
-	private void updateData(Entry newObj, Entry obj) {
-		newObj.setValue(obj.getValue());
-		newObj.setDescription(obj.getDescription());
-		newObj.setDueDate(obj.getDueDate());
-		newObj.setPaymentMoment(obj.getPaymentMoment());
-		newObj.setInstallmentNumber(obj.getInstallmentNumber());
-		newObj.setNumberInstallmentsTotal(obj.getNumberInstallmentsTotal());
-		newObj.setEntryType(obj.getEntryType());
-		newObj.setAccount(obj.getAccount());
 	}
 
 	public Entry fromDTO(EntryDTO objDTO) {
@@ -201,5 +194,4 @@ public class EntryService {
 				entryType, account, null);
 		return insert(entry);
 	}
-
 }

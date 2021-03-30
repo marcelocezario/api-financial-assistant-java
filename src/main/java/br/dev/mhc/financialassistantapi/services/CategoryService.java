@@ -18,7 +18,7 @@ import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
 @Service
-public class CategoryService {
+public class CategoryService implements CrudInterface<Category, Long> {
 
 	@Autowired
 	private CategoryRepository repository;
@@ -27,23 +27,46 @@ public class CategoryService {
 	private UserService userService;
 
 	@Transactional
+	@Override
 	public Category insert(Category obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
-
 		obj.setId(null);
 		obj.setUser(userService.findById(userSS.getId()));
 		obj = repository.save(obj);
 		return obj;
 	}
 
-	public List<Category> findByUserAndDefault() {
+	@Transactional
+	@Override
+	public Category update(Category obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
-
-		return repository.findByUserOrDefaultForAllUsersTrueOrderByNameAsc(userService.findById(userSS.getId()));
+		Category newObj = findById(obj.getId());
+		if (newObj.isDefaultForAllUsers()) {
+			AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		} else {
+			AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
+		}
+		newObj.setName(obj.getName());
+		newObj.setIconUrl(obj.getIconUrl());
+		newObj.setUser(userService.findById(userSS.getId()));
+		return repository.save(newObj);
 	}
 
+	@Transactional
+	@Override
+	public void delete(Long id) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		Category obj = findById(id);
+		if (obj.isDefaultForAllUsers()) {
+			AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		} else {
+			AuthService.validatesUserAuthorization(obj.getUser().getId(), AuthorizationType.USER_ONLY);
+		}
+		repository.delete(obj);
+	}
+
+	@Override
 	public Category findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
 		Category category = obj.orElseThrow(() -> new ObjectNotFoundException(
@@ -54,34 +77,33 @@ public class CategoryService {
 		return category;
 	}
 
+	@Override
+	public List<Category> findAll() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		return repository.findAll();
+	}
+
+	@Override
+	public Page<Category> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findAll(pageRequest);
+	}
+
+	public List<Category> findByUserAndDefault() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		return repository.findByUserOrDefaultForAllUsersTrueOrderByNameAsc(userService.findById(userSS.getId()));
+	}
+
 	public Page<Category> findPageByUserAndDefault(Integer page, Integer linesPerPage, String orderBy,
 			String direction) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
-
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findByUserOrDefaultForAllUsersTrue(userService.findById(userSS.getId()), pageRequest);
-	}
-
-	@Transactional
-	public Category update(Category obj) {
-		Category newObj = findById(obj.getId());
-		if (newObj.isDefaultForAllUsers()) {
-			UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-			AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
-			updateData(newObj, obj);
-			newObj.setUser(userService.findById(userSS.getId()));
-			return repository.save(newObj);
-		} else {
-			AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
-			updateData(newObj, obj);
-			return repository.save(newObj);
-		}
-	}
-
-	private void updateData(Category newObj, Category obj) {
-		newObj.setName(obj.getName());
-		newObj.setIconUrl(obj.getIconUrl());
 	}
 
 	public Category fromDTO(CategoryDTO objDTO) {

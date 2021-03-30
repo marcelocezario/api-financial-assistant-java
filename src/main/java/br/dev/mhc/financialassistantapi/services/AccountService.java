@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +26,11 @@ import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 
 @Service
-public class AccountService {
+public class AccountService implements CrudInterface<Account, Long> {
 
 	@Autowired
 	private DefaultService defaultService;
-	
+
 	@Autowired
 	private AccountRepository repository;
 
@@ -41,24 +44,49 @@ public class AccountService {
 	private CurrencyTypeService currencyService;
 
 	@Transactional
+	@Override
 	public Account insert(Account obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
-
 		obj.setId(null);
 		obj.setUser(userService.findById(userSS.getId()));
 		obj = repository.save(obj);
-
 		return obj;
 	}
 
-	public List<Account> findByUser() {
-		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
-
-		return repository.findByUser(userService.findById(userSS.getId()));
+	@Transactional
+	@Override
+	public Account update(Account obj) {
+		Account newObj = findById(obj.getId());
+		AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
+		newObj.setName(obj.getName());
+		switch (obj.getAccountType()) {
+		case WALLET:
+			break;
+		case BANK_ACCOUNT:
+			((BankAccount) newObj).setBankInterestRate(((BankAccount) obj).getBankInterestRate());
+			((BankAccount) newObj).setLimitValue(((BankAccount) obj).getLimitValueBankAccount());
+			break;
+		case CREDIT_CARD:
+			((CreditCard) newObj).setClosingDay(((CreditCard) obj).getClosingDay());
+			((CreditCard) newObj).setDueDay(((CreditCard) obj).getDueDay());
+			((CreditCard) newObj).setLimitValueCard(((CreditCard) obj).getLimitValueCard());
+			break;
+		case INVESTMENT_ACCOUNT:
+			break;
+		}
+		return repository.save(newObj);
 	}
 
+	@Transactional
+	@Override
+	public void delete(Long id) {
+		Account account = findById(id);
+		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
+		repository.delete(account);
+	}
+
+	@Override
 	public Account findById(Long id) {
 		Optional<Account> obj = repository.findById(id);
 		Account account = obj.orElseThrow(() -> new ObjectNotFoundException(
@@ -67,15 +95,29 @@ public class AccountService {
 		return account;
 	}
 
-	@Transactional
-	public Account update(Account obj) {
-		Account newObj = findById(obj.getId());
-		AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
-		updateData(newObj, obj);
-		return repository.save(newObj);
+	@Override
+	public List<Account> findAll() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		return repository.findAll();
+	}
+
+	@Override
+	public Page<Account> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findAll(pageRequest);
+	}
+
+	public List<Account> findByUser() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+		return repository.findByUser(userService.findById(userSS.getId()));
 	}
 
 	public Entry adjustBalance(Account account, BigDecimal newBalance) {
+		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		BigDecimal valueEntry = newBalance.subtract(account.getBalance());
 		if (valueEntry.compareTo(BigDecimal.ZERO) < 0) {
 			return entryService.createAdjustEntry(account, valueEntry.abs(), EntryType.DEBIT);
@@ -100,25 +142,6 @@ public class AccountService {
 		return repository.save(account);
 	}
 
-	private void updateData(Account newObj, Account obj) {
-		newObj.setName(obj.getName());
-		switch (obj.getAccountType()) {
-		case WALLET:
-			break;
-		case BANK_ACCOUNT:
-			((BankAccount) newObj).setBankInterestRate(((BankAccount) obj).getBankInterestRate());
-			((BankAccount) newObj).setLimitValue(((BankAccount) obj).getLimitValueBankAccount());
-			break;
-		case CREDIT_CARD:
-			((CreditCard) newObj).setClosingDay(((CreditCard) obj).getClosingDay());
-			((CreditCard) newObj).setDueDay(((CreditCard) obj).getDueDay());
-			((CreditCard) newObj).setLimitValueCard(((CreditCard) obj).getLimitValueCard());
-			break;
-		case INVESTMENT_ACCOUNT:
-			break;
-		}
-	}
-
 	public Account fromDTO(AccountDTO objDTO) {
 		CurrencyType currency;
 		if (objDTO.getCurrencyType() == null) {
@@ -126,7 +149,6 @@ public class AccountService {
 		} else {
 			currency = currencyService.fromDTO(objDTO.getCurrencyType());
 		}
-
 		switch (objDTO.getAccountType()) {
 		case WALLET:
 			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency, null);

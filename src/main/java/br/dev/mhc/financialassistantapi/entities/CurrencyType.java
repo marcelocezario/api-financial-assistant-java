@@ -20,7 +20,7 @@ public class CurrencyType implements Serializable {
 	// dados da ISO4217
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	@Column(unique = true)
 	private String code;
 	private String name;
@@ -34,7 +34,7 @@ public class CurrencyType implements Serializable {
 	public CurrencyType() {
 	}
 
-	public CurrencyType(Integer id, String code, String name, String initials, Integer decimalDigits,
+	public CurrencyType(Long id, String code, String name, String initials, Integer decimalDigits,
 			BigDecimal priceInBRL, Instant lastUpdate) {
 		super();
 		this.id = id;
@@ -50,11 +50,11 @@ public class CurrencyType implements Serializable {
 		}
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

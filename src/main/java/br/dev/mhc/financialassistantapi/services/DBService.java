@@ -65,12 +65,12 @@ public class DBService {
 		
 		Instant momentUpdate = Instant.now().minusMillis(300000L);
 		List<CurrencyType> currencies = new ArrayList<>();
-		currencies.add(new CurrencyType(1, "BRL", "Real", "R$", 2, BigDecimal.ZERO, momentUpdate));
-		currencies.add(new CurrencyType(2, "USD", "Dólar Americano", "US$", 2, BigDecimal.ZERO, momentUpdate));
-		currencies.add(new CurrencyType(3, "EUR", "Euro", "€", 2, BigDecimal.ZERO, momentUpdate));
-		currencies.add(new CurrencyType(4, "GBP", "Libra Esterlina", "£", 2, BigDecimal.ZERO, momentUpdate));
-		currencies.add(new CurrencyType(5, "ARS", "Peso Argentino", "ARS", 2, BigDecimal.ZERO, momentUpdate));
-		currencies.add(new CurrencyType(6, "CAD", "Dólar Canadense", "C$", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(1L, "BRL", "Real", "R$", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(2L, "USD", "Dólar Americano", "US$", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(3L, "EUR", "Euro", "€", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(4L, "GBP", "Libra Esterlina", "£", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(5L, "ARS", "Peso Argentino", "ARS", 2, BigDecimal.ZERO, momentUpdate));
+		currencies.add(new CurrencyType(6L, "CAD", "Dólar Canadense", "C$", 2, BigDecimal.ZERO, momentUpdate));
 //		currencies.add(new CurrencyType(8, "AUD", "Dólar Australiano", "AU$", 2, BigDecimal.ZERO, momentUpdate));
 //		currencies.add(new CurrencyType(9, "JPY", "Iene", "¥", 0, BigDecimal.ZERO, momentUpdate));
 //		currencies.add(new CurrencyType(10, "CNY", "Renminbi", "CN¥", 1, BigDecimal.ZERO, momentUpdate));

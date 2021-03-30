@@ -8,6 +8,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +23,7 @@ import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundExcept
 import br.dev.mhc.financialassistantapi.services.hgservice.HGService;
 
 @Service
-public class CurrencyTypeService {
+public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 
 	@Value("${api_hgfinance_limit-requests-per-day}")
 	private Long limitRequestHgFinance;
@@ -32,6 +35,7 @@ public class CurrencyTypeService {
 	HGService hgService;
 
 	@Transactional
+	@Override
 	public CurrencyType insert(CurrencyType obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
@@ -39,12 +43,52 @@ public class CurrencyTypeService {
 	}
 
 	@Transactional
+	@Override
 	public CurrencyType update(CurrencyType obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
 		CurrencyType newObj = findById(obj.getId());
-		updateData(newObj, obj);
+		newObj.setCode(obj.getCode());
+		newObj.setDecimalDigits(obj.getDecimalDigits());
+		newObj.setInitials(obj.getInitials());
+		newObj.setName(obj.getName());
 		return repository.save(newObj);
+	}
+
+	@Transactional
+	@Override
+	public void delete(Long id) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		CurrencyType obj = findById(id);
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		repository.delete(obj);
+	}
+
+	@Override
+	public CurrencyType findById(Long id) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
+		updateCurrencyExchange();
+		Optional<CurrencyType> obj = repository.findById(id);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Id: " + id + ", Type: " + CurrencyType.class.getName()));
+	}
+
+	@Override
+	public List<CurrencyType> findAll() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
+		updateCurrencyExchange();
+		return repository.findAll();
+	}
+
+	@Override
+	public Page<CurrencyType> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		updateCurrencyExchange();
+		return repository.findAll(pageRequest);
 	}
 
 	@Transactional
@@ -57,17 +101,9 @@ public class CurrencyTypeService {
 			for (CurrencyType currency : list) {
 				currency.setPriceInBRL(resultApi.get(currency.getCode()));
 				currency.setLastUpdate(Instant.now());
+				repository.save(currency);
 			}
 		}
-	}
-
-	public CurrencyType findById(Integer id) {
-		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
-		updateCurrencyExchange();
-		Optional<CurrencyType> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ObjectNotFoundException(
-				"Object not found! Id: " + id + ", Type: " + CurrencyType.class.getName()));
 	}
 
 	public CurrencyType findByCode(String code) {
@@ -77,22 +113,8 @@ public class CurrencyTypeService {
 		return repository.findByCode(code);
 	}
 
-	public List<CurrencyType> findAll() {
-		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
-		updateCurrencyExchange();
-		return repository.findAll();
-	}
-
 	public CurrencyType fromDTO(CurrencyTypeDTO objDTO) {
 		return new CurrencyType(objDTO.getId(), objDTO.getCode(), objDTO.getName(), objDTO.getInitials(),
 				objDTO.getDecimalDigits(), objDTO.getPriceInBRL(), objDTO.getLastUpdate());
-	}
-
-	private void updateData(CurrencyType newObj, CurrencyType obj) {
-		newObj.setCode(obj.getCode());
-		newObj.setDecimalDigits(obj.getDecimalDigits());
-		newObj.setInitials(obj.getInitials());
-		newObj.setName(obj.getName());
 	}
 }

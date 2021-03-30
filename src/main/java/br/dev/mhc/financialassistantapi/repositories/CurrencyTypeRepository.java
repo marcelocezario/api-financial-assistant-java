@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 
 @Repository
-public interface CurrencyTypeRepository extends JpaRepository<CurrencyType, Integer> {
+public interface CurrencyTypeRepository extends JpaRepository<CurrencyType, Long> {
 
 	@Transactional(readOnly = true)
 	CurrencyType findByCode(String code);

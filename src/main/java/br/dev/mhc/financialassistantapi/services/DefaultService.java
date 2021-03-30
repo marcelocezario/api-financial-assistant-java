@@ -7,7 +7,7 @@ import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 
 @Service
 public class DefaultService {
-	
+
 	@Autowired
 	private CurrencyTypeService currencyService;
 
