@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
+import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
@@ -51,7 +52,7 @@ public class UserService implements CrudInterface<User, Long> {
 
 	@Autowired
 	private CurrencyTypeService currencyService;
-
+	
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
 
@@ -63,6 +64,14 @@ public class UserService implements CrudInterface<User, Long> {
 	@Override
 	public User insert(User obj) {
 		obj.setRegistrationMoment(Instant.now());
+		if(obj.getDefaultCurrencyType() == null) {
+			obj.setDefaultCurrencyType(defaultService.currencyDefault());
+		}
+		for(Account account : defaultService.accountsDefault()) {
+			account.setCurrencyType(obj.getDefaultCurrencyType());
+			account.setUser(obj);
+			obj.addAccount(account);
+		}
 		obj = repository.save(obj);
 //		emailService.sendUserConfirmationEmail(obj);
 		emailService.sendUserConfirmationHtmlEmail(obj);
