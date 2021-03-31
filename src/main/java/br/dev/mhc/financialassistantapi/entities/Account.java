@@ -39,16 +39,16 @@ public abstract class Account implements Serializable {
 	private String name;
 	private BigDecimal balance;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-
 	@NotNull(message = "Entrytype cannot be null")
 	private Integer accountType;
 
 	@ManyToOne
 	@JoinColumn(name = "currency_type_id")
 	private CurrencyType currencyType;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@OneToMany(mappedBy = "account")
 	private Set<Entry> entries = new HashSet<>();
@@ -100,14 +100,6 @@ public abstract class Account implements Serializable {
 		this.balance = this.balance.subtract(value);
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	public AccountType getAccountType() {
 		return AccountType.toEnum(accountType);
 	}
@@ -122,6 +114,14 @@ public abstract class Account implements Serializable {
 
 	public void setCurrencyType(CurrencyType currencyType) {
 		this.currencyType = currencyType;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Set<Entry> getEntries() {
