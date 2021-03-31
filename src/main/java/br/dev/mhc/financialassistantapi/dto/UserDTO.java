@@ -19,8 +19,9 @@ public class UserDTO implements Serializable {
 	private String name;
 	private String nickname;
 	private String email;
-	private Instant registrationMoment;
 	private String imageUrl;
+	private Instant creationMoment;
+	private Instant lastUpdate;
 	private CurrencyTypeDTO defaultCurrencyType;
 
 	private List<Profile> profiles = new ArrayList<>();
@@ -28,16 +29,18 @@ public class UserDTO implements Serializable {
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String name, String nickname, String email, Instant registrationMoment, String imageUrl,
-			CurrencyTypeDTO defaultCurrencyType) {
+	public UserDTO(Long id, String name, String nickname, String email, String imageUrl, Instant creationMoment,
+			Instant lastUpdate, CurrencyTypeDTO defaultCurrencyType, List<Profile> profiles) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
-		this.registrationMoment = registrationMoment;
 		this.imageUrl = imageUrl;
+		this.creationMoment = creationMoment;
+		this.lastUpdate = lastUpdate;
 		this.defaultCurrencyType = defaultCurrencyType;
+		this.profiles = profiles;
 	}
 
 	public UserDTO(User obj) {
@@ -45,8 +48,9 @@ public class UserDTO implements Serializable {
 		this.name = obj.getName();
 		this.nickname = obj.getNickname();
 		this.email = obj.getEmail();
-		this.registrationMoment = obj.getRegistrationMoment();
 		this.imageUrl = obj.getImageUrl();
+		this.creationMoment = obj.getCreationMoment();
+		this.lastUpdate = obj.getLastUpdate();
 		this.defaultCurrencyType = new CurrencyTypeDTO(obj.getDefaultCurrencyType());
 		this.profiles = obj.getProfiles().stream().collect(Collectors.toList());
 	}
@@ -83,20 +87,28 @@ public class UserDTO implements Serializable {
 		this.email = email;
 	}
 
-	public Instant getRegistrationMoment() {
-		return registrationMoment;
-	}
-
-	public void setRegistrationMoment(Instant registrationMoment) {
-		this.registrationMoment = registrationMoment;
-	}
-
 	public String getImageUrl() {
 		return imageUrl;
 	}
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	public CurrencyTypeDTO getDefaultCurrencyType() {
@@ -109,5 +121,9 @@ public class UserDTO implements Serializable {
 
 	public List<Profile> getProfiles() {
 		return profiles;
+	}
+
+	public void setProfiles(List<Profile> profiles) {
+		this.profiles = profiles;
 	}
 }

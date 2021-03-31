@@ -2,6 +2,7 @@ package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
@@ -18,6 +19,9 @@ public class AccountDTO implements Serializable {
 	private BigDecimal balance;
 
 	private AccountType accountType;
+	private Instant creationMoment;
+	private Instant lastUpdate;
+
 	private CurrencyTypeDTO currencyType;
 
 	// Wallet
@@ -38,14 +42,16 @@ public class AccountDTO implements Serializable {
 	public AccountDTO() {
 	}
 
-	public AccountDTO(Long id, String name, BigDecimal balance, AccountType accountType, CurrencyTypeDTO currencyType,
-			BigDecimal bankInterestRate, BigDecimal limitValueBankAccount, Integer closingDay, Integer dueDay,
-			BigDecimal limitValueCard) {
+	public AccountDTO(Long id, String name, BigDecimal balance, AccountType accountType, Instant creationMoment,
+			Instant lastUpdate, CurrencyTypeDTO currencyType, BigDecimal bankInterestRate,
+			BigDecimal limitValueBankAccount, Integer closingDay, Integer dueDay, BigDecimal limitValueCard) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.balance = balance;
 		this.accountType = accountType;
+		this.creationMoment = creationMoment;
+		this.lastUpdate = lastUpdate;
 		this.currencyType = currencyType;
 		this.bankInterestRate = bankInterestRate;
 		this.limitValueBankAccount = limitValueBankAccount;
@@ -59,6 +65,8 @@ public class AccountDTO implements Serializable {
 		this.name = obj.getName();
 		this.balance = obj.getBalance();
 		this.accountType = obj.getAccountType();
+		this.creationMoment = obj.getCreationMoment();
+		this.lastUpdate = obj.getLastUpdate();
 		this.currencyType = new CurrencyTypeDTO(obj.getCurrencyType());
 
 		switch (obj.getAccountType()) {
@@ -108,6 +116,22 @@ public class AccountDTO implements Serializable {
 
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
+	}
+
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	public CurrencyTypeDTO getCurrencyType() {

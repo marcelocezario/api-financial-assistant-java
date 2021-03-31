@@ -27,7 +27,6 @@ public class Entry implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Instant criationMoment;
 	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
@@ -35,6 +34,9 @@ public class Entry implements Serializable {
 	private Integer installmentNumber;
 	private Integer numberInstallmentsTotal;
 	private Integer entryType;
+	private Instant creationMoment;
+	private Instant lastUpdate;
+	private boolean active;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "account_id")
@@ -48,14 +50,14 @@ public class Entry implements Serializable {
 	private Set<EntryCategory> categories = new HashSet<>();
 
 	public Entry() {
+		active = true;
 	}
 
-	public Entry(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
-			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
-			Account account, User user) {
+	public Entry(Long id, BigDecimal value, String description, Instant dueDate, Instant paymentMoment,
+			Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType, Account account,
+			User user) {
 		super();
 		this.id = id;
-		this.criationMoment = criationMoment;
 		this.value = value;
 		this.description = description;
 		this.dueDate = dueDate;
@@ -65,6 +67,7 @@ public class Entry implements Serializable {
 		this.entryType = entryType.getCod();
 		this.account = account;
 		this.user = user;
+		this.active = true;
 	}
 
 	public Long getId() {
@@ -73,14 +76,6 @@ public class Entry implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Instant getCriationMoment() {
-		return criationMoment;
-	}
-
-	public void setCriationMoment(Instant criationMoment) {
-		this.criationMoment = criationMoment;
 	}
 
 	public BigDecimal getValue() {
@@ -139,8 +134,28 @@ public class Entry implements Serializable {
 		this.entryType = entryType.getCod();
 	}
 
-	public void setEntryType(Integer entryType) {
-		this.entryType = entryType;
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public Account getAccount() {

@@ -39,6 +39,8 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 	public CurrencyType insert(CurrencyType obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		obj.setCreationMoment(Instant.now());
+		obj.setLastUpdate(Instant.now());
 		return repository.save(obj);
 	}
 
@@ -52,6 +54,7 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 		newObj.setDecimalDigits(obj.getDecimalDigits());
 		newObj.setInitials(obj.getInitials());
 		newObj.setName(obj.getName());
+		newObj.setLastUpdate(Instant.now());
 		return repository.save(newObj);
 	}
 
@@ -90,7 +93,7 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 		updateCurrencyExchange();
 		return repository.findAll(pageRequest);
 	}
-
+	
 	@Transactional
 	public void updateCurrencyExchange() {
 		Long timeoutBetweenRequests = 86400000l / limitRequestHgFinance;
@@ -113,6 +116,6 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 
 	public CurrencyType fromDTO(CurrencyTypeDTO objDTO) {
 		return new CurrencyType(objDTO.getId(), objDTO.getCode(), objDTO.getName(), objDTO.getInitials(),
-				objDTO.getDecimalDigits(), objDTO.getPriceInBRL(), objDTO.getLastUpdate());
+				objDTO.getDecimalDigits(), objDTO.getPriceInBRL());
 	}
 }

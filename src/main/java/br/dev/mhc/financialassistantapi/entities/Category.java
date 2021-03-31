@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,9 @@ public class Category implements Serializable {
 	private String name;
 	private String iconUrl;
 	private boolean defaultForAllUsers;
+	private Instant creationMoment;
+	private Instant lastUpdate;
+	private boolean active;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -36,7 +40,8 @@ public class Category implements Serializable {
 	private Set<EntryCategory> entriesCategories = new HashSet<>();
 
 	public Category() {
-		this.defaultForAllUsers = false;
+		defaultForAllUsers = false;
+		active = true;
 	}
 
 	public Category(Long id, String name, String iconUrl, User user) {
@@ -46,6 +51,7 @@ public class Category implements Serializable {
 		this.iconUrl = iconUrl;
 		this.user = user;
 		this.defaultForAllUsers = false;
+		this.active = true;
 	}
 
 	public Category(Long id, String name, String iconUrl, User user, boolean defaultForAllUsers) {
@@ -95,6 +101,30 @@ public class Category implements Serializable {
 
 	public void setDefaultForAllUsers(boolean defaultForAllUsers) {
 		this.defaultForAllUsers = defaultForAllUsers;
+	}
+
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public User getUser() {

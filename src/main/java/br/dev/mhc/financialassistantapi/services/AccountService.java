@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.services;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +50,7 @@ public class AccountService implements CrudInterface<Account, Long> {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 		obj.setId(null);
+		obj.setCreationMoment(Instant.now());
 		obj.setUser(userService.findById(userSS.getId()));
 		obj = repository.save(obj);
 		return obj;
@@ -60,6 +62,7 @@ public class AccountService implements CrudInterface<Account, Long> {
 		Account newObj = findById(obj.getId());
 		AuthService.validatesUserAuthorization(newObj.getUser().getId(), AuthorizationType.USER_ONLY);
 		newObj.setName(obj.getName());
+		newObj.setLastUpdate(Instant.now());
 		switch (obj.getAccountType()) {
 		case WALLET:
 			break;
@@ -131,7 +134,7 @@ public class AccountService implements CrudInterface<Account, Long> {
 		Account account = findById(idAccount);
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		account.increaseBalance(valueEntry);
-		return repository.save(account);
+		return update(account);
 	}
 
 	@Transactional
@@ -139,13 +142,13 @@ public class AccountService implements CrudInterface<Account, Long> {
 		Account account = findById(idAccount);
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		account.decreaseBalance(valueEntry);
-		return repository.save(account);
+		return update(account);
 	}
 
 	public Account fromDTO(AccountDTO objDTO) {
 		CurrencyType currency;
 		if (objDTO.getCurrencyType() == null) {
-			currency = defaultService.currencyDefault();
+			currency = defaultService.defaultCurrency();
 		} else {
 			currency = currencyService.fromDTO(objDTO.getCurrencyType());
 		}

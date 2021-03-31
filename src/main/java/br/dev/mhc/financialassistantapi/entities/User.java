@@ -2,10 +2,7 @@ package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,8 +37,10 @@ public class User implements Serializable {
 	private String email;
 	@JsonIgnore
 	private String password;
-	private Instant registrationMoment;
 	private String imageUrl;
+	private Instant creationMoment;
+	private Instant lastUpdate;
+	private boolean active;
 
 	@ManyToOne
 	@JoinColumn(name = "default_currency_type_id")
@@ -55,20 +54,21 @@ public class User implements Serializable {
 	private Set<Account> accounts = new HashSet<>();
 
 	public User() {
+		active = true;
 		addProfile(Profile.BASIC_USER);
 	}
 
-	public User(Long id, String name, String nickname, String email, String password, Instant registrationMoment,
-			String imageUrl, CurrencyType defaultCurrencyType) {
+	public User(Long id, String name, String nickname, String email, String password, String imageUrl,
+			CurrencyType defaultCurrencyType) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
-		this.registrationMoment = registrationMoment;
 		this.imageUrl = imageUrl;
 		this.defaultCurrencyType = defaultCurrencyType;
+		this.active = true;
 		addProfile(Profile.BASIC_USER);
 	}
 
@@ -113,20 +113,36 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public Instant getRegistrationMoment() {
-		return registrationMoment;
-	}
-
-	public void setRegistrationMoment(Instant registrationMoment) {
-		this.registrationMoment = registrationMoment;
-	}
-
 	public String getImageUrl() {
 		return imageUrl;
 	}
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public CurrencyType getDefaultCurrencyType() {
@@ -176,32 +192,5 @@ public class User implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withLocale(new Locale("pt", "BR"))
-				.withZone(ZoneId.systemDefault());
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("Olá ");
-		builder.append(nickname);
-		builder.append("!\n\n");
-		builder.append("Cadastrado realizado com sucesso!\n\n");
-		builder.append("E-mail de cadastro: ");
-		builder.append(email);
-		builder.append("\n");
-		builder.append("Data e hora do cadastro: ");
-		builder.append(dtf.format(registrationMoment));
-		builder.append("\n");
-		builder.append("\n");
-		builder.append("O que posso fazer agora?");
-		builder.append("\n");
-		builder.append("Agora você tem acesso ao app Assitente Financeiro, para lhe ajudar a controlar suas finanças.");
-		builder.append("\n");
-		builder.append("\n");
-		builder.append("---------------------------------------------------------------------------------------------");
-		builder.append("\n");
-		return builder.toString();
 	}
 }

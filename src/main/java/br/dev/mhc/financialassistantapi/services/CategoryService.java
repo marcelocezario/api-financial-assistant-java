@@ -1,5 +1,6 @@
 package br.dev.mhc.financialassistantapi.services;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class CategoryService implements CrudInterface<Category, Long> {
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
 		obj.setId(null);
 		obj.setUser(userService.findById(userSS.getId()));
+		obj.setCreationMoment(Instant.now());
 		obj = repository.save(obj);
 		return obj;
 	}
@@ -50,6 +52,7 @@ public class CategoryService implements CrudInterface<Category, Long> {
 		newObj.setName(obj.getName());
 		newObj.setIconUrl(obj.getIconUrl());
 		newObj.setUser(userService.findById(userSS.getId()));
+		newObj.setLastUpdate(Instant.now());
 		return repository.save(newObj);
 	}
 

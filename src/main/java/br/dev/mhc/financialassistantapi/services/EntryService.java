@@ -60,7 +60,7 @@ public class EntryService implements CrudInterface<Entry, Long> {
 			}
 		}
 		obj.setId(null);
-		obj.setCriationMoment(Instant.now());
+		obj.setCreationMoment(Instant.now());
 		obj = repository.save(obj);
 		entryCategoryRepository.saveAll(obj.getCategories());
 		return obj;
@@ -93,6 +93,7 @@ public class EntryService implements CrudInterface<Entry, Long> {
 		newObj.setNumberInstallmentsTotal(obj.getNumberInstallmentsTotal());
 		newObj.setEntryType(obj.getEntryType());
 		newObj.setAccount(obj.getAccount());
+		newObj.setLastUpdate(Instant.now());
 		return repository.save(newObj);
 	}
 
@@ -170,18 +171,18 @@ public class EntryService implements CrudInterface<Entry, Long> {
 	}
 
 	public Entry fromDTO(EntryDTO objDTO) {
-		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
-				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
-				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), null, null);
+		Entry entry = new Entry(objDTO.getId(), objDTO.getValue(), objDTO.getDescription(), objDTO.getDueDate(),
+				objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(), objDTO.getNumberInstallmentsTotal(),
+				objDTO.getEntryType(), null, null);
 		return entry;
 	}
 
 	public Entry fromDTO(EntryNewDTO objDTO) {
 		Account account = (objDTO.getAccount() == null) ? null : accountService.findById(objDTO.getAccount().getId());
 
-		Entry entry = new Entry(objDTO.getId(), objDTO.getCriationMoment(), objDTO.getValue(), objDTO.getDescription(),
-				objDTO.getDueDate(), objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(),
-				objDTO.getNumberInstallmentsTotal(), objDTO.getEntryType(), account, null);
+		Entry entry = new Entry(objDTO.getId(), objDTO.getValue(), objDTO.getDescription(), objDTO.getDueDate(),
+				objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(), objDTO.getNumberInstallmentsTotal(),
+				objDTO.getEntryType(), account, null);
 
 		for (EntryCategoryDTO x : objDTO.getCategories()) {
 			entry.addCategory(new EntryCategory(entry, categoryService.fromDTO(x.getCategory()), x.getValue()));
@@ -190,8 +191,8 @@ public class EntryService implements CrudInterface<Entry, Long> {
 	}
 
 	public Entry createAdjustEntry(Account account, BigDecimal valueEntry, EntryType entryType) {
-		Entry entry = new Entry(null, Instant.now(), valueEntry, "Ajuste de saldo", Instant.now(), Instant.now(), 1, 1,
-				entryType, account, null);
+		Entry entry = new Entry(null, valueEntry, "Ajuste de saldo", Instant.now(), Instant.now(), 1, 1, entryType,
+				account, null);
 		return insert(entry);
 	}
 }

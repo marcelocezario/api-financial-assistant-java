@@ -19,17 +19,19 @@ public class DefaultService {
 
 	@Autowired
 	private CurrencyTypeService currencyService;
-	
-	public CurrencyType currencyDefault() {
+
+	public CurrencyType defaultCurrency() {
 		return currencyService.findByCode("BRL");
 	}
-	
-	public List<Account> accountsDefault() {
+
+	public List<Account> defaultUserAccounts() {
 		List<Account> accounts = new ArrayList<>();
-		accounts.add(new Wallet(null, "Carteira", BigDecimal.ZERO, currencyDefault(), null));
-		accounts.add(new BankAccount(null, "Conta corrente", BigDecimal.ZERO, currencyDefault(), BigDecimal.ZERO, BigDecimal.ZERO, null));
-		accounts.add(new CreditCard(null, "Cartão de crédito", BigDecimal.ZERO, currencyDefault(), 1, 10, BigDecimal.ZERO, null));
-		accounts.add(new InvestmentAccount(null, "Investimento", BigDecimal.ZERO, currencyDefault(), null));
+		accounts.add(new Wallet(null, "Carteira", BigDecimal.ZERO, defaultCurrency(), null));
+		accounts.add(new BankAccount(null, "Conta corrente", BigDecimal.ZERO, defaultCurrency(), BigDecimal.ZERO,
+				BigDecimal.ZERO, null));
+		accounts.add(new CreditCard(null, "Cartão de crédito", BigDecimal.ZERO, defaultCurrency(), 1, 10,
+				BigDecimal.ZERO, null));
+		accounts.add(new InvestmentAccount(null, "Investimento", BigDecimal.ZERO, defaultCurrency(), null));
 		return accounts;
 	}
 }

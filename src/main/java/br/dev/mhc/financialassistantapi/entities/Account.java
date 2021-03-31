@@ -2,6 +2,7 @@ package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +33,9 @@ public abstract class Account implements Serializable {
 	private String name;
 	private BigDecimal balance;
 	private Integer accountType;
+	private Instant creationMoment;
+	private Instant lastUpdate;
+	private boolean active;
 
 	@ManyToOne
 	@JoinColumn(name = "currency_type_id")
@@ -45,7 +49,8 @@ public abstract class Account implements Serializable {
 	private Set<Entry> entries = new HashSet<>();
 
 	public Account() {
-		balance = new BigDecimal("0");
+		balance = BigDecimal.ZERO;
+		active = true;
 	}
 
 	public Account(Long id, String name, BigDecimal balance, AccountType accountType, CurrencyType currencyType,
@@ -53,14 +58,11 @@ public abstract class Account implements Serializable {
 		super();
 		this.id = id;
 		this.name = name;
-		if (balance == null) {
-			this.balance = new BigDecimal("0");
-		} else {
-			this.balance = balance;
-		}
+		this.balance = (balance != null) ? balance : BigDecimal.ZERO;
 		this.accountType = accountType.getCod();
 		this.currencyType = currencyType;
 		this.user = user;
+		this.active = true;
 	}
 
 	public Long getId() {
@@ -97,6 +99,30 @@ public abstract class Account implements Serializable {
 
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType.getCod();
+	}
+
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public CurrencyType getCurrencyType() {

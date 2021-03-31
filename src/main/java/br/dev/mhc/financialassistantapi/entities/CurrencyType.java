@@ -25,13 +25,16 @@ public class CurrencyType implements Serializable {
 	private String initials;
 	private Integer decimalDigits;
 	private BigDecimal priceInBRL;
+	private Instant creationMoment;
 	private Instant lastUpdate;
+	private boolean active;
 
 	public CurrencyType() {
+		active = true;
 	}
 
 	public CurrencyType(Long id, String code, String name, String initials, Integer decimalDigits,
-			BigDecimal priceInBRL, Instant lastUpdate) {
+			BigDecimal priceInBRL) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -39,11 +42,7 @@ public class CurrencyType implements Serializable {
 		this.initials = initials;
 		this.decimalDigits = decimalDigits;
 		this.priceInBRL = priceInBRL;
-		if (lastUpdate != null && lastUpdate.compareTo(Instant.now()) < 0) {
-			this.lastUpdate = lastUpdate;
-		} else {
-			this.lastUpdate = Instant.now();
-		}
+		this.active = true;
 	}
 
 	public Long getId() {
@@ -94,11 +93,27 @@ public class CurrencyType implements Serializable {
 		this.priceInBRL = priceInBRL;
 	}
 
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
 	public Instant getLastUpdate() {
 		return lastUpdate;
 	}
 
 	public void setLastUpdate(Instant lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

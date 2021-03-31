@@ -31,7 +31,7 @@ import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundExcept
 
 @Service
 public class UserService implements CrudInterface<User, Long> {
-	
+
 	@Autowired
 	private DefaultService defaultService;
 
@@ -52,22 +52,22 @@ public class UserService implements CrudInterface<User, Long> {
 
 	@Autowired
 	private CurrencyTypeService currencyService;
-	
+
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
 
 	@Value("${img.profile.size}")
 	private Integer size;
-	
-	
+
 	@Transactional
 	@Override
 	public User insert(User obj) {
-		obj.setRegistrationMoment(Instant.now());
-		if(obj.getDefaultCurrencyType() == null) {
-			obj.setDefaultCurrencyType(defaultService.currencyDefault());
+		obj.setCreationMoment(Instant.now());
+		if (obj.getDefaultCurrencyType() == null) {
+			obj.setDefaultCurrencyType(defaultService.defaultCurrency());
 		}
-		for(Account account : defaultService.accountsDefault()) {
+		for (Account account : defaultService.defaultUserAccounts()) {
+			account.setCreationMoment(obj.getCreationMoment());
 			account.setCurrencyType(obj.getDefaultCurrencyType());
 			account.setUser(obj);
 			obj.addAccount(account);
@@ -86,6 +86,7 @@ public class UserService implements CrudInterface<User, Long> {
 		newObj.setName(obj.getName());
 		newObj.setNickname(obj.getNickname());
 		newObj.setEmail(obj.getEmail());
+		newObj.setLastUpdate(Instant.now());
 		return repository.save(newObj);
 	}
 
@@ -129,8 +130,7 @@ public class UserService implements CrudInterface<User, Long> {
 
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
-				objDto.getRegistrationMoment(), objDto.getImageUrl(),
-				currencyService.fromDTO(objDto.getDefaultCurrencyType()));
+				objDto.getImageUrl(), currencyService.fromDTO(objDto.getDefaultCurrencyType()));
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
@@ -139,13 +139,12 @@ public class UserService implements CrudInterface<User, Long> {
 		}
 		CurrencyType currency;
 		if (objDTO.getDefaultCurrencyType() == null) {
-			currency = defaultService.currencyDefault();
+			currency = defaultService.defaultCurrency();
 		} else {
 			currency = currencyService.fromDTO(objDTO.getDefaultCurrencyType());
 		}
-		
 		return new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
-				pe.encode(objDTO.getPassword()), null, null, currency);
+				pe.encode(objDTO.getPassword()), null, currency);
 	}
 
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
@@ -162,7 +161,7 @@ public class UserService implements CrudInterface<User, Long> {
 
 		User user = findById(userSS.getId());
 		user.setImageUrl(uri.toString());
-		repository.save(user);
+		update(user);
 
 		return uri;
 	}

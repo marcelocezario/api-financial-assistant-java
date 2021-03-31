@@ -15,7 +15,6 @@ public class EntryDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	private Instant criationMoment;
 	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
@@ -23,18 +22,19 @@ public class EntryDTO implements Serializable {
 	private Integer installmentNumber;
 	private Integer numberInstallmentsTotal;
 	private EntryType entryType;
+	private Instant creationMoment;
+	private Instant lastUpdate;
 
 	private List<EntryCategoryDTO> categories = new ArrayList<>();
 
 	public EntryDTO() {
 	}
 
-	public EntryDTO(Long id, Instant criationMoment, BigDecimal value, String description, Instant dueDate,
-			Instant paymentMoment, Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType,
-			List<EntryCategoryDTO> categories) {
+	public EntryDTO(Long id, BigDecimal value, String description, Instant dueDate, Instant paymentMoment,
+			Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType, Instant creationMoment,
+			Instant lastUpdate, List<EntryCategoryDTO> categories) {
 		super();
 		this.id = id;
-		this.criationMoment = criationMoment;
 		this.value = value;
 		this.description = description;
 		this.dueDate = dueDate;
@@ -42,12 +42,13 @@ public class EntryDTO implements Serializable {
 		this.installmentNumber = installmentNumber;
 		this.numberInstallmentsTotal = numberInstallmentsTotal;
 		this.entryType = entryType;
+		this.creationMoment = creationMoment;
+		this.lastUpdate = lastUpdate;
 		this.categories = categories;
 	}
 
 	public EntryDTO(Entry obj) {
 		this.id = obj.getId();
-		this.criationMoment = obj.getCriationMoment();
 		this.value = obj.getValue();
 		this.description = obj.getDescription();
 		this.dueDate = obj.getDueDate();
@@ -56,6 +57,8 @@ public class EntryDTO implements Serializable {
 		this.numberInstallmentsTotal = obj.getNumberInstallmentsTotal();
 		this.entryType = obj.getEntryType();
 		this.categories = obj.getCategories().stream().map(x -> new EntryCategoryDTO(x)).collect(Collectors.toList());
+		this.creationMoment = obj.getCreationMoment();
+		this.lastUpdate = obj.getLastUpdate();
 	}
 
 	public Long getId() {
@@ -64,14 +67,6 @@ public class EntryDTO implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Instant getCriationMoment() {
-		return criationMoment;
-	}
-
-	public void setCriationMoment(Instant criationMoment) {
-		this.criationMoment = criationMoment;
 	}
 
 	public BigDecimal getValue() {
@@ -128,6 +123,22 @@ public class EntryDTO implements Serializable {
 
 	public void setEntryType(EntryType entryType) {
 		this.entryType = entryType;
+	}
+
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	public List<EntryCategoryDTO> getCategories() {
