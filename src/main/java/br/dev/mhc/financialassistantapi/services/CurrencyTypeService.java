@@ -107,8 +107,6 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 	}
 
 	public CurrencyType findByCode(String code) {
-		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
-		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
 		updateCurrencyExchange();
 		return repository.findByCode(code);
 	}
