@@ -6,12 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-
-import org.hibernate.validator.constraints.Length;
-
 import br.dev.mhc.financialassistantapi.entities.User;
 import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 import br.dev.mhc.financialassistantapi.services.validation.UserUpdate;
@@ -22,19 +16,9 @@ public class UserDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-
-	@NotEmpty(message = "The user's name is a required field")
-	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String name;
-
-	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
-
-	@NotEmpty(message = "The user's email is a required field")
-	@Email(message = "Invalid email adress")
-	@Column(unique = true)
 	private String email;
-
 	private Instant registrationMoment;
 	private String imageUrl;
 	private CurrencyTypeDTO defaultCurrencyType;

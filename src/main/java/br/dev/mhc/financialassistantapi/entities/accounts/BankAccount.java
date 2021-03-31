@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.CurrencyType;
@@ -18,12 +16,7 @@ public class BankAccount extends Account {
 
 	private static final long serialVersionUID = 1L;
 
-	@NotNull(message = "Bank interest rate is a required field")
-	@PositiveOrZero(message = "The bank interest rate must be greater than or equal to zero")
 	private BigDecimal bankInterestRate;
-
-	@NotNull(message = "Limit value is a required field")
-	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
 	private BigDecimal limitValueBankAccount;
 
 	public BankAccount() {

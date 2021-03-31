@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.CurrencyType;
@@ -20,18 +16,8 @@ public class CreditCard extends Account {
 
 	private static final long serialVersionUID = 1L;
 
-	@NotNull(message = "Closing day is a required field")
-	@Min(value = 1, message = "Choose a day between 1 and 31")
-	@Max(value = 31, message = "Choose a day between 1 and 31")
 	private Integer closingDay;
-
-	@NotNull(message = "Due day is a required field")
-	@Min(value = 1, message = "Choose a day between 1 and 31")
-	@Max(value = 31, message = "Choose a day between 1 and 31")
 	private Integer dueDay;
-
-	@NotNull(message = "Limit value is a required field")
-	@PositiveOrZero(message = "The limit value must be greater than or equal to zero")
 	private BigDecimal limitValueCard;
 
 	public CreditCard() {

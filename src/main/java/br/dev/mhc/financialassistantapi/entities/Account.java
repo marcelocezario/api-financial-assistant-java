@@ -15,10 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Length;
 
 import br.dev.mhc.financialassistantapi.entities.enums.AccountType;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
@@ -33,13 +29,8 @@ public abstract class Account implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@NotEmpty(message = "The account's name is a required field")
-	@Length(max = 50, message = "Maximum number of 50 characters exceeded")
 	private String name;
 	private BigDecimal balance;
-
-	@NotNull(message = "Entrytype cannot be null")
 	private Integer accountType;
 
 	@ManyToOne

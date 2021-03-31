@@ -2,44 +2,25 @@ package br.dev.mhc.financialassistantapi.dto;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-
-import org.hibernate.validator.constraints.Length;
-
 import br.dev.mhc.financialassistantapi.services.validation.UserInsert;
 
 @UserInsert
-public class UserNewDTO implements Serializable{
-	
+public class UserNewDTO implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
-	@NotEmpty(message = "The user's name is a required field")
-	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String name;
-
-	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
-
-	@NotEmpty(message = "The user's email is a required field")
-	@Email(message = "Invalid email adress")
-	@Column(unique = true)
 	private String email;
-	
-	@NotEmpty(message = "Required field")
 	private String password;
-	
+
 	private CurrencyTypeDTO defaultCurrencyType;
 
 	public UserNewDTO() {
 	}
-	
-	public UserNewDTO(
-			@NotEmpty(message = "Required field") @Length(max = 80, message = "Maximum number of 80 characters exceeded") String name,
-			@Length(max = 80, message = "Maximum number of 80 characters exceeded") String nickname,
-			@NotEmpty(message = "Required field") @Email(message = "Invalid email adress") String email,
-			@NotEmpty(message = "Required field") String password, CurrencyTypeDTO defaultCurrencyType) {
+
+	public UserNewDTO(String name, String nickname, String email, String password,
+			CurrencyTypeDTO defaultCurrencyType) {
 		super();
 		this.name = name;
 		this.nickname = nickname;

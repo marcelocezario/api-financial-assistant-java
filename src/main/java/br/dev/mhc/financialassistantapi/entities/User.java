@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,10 +21,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-
-import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,24 +35,11 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@NotEmpty(message = "The user's name is a required field")
-	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String name;
-
-	@NotEmpty(message = "The user's nickname is a required field")
-	@Length(max = 80, message = "Maximum number of 80 characters exceeded")
 	private String nickname;
-
-	@NotEmpty(message = "The user's email is a required field")
-	@Email(message = "Invalid email adress")
-	@Column(unique = true)
 	private String email;
-
-	@NotEmpty(message = "The user's password is a required field")
 	@JsonIgnore
 	private String password;
-
 	private Instant registrationMoment;
 	private String imageUrl;
 

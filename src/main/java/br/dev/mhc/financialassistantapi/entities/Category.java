@@ -14,9 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-
-import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "tb_category")
@@ -27,9 +24,6 @@ public class Category implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@NotEmpty(message = "The category's name is a required field")
-	@Length(max = 50, message = "Maximum number of 50 characters exceeded")
 	private String name;
 	private String iconUrl;
 	private boolean defaultForAllUsers;
@@ -53,7 +47,7 @@ public class Category implements Serializable {
 		this.user = user;
 		this.defaultForAllUsers = false;
 	}
-	
+
 	public Category(Long id, String name, String iconUrl, User user, boolean defaultForAllUsers) {
 		super();
 		this.id = id;

@@ -15,8 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
@@ -29,30 +27,13 @@ public class Entry implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@NotNull
 	private Instant criationMoment;
-
-	@NotNull
-	@PositiveOrZero
 	private BigDecimal value;
-
 	private String description;
-
-	@NotNull
 	private Instant dueDate;
-
 	private Instant paymentMoment;
-
-	@NotNull
-	@PositiveOrZero
 	private Integer installmentNumber;
-
-	@NotNull
-	@PositiveOrZero
 	private Integer numberInstallmentsTotal;
-
-	@NotNull
 	private Integer entryType;
 
 	@ManyToOne(fetch = FetchType.EAGER)

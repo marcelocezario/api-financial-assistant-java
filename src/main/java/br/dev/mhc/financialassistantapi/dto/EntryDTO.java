@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 
@@ -19,23 +16,12 @@ public class EntryDTO implements Serializable {
 
 	private Long id;
 	private Instant criationMoment;
-
-	@NotNull
-	@PositiveOrZero
 	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
 	private Instant paymentMoment;
-
-	@NotNull
-	@PositiveOrZero
 	private Integer installmentNumber;
-
-	@NotNull
-	@PositiveOrZero
 	private Integer numberInstallmentsTotal;
-
-	@NotNull
 	private EntryType entryType;
 
 	private List<EntryCategoryDTO> categories = new ArrayList<>();

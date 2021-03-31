@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.Positive;
 
 @Entity
 @Table(name = "tb_entry_category")
@@ -16,8 +15,6 @@ public class EntryCategory implements Serializable {
 
 	@EmbeddedId
 	private EntryCategoryPK id = new EntryCategoryPK();
-
-	@Positive(message = "Value must be positive")
 	private BigDecimal value;
 
 	public EntryCategory() {
