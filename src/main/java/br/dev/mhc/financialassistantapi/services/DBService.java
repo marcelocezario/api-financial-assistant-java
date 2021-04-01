@@ -4,177 +4,106 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Category;
 import br.dev.mhc.financialassistantapi.entities.CurrencyType;
-import br.dev.mhc.financialassistantapi.entities.Entry;
-import br.dev.mhc.financialassistantapi.entities.EntryCategory;
 import br.dev.mhc.financialassistantapi.entities.User;
-import br.dev.mhc.financialassistantapi.entities.accounts.BankAccount;
-import br.dev.mhc.financialassistantapi.entities.accounts.CreditCard;
-import br.dev.mhc.financialassistantapi.entities.accounts.Wallet;
-import br.dev.mhc.financialassistantapi.entities.enums.EntryType;
 import br.dev.mhc.financialassistantapi.entities.enums.Profile;
-import br.dev.mhc.financialassistantapi.repositories.AccountRepository;
 import br.dev.mhc.financialassistantapi.repositories.CategoryRepository;
 import br.dev.mhc.financialassistantapi.repositories.CurrencyTypeRepository;
-import br.dev.mhc.financialassistantapi.repositories.EntryCategoryRepository;
-import br.dev.mhc.financialassistantapi.repositories.EntryRepository;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 
 @Service
 public class DBService {
 
 	@Autowired
+	private UserRepository userRepository;
+
+	@Value("${dbseed.admin_user.email}")
+	private String adminEmail;
+
+	@Value("${dbseed.admin_user.password}")
+	private String adminPassword;
+
+	@Autowired
 	private BCryptPasswordEncoder pe;
 
 	@Autowired
-	private UserRepository userRepository;
+	private CurrencyTypeRepository currencyRepository;
 
 	@Autowired
-	private AccountRepository accountRepository;
+	private CurrencyTypeService currencyService;
 
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-	@Autowired
-	private EntryRepository entryRepository;
+	public void databaseSeeding() throws ParseException {
+		// add user admin
+		User user;
+		if (userRepository.count() > 0) {
+			user = userRepository.findById(1l).get();
+		} else {
+			user = new User(1l, null, "Administrador", "Admin", adminEmail, pe.encode(adminPassword), null, null);
+			user.addProfile(Profile.ADMIN);
+			user = userRepository.save(user);
+		}
 
-	@Autowired
-	private EntryCategoryRepository entryCategoryRepository;
-
-	@Autowired
-	private CurrencyTypeRepository currencyTypeRepository;
-
-	@SuppressWarnings("unused")
-	@Autowired
-	private CurrencyTypeService currencyService;
-
-	public void instantiateTestDatabase() throws ParseException {
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		System.out.println("Database test");
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
+		// add currencies
 		Instant momentUpdate = Instant.now().minusMillis(300000L);
 		List<CurrencyType> currencies = new ArrayList<>();
 		currencies.add(new CurrencyType(1L, "BRL", "Real", "R$", 2, BigDecimal.ZERO));
 		currencies.add(new CurrencyType(2L, "USD", "Dólar Americano", "US$", 2, BigDecimal.ZERO));
 		currencies.add(new CurrencyType(3L, "EUR", "Euro", "€", 2, BigDecimal.ZERO));
-
+		currencies.add(new CurrencyType(4L, "GBP", "Libra Esterlina", "£", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(5L, "ARS", "Peso Argentino", "ARS", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(6L, "CAD", "Dólar Canadense", "C$", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(8L, "AUD", "Dólar Australiano", "AU$", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(9L, "JPY", "Iene", "¥", 0, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(10L, "CNY", "Renminbi", "CN¥", 1, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(11L, "BTC", "Bitcoin", "₿", 5, BigDecimal.ZERO));
+		Long registers = currencyRepository.count();
 		for (CurrencyType x : currencies) {
-			x.setCreationMoment(momentUpdate);
-			x.setLastUpdate(momentUpdate);
+			if(x.getId() < registers) {
+				currencies.remove(x);
+			} else {
+				x.setCreationMoment(momentUpdate);
+				x.setLastUpdate(momentUpdate);
+			}
 		}
+		currencyRepository.saveAll(currencies);
+		currencyService.updateCurrencyExchange();
+		
+		// add categories
+		List<Category> categories = new ArrayList<>();
+		categories.add(new Category(1L, "Alimentação", "", user, true));
+		categories.add(new Category(2L, "Automotivo", "", user, true));
+		categories.add(new Category(3L, "Cartão de crédito", "", user, true));
+		categories.add(new Category(4L, "Doações/Presentes", "", user, true));
+		categories.add(new Category(5L, "Educação", "", user, true));
+		categories.add(new Category(6L, "Impostos/Tributos", "", user, true));
+		categories.add(new Category(7L, "Investimento", "", user, true));
+		categories.add(new Category(8L, "Lazer", "", user, true));
+		categories.add(new Category(9L, "Moradia", "", user, true));
+		categories.add(new Category(10L, "Pet", "", user, true));
+		categories.add(new Category(11L, "Produtos de Limpeza", "", user, true));
+		categories.add(new Category(12L, "Saque", "", user, true));
+		categories.add(new Category(13L, "Saúde", "", user, true));
+		categories.add(new Category(14L, "Seguros", "", user, true));
+		categories.add(new Category(15L, "Tarifas Bancárias", "", user, true));
+		categories.add(new Category(16L, "Trabalho", "", user, true));
+		categories.add(new Category(17L, "Transporte", "", user, true));
+		categories.add(new Category(18L, "Vestuário", "", user, true));
+		categories.add(new Category(19L, "Viagens", "", user, true));
+		for (Long i = categoryRepository.count(); i > 0; i--) {
+			categories.remove(0);
+		}
+		categoryRepository.saveAll(categories);
 
-		currencyTypeRepository.saveAll(currencies);
-
-		CurrencyType brl = null;
-		CurrencyType usd = null;
-
-		User u1 = new User(null, "Henrique Cezário", "Henrique", "marcelocezario@gmail.com", pe.encode("111111"), null,
-				usd);
-		u1.addProfile(Profile.ADMIN);
-
-		User u2 = new User(null, "Jennifer", "Jenn", "jenni@gmail.com", pe.encode("222222"), null, brl);
-		User u3 = new User(null, "Niele Angela", "Dekhan", "dekhan@gmail.com", pe.encode("333333"), null, brl);
-		User u4 = new User(null, "Bruno Rafael", "blk", "blk@gmail.com", pe.encode("444444"), null, brl);
-		User u5 = new User(null, "Bruno Cezario", "Bruno", "bruno@gmail.com", pe.encode("555555"), null, brl);
-		User u6 = new User(null, "Carlos José Cezario", "Carlos", "carlos@gmail.com", pe.encode("666666"), null, brl);
-
-		Account a1 = new Wallet(null, "Carteira", new BigDecimal("0"), brl, u1);
-		Account a2 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), brl, new BigDecimal("8.0"),
-				new BigDecimal("1000.0"), u1);
-		Account a3 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), brl, 15, 25,
-				new BigDecimal("200.0"), u1);
-		Account a4 = new Wallet(null, "Carteira", new BigDecimal("0"), brl, u2);
-		Account a5 = new BankAccount(null, "Conta corrente", new BigDecimal("0"), brl, new BigDecimal("10.0"),
-				new BigDecimal("500.0"), u2);
-		Account a6 = new CreditCard(null, "Cartão de crédito", new BigDecimal("0"), brl, 10, 20,
-				new BigDecimal("500.0"), u2);
-
-		Category c1 = new Category(null, "Alimentação", "", u2, true);
-		Category c2 = new Category(null, "Automotivo", "", u2, true);
-		Category c3 = new Category(null, "Cartão de crédito", "", u2, true);
-		Category c4 = new Category(null, "Doações/Presentes", "", u2, true);
-		Category c5 = new Category(null, "Educação", "", u1, true);
-		Category c6 = new Category(null, "Impostos/Tributos", "", u1, true);
-		Category c7 = new Category(null, "Investimento", "", u1, true);
-		Category c8 = new Category(null, "Lazer", "", u1, true);
-		Category c9 = new Category(null, "Moradia", "", u1, true);
-		Category c10 = new Category(null, "Pet", "", u1, true);
-		Category c11 = new Category(null, "Produtos de Limpeza", "", u1, true);
-		Category c12 = new Category(null, "Saque", "", u1, true);
-		Category c13 = new Category(null, "Saúde", "", u1, true);
-		Category c14 = new Category(null, "Seguros", "", u1, true);
-		Category c15 = new Category(null, "Tarifas Bancárias", "", u1, true);
-		Category c16 = new Category(null, "Trabalho", "", u1, true);
-		Category c17 = new Category(null, "Transporte", "", u1, true);
-		Category c18 = new Category(null, "Vestuário", "", u1, true);
-		Category c19 = new Category(null, "Viagens", "", u1, true);
-
-		Entry e1 = new Entry(null, new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(), 1, 1,
-				EntryType.DEBIT, a4, u2);
-		Entry e2 = new Entry(null, new BigDecimal("15.0"), "Compra lanche", Instant.now(), Instant.now(), 1, 1,
-				EntryType.DEBIT, a4, u2);
-		Entry e3 = new Entry(null, new BigDecimal("20.0"), "Compra lanche", Instant.now(), Instant.now(), 1, 1,
-				EntryType.DEBIT, a4, u2);
-		Entry e4 = new Entry(null, new BigDecimal("25.0"), "Compra lanche", Instant.now(), Instant.now(), 1, 1,
-				EntryType.DEBIT, a4, u2);
-		Entry e5 = new Entry(null, new BigDecimal("30.0"), "Compra lanche", Instant.now(), Instant.now(), 1, 1,
-				EntryType.DEBIT, a4, u2);
-		Entry e6 = new Entry(null, new BigDecimal("50.0"), "Dinheiro recebido", Instant.now(), Instant.now(), 1, 1,
-				EntryType.CREDIT, a4, u2);
-		Entry e7 = new Entry(null, new BigDecimal("10.0"), "Compra lanche", Instant.now(), Instant.now(), 1, 1,
-				EntryType.DEBIT, a4, u2);
-
-		Entry e8 = new Entry(null, new BigDecimal("10.0"), "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT,
-				null, u2);
-		Entry e9 = new Entry(null, new BigDecimal("15.0"), "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT,
-				null, u2);
-		Entry e10 = new Entry(null, new BigDecimal("16.0"), "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT,
-				null, u2);
-		Entry e11 = new Entry(null, new BigDecimal("17.0"), "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT,
-				null, u2);
-		Entry e12 = new Entry(null, new BigDecimal("20.0"), "Compra lanche", Instant.now(), null, 1, 1, EntryType.DEBIT,
-				null, u2);
-
-		a4.addEntry(e1);
-		a4.addEntry(e2);
-		a4.addEntry(e3);
-		a4.addEntry(e4);
-		a4.addEntry(e5);
-		a4.addEntry(e6);
-		a4.addEntry(e7);
-
-		EntryCategory ec1 = new EntryCategory(e1, c1, new BigDecimal("10.00"));
-		EntryCategory ec2 = new EntryCategory(e2, c1, new BigDecimal("15.00"));
-		EntryCategory ec3 = new EntryCategory(e3, c1, new BigDecimal("20.00"));
-		EntryCategory ec4 = new EntryCategory(e4, c1, new BigDecimal("15.00"));
-		EntryCategory ec5 = new EntryCategory(e5, c1, new BigDecimal("30.00"));
-		EntryCategory ec6 = new EntryCategory(e6, c3, new BigDecimal("50.00"));
-		EntryCategory ec7 = new EntryCategory(e7, c1, new BigDecimal("10.00"));
-		EntryCategory ec8 = new EntryCategory(e8, c1, new BigDecimal("10.00"));
-		EntryCategory ec9 = new EntryCategory(e9, c1, new BigDecimal("15.00"));
-
-		EntryCategory ec10 = new EntryCategory(e10, c1, new BigDecimal("10.00"));
-		EntryCategory ec11 = new EntryCategory(e10, c2, new BigDecimal("6.00"));
-
-		EntryCategory ec12 = new EntryCategory(e11, c1, new BigDecimal("17.00"));
-		EntryCategory ec13 = new EntryCategory(e12, c1, new BigDecimal("20.00"));
-
-		userRepository.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
-		accountRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6));
-		categoryRepository.saveAll(
-				Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19));
-		entryRepository.saveAll(Arrays.asList(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12));
-		entryCategoryRepository
-				.saveAll(Arrays.asList(ec1, ec2, ec3, ec4, ec5, ec6, ec7, ec8, ec9, ec10, ec11, ec12, ec13));
 	}
 }

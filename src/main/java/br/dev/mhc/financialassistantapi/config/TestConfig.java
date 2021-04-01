@@ -14,13 +14,14 @@ import br.dev.mhc.financialassistantapi.services.email.MockEmailService;
 @Configuration
 @Profile("test")
 public class TestConfig {
-	
+
 	@Autowired
 	private DBService dbService;
-	
+
 	@Bean
 	public boolean instantiateDatabase() throws ParseException {
-		dbService.instantiateTestDatabase();
+		dbService.databaseSeeding();
+//		dbService.instantiateTestDatabase();
 		return true;
 	}
 
