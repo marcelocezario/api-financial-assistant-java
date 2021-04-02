@@ -56,6 +56,17 @@ public class AccountService implements CrudInterface<Account, Long> {
 			obj.setUuid(UUID.randomUUID().toString());
 		obj.setCreationMoment(Instant.now());
 		obj.setUser(userService.findById(userSS.getId()));
+		if (obj.getCurrencyType() == null) {
+			obj.setCurrencyType(obj.getUser().getDefaultCurrencyType());
+		} else {
+			if(obj.getCurrencyType().getCode() != null) {
+				obj.setCurrencyType(currencyService.findByCode(obj.getCurrencyType().getCode()));
+			} else if (obj.getCurrencyType().getUuid() != null) {
+				obj.setCurrencyType(currencyService.findByUuid(obj.getCurrencyType().getUuid()));
+			} else {
+				obj.setCurrencyType(defaultService.defaultCurrency());
+			}
+		}
 		obj = repository.save(obj);
 		return obj;
 	}
