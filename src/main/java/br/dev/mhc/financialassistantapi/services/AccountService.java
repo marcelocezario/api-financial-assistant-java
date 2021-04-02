@@ -94,7 +94,7 @@ public class AccountService implements CrudInterface<Account, Long> {
 	public Account findById(Long id) {
 		Optional<Account> obj = repository.findById(id);
 		Account account = obj.orElseThrow(() -> new ObjectNotFoundException(
-				"Object not found! Id: " + id + ", Type: " + Account.class.getName()));
+				"Object not found! Uuid: " + id + ", Type: " + Account.class.getName()));
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		return account;
 	}
