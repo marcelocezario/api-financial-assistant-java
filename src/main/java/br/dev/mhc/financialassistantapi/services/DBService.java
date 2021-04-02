@@ -51,16 +51,16 @@ public class DBService {
 		// add currencies
 		Instant momentUpdate = Instant.now().minusMillis(300000L);
 		List<CurrencyType> currencies = new ArrayList<>();
-		currencies.add(new CurrencyType(1L, "BRL", "Real", "R$", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(2L, "USD", "Dólar Americano", "US$", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(3L, "EUR", "Euro", "€", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(4L, "GBP", "Libra Esterlina", "£", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(5L, "ARS", "Peso Argentino", "ARS", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(6L, "CAD", "Dólar Canadense", "C$", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(8L, "AUD", "Dólar Australiano", "AU$", 2, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(9L, "JPY", "Iene", "¥", 0, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(10L, "CNY", "Renminbi", "CN¥", 1, BigDecimal.ZERO));
-		currencies.add(new CurrencyType(11L, "BTC", "Bitcoin", "₿", 5, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(1L, UUID.nameUUIDFromBytes("BRL".getBytes()).toString(), "BRL", "Real", "R$", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(2L, UUID.nameUUIDFromBytes("USD".getBytes()).toString(), "USD", "Dólar Americano", "US$", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(3L, UUID.nameUUIDFromBytes("EUR".getBytes()).toString(), "EUR", "Euro", "€", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(4L, UUID.nameUUIDFromBytes("GPD".getBytes()).toString(), "GBP", "Libra Esterlina", "£", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(5L, UUID.nameUUIDFromBytes("ARS".getBytes()).toString(), "ARS", "Peso Argentino", "ARS", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(6L, UUID.nameUUIDFromBytes("CAD".getBytes()).toString(), "CAD", "Dólar Canadense", "C$", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(8L, UUID.nameUUIDFromBytes("AUD".getBytes()).toString(), "AUD", "Dólar Australiano", "AU$", 2, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(9L, UUID.nameUUIDFromBytes("JPY".getBytes()).toString(), "JPY", "Iene", "¥", 0, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(10L, UUID.nameUUIDFromBytes("CNY".getBytes()).toString(), "CNY", "Renminbi", "CN¥", 1, BigDecimal.ZERO));
+		currencies.add(new CurrencyType(11L, UUID.nameUUIDFromBytes("BTC".getBytes()).toString(), "BTC", "Bitcoin", "₿", 5, BigDecimal.ZERO));
 		Long registers = currencyRepository.count();
 		for (CurrencyType x : currencies) {
 			if (x.getId() < registers) {

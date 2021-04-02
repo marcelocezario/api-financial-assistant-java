@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,8 @@ public class AccountService implements CrudInterface<Account, Long> {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
 		obj.setId(null);
+		if (obj.getUuid() == null)
+			obj.setUuid(UUID.randomUUID().toString());
 		obj.setCreationMoment(Instant.now());
 		obj.setUser(userService.findById(userSS.getId()));
 		obj = repository.save(obj);
@@ -98,7 +101,7 @@ public class AccountService implements CrudInterface<Account, Long> {
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		return account;
 	}
-	
+
 	@Override
 	public Account findByUuid(String uuid) {
 		Optional<Account> obj = repository.findByUuid(uuid);

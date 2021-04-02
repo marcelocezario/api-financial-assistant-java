@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +41,9 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 	public CurrencyType insert(CurrencyType obj) {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		obj.setId(null);
+		if (obj.getUuid() == null)
+			obj.setUuid(UUID.randomUUID().toString());
 		obj.setCreationMoment(Instant.now());
 		obj.setLastUpdate(Instant.now());
 		return repository.save(obj);

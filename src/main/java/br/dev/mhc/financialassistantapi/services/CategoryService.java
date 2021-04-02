@@ -3,6 +3,7 @@ package br.dev.mhc.financialassistantapi.services;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,8 @@ public class CategoryService implements CrudInterface<Category, Long> {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
 		obj.setId(null);
+		if (obj.getUuid() == null)
+			obj.setUuid(UUID.randomUUID().toString());
 		obj.setUser(userService.findById(userSS.getId()));
 		obj.setCreationMoment(Instant.now());
 		obj = repository.save(obj);

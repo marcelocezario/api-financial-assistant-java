@@ -26,12 +26,12 @@ public class DefaultService {
 
 	public List<Account> defaultUserAccounts() {
 		List<Account> accounts = new ArrayList<>();
-		accounts.add(new Wallet(null, "Carteira", BigDecimal.ZERO, defaultCurrency(), null));
-		accounts.add(new BankAccount(null, "Conta corrente", BigDecimal.ZERO, defaultCurrency(), BigDecimal.ZERO,
+		accounts.add(new Wallet(null, null, "Carteira", BigDecimal.ZERO, defaultCurrency(), null));
+		accounts.add(new BankAccount(null, null, "Conta corrente", BigDecimal.ZERO, defaultCurrency(), BigDecimal.ZERO,
 				BigDecimal.ZERO, null));
-		accounts.add(new CreditCard(null, "Cartão de crédito", BigDecimal.ZERO, defaultCurrency(), 1, 10,
+		accounts.add(new CreditCard(null, null, "Cartão de crédito", BigDecimal.ZERO, defaultCurrency(), 1, 10,
 				BigDecimal.ZERO, null));
-		accounts.add(new InvestmentAccount(null, "Investimento", BigDecimal.ZERO, defaultCurrency(), null));
+		accounts.add(new InvestmentAccount(null, null, "Investimento", BigDecimal.ZERO, defaultCurrency(), null));
 		return accounts;
 	}
 }
