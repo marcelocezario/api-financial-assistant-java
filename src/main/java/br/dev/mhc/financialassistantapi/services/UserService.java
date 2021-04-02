@@ -72,7 +72,10 @@ public class UserService implements CrudInterface<User, Long> {
 			obj.setDefaultCurrencyType(defaultService.defaultCurrency());
 		}
 		for (Account account : defaultService.defaultUserAccounts()) {
-			account.setCreationMoment(obj.getCreationMoment());
+			account.setId(null);
+			if (account.getUuid() == null)
+				account.setUuid(UUID.randomUUID().toString());
+			account.setCreationMoment(Instant.now());
 			account.setCurrencyType(obj.getDefaultCurrencyType());
 			account.setUser(obj);
 			obj.addAccount(account);
