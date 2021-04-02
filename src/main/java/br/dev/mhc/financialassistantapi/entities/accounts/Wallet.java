@@ -20,7 +20,7 @@ public class Wallet extends Account {
 		this.setAccountType(AccountType.WALLET);
 	}
 
-	public Wallet(Long id, String name, BigDecimal balance, CurrencyType currencyType, User user) {
-		super(id, name, balance, AccountType.WALLET, currencyType, user);
+	public Wallet(Long id, String uuid, String name, BigDecimal balance, CurrencyType currencyType, User user) {
+		super(id, uuid, name, balance, AccountType.WALLET, currencyType, user);
 	}
 }

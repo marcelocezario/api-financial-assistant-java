@@ -20,7 +20,7 @@ public class InvestmentAccount extends Account {
 		this.setAccountType(AccountType.INVESTMENT_ACCOUNT);
 	}
 
-	public InvestmentAccount(Long id, String name, BigDecimal balance, CurrencyType currencyType, User user) {
-		super(id, name, balance, AccountType.INVESTMENT_ACCOUNT, currencyType, user);
+	public InvestmentAccount(Long id, String uuid, String name, BigDecimal balance, CurrencyType currencyType, User user) {
+		super(id, uuid, name, balance, AccountType.INVESTMENT_ACCOUNT, currencyType, user);
 	}
 }

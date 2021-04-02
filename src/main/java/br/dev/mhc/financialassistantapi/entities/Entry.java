@@ -27,6 +27,7 @@ public class Entry implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String uuid;
 	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
@@ -53,11 +54,12 @@ public class Entry implements Serializable {
 		active = true;
 	}
 
-	public Entry(Long id, BigDecimal value, String description, Instant dueDate, Instant paymentMoment,
+	public Entry(Long id, String uuid, BigDecimal value, String description, Instant dueDate, Instant paymentMoment,
 			Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType, Account account,
 			User user) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
 		this.value = value;
 		this.description = description;
 		this.dueDate = dueDate;
@@ -76,6 +78,14 @@ public class Entry implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public BigDecimal getValue() {

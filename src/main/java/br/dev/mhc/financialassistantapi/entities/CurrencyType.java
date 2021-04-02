@@ -20,6 +20,7 @@ public class CurrencyType implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String uuid;
 	private String code;
 	private String name;
 	private String initials;
@@ -33,10 +34,11 @@ public class CurrencyType implements Serializable {
 		active = true;
 	}
 
-	public CurrencyType(Long id, String code, String name, String initials, Integer decimalDigits,
+	public CurrencyType(Long id, String uuid, String code, String name, String initials, Integer decimalDigits,
 			BigDecimal priceInBRL) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
 		this.code = code;
 		this.name = name;
 		this.initials = initials;
@@ -51,6 +53,14 @@ public class CurrencyType implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getCode() {

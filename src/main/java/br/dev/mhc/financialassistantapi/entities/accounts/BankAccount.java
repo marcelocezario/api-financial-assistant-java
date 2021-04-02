@@ -23,9 +23,9 @@ public class BankAccount extends Account {
 		this.setAccountType(AccountType.BANK_ACCOUNT);
 	}
 
-	public BankAccount(Long id, String name, BigDecimal balance, CurrencyType currencyType, BigDecimal bankInterestRate,
+	public BankAccount(Long id, String uuid, String name, BigDecimal balance, CurrencyType currencyType, BigDecimal bankInterestRate,
 			BigDecimal limitValueBankAccount, User user) {
-		super(id, name, balance, AccountType.BANK_ACCOUNT, currencyType, user);
+		super(id, uuid, name, balance, AccountType.BANK_ACCOUNT, currencyType, user);
 		this.bankInterestRate = bankInterestRate;
 		this.limitValueBankAccount = limitValueBankAccount;
 	}

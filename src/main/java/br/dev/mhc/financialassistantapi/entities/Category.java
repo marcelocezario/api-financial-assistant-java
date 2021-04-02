@@ -25,6 +25,7 @@ public class Category implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String uuid;
 	private String name;
 	private String iconUrl;
 	private boolean defaultForAllUsers;
@@ -44,9 +45,10 @@ public class Category implements Serializable {
 		active = true;
 	}
 
-	public Category(Long id, String name, String iconUrl, User user) {
+	public Category(Long id, String uuid, String name, String iconUrl, User user) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
 		this.name = name;
 		this.iconUrl = iconUrl;
 		this.user = user;
@@ -77,6 +79,14 @@ public class Category implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {

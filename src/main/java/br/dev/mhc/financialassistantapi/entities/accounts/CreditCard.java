@@ -24,9 +24,9 @@ public class CreditCard extends Account {
 		this.setAccountType(AccountType.CREDIT_CARD);
 	}
 
-	public CreditCard(Long id, String name, BigDecimal balance, CurrencyType currencyType, Integer closignDay,
+	public CreditCard(Long id, String uuid, String name, BigDecimal balance, CurrencyType currencyType, Integer closignDay,
 			Integer dueDay, BigDecimal limitValueCard, User user) {
-		super(id, name, balance, AccountType.CREDIT_CARD, currencyType, user);
+		super(id, uuid, name, balance, AccountType.CREDIT_CARD, currencyType, user);
 		this.closingDay = closignDay;
 		this.dueDay = dueDay;
 		this.limitValueCard = limitValueCard;

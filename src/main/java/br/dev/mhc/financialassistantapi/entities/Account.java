@@ -30,6 +30,7 @@ public abstract class Account implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String uuid;
 	private String name;
 	private BigDecimal balance;
 	private Integer accountType;
@@ -53,10 +54,11 @@ public abstract class Account implements Serializable {
 		active = true;
 	}
 
-	public Account(Long id, String name, BigDecimal balance, AccountType accountType, CurrencyType currencyType,
+	public Account(Long id, String uuid, String name, BigDecimal balance, AccountType accountType, CurrencyType currencyType,
 			User user) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
 		this.name = name;
 		this.balance = (balance != null) ? balance : BigDecimal.ZERO;
 		this.accountType = accountType.getCod();
@@ -71,6 +73,14 @@ public abstract class Account implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
