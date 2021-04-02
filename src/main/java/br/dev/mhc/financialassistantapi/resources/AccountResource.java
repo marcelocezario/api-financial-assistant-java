@@ -36,7 +36,8 @@ public class AccountResource {
 	public ResponseEntity<Void> insert(@Valid @RequestBody AccountDTO objDTO) {
 		Account obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
