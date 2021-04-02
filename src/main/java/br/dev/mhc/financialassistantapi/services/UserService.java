@@ -91,6 +91,7 @@ public class UserService implements CrudInterface<User, Long> {
 		newObj.setName(obj.getName());
 		newObj.setNickname(obj.getNickname());
 		newObj.setEmail(obj.getEmail());
+		newObj.setImageUrl(obj.getImageUrl());
 		newObj.setLastUpdate(Instant.now());
 		newObj.setDefaultCurrencyType(obj.getDefaultCurrencyType());
 		return repository.save(newObj);
