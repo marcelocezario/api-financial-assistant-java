@@ -9,9 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Digits;
 
 @Entity
-@Table(name = "tb_currency_use")
+@Table(name = "tb_currency_type")
 public class CurrencyType implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -25,6 +26,7 @@ public class CurrencyType implements Serializable {
 	private String name;
 	private String initials;
 	private Integer decimalDigits;
+	@Digits(integer = 8, fraction = 5)
 	private BigDecimal priceInBRL;
 	private Instant creationMoment;
 	private Instant lastUpdate;
