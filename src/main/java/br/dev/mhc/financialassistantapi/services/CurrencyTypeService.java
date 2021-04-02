@@ -79,6 +79,16 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 	}
 
 	@Override
+	public CurrencyType findByUuid(String uuid) {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
+		updateCurrencyExchange();
+		Optional<CurrencyType> obj = repository.findByUuid(uuid);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Uuid: " + uuid + ", Type: " + CurrencyType.class.getName()));
+	}
+
+	@Override
 	public List<CurrencyType> findAll() {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_OR_ADMIN);
@@ -94,7 +104,7 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 		updateCurrencyExchange();
 		return repository.findAll(pageRequest);
 	}
-	
+
 	@Transactional
 	public void updateCurrencyExchange() {
 		Long timeoutBetweenRequests = 86400000l / limitRequestHgFinance;
@@ -116,7 +126,7 @@ public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {
 	}
 
 	public CurrencyType fromDTO(CurrencyTypeDTO objDTO) {
-		return new CurrencyType(objDTO.getId(), objDTO.getCode(), objDTO.getName(), objDTO.getInitials(),
+		return new CurrencyType(null, objDTO.getUuid(), objDTO.getCode(), objDTO.getName(), objDTO.getInitials(),
 				objDTO.getDecimalDigits(), objDTO.getPriceInBRL());
 	}
 }

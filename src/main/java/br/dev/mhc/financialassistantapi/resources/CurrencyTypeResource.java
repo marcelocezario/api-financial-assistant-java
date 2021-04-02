@@ -34,7 +34,8 @@ public class CurrencyTypeResource {
 	public ResponseEntity<Void> insert(@Valid @RequestBody CurrencyTypeDTO objDTO) {
 		CurrencyType obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
@@ -46,11 +47,11 @@ public class CurrencyTypeResource {
 		return ResponseEntity.ok().body(listDTO);
 	}
 
-	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody CurrencyTypeDTO objDTO, @PathVariable Long id) {
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PutMapping(value = "/{uuid}")
+	public ResponseEntity<Void> update(@Valid @RequestBody CurrencyTypeDTO objDTO, @PathVariable String uuid) {
 		CurrencyType obj = service.fromDTO(objDTO);
-		obj.setId(id);
+		obj.setId(service.findByUuid(uuid).getId());
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}

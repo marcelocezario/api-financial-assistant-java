@@ -7,7 +7,7 @@ import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 
 public class CurrencyTypeDTO {
 
-	private Long id;
+	private String uuid;
 	private String code;
 	private String name;
 	private String initials;
@@ -18,9 +18,10 @@ public class CurrencyTypeDTO {
 	public CurrencyTypeDTO() {
 	}
 
-	public CurrencyTypeDTO(Long id, String code, String name, String initials, Integer decimalDigits, BigDecimal priceInBRL, Instant lastUpdate) {
+	public CurrencyTypeDTO(String uuid, String code, String name, String initials, Integer decimalDigits,
+			BigDecimal priceInBRL, Instant lastUpdate) {
 		super();
-		this.id = id;
+		this.uuid = uuid;
 		this.code = code;
 		this.name = name;
 		this.initials = initials;
@@ -30,7 +31,7 @@ public class CurrencyTypeDTO {
 	}
 
 	public CurrencyTypeDTO(CurrencyType obj) {
-		this.id = obj.getId();
+		this.uuid = obj.getUuid();
 		this.code = obj.getCode();
 		this.name = obj.getName();
 		this.initials = obj.getInitials();
@@ -39,12 +40,12 @@ public class CurrencyTypeDTO {
 		this.lastUpdate = obj.getLastUpdate();
 	}
 
-	public Long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getCode() {
