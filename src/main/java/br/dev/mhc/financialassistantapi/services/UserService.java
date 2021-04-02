@@ -116,14 +116,14 @@ public class UserService implements CrudInterface<User, Long> {
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
 	}
-	
+
 	@Override
 	public User findByUuid(String uuid) {
 		AuthService.validatesUserAuthorization(uuid, AuthorizationType.USER_OR_ADMIN);
 
 		Optional<User> obj = repository.findByUuid(uuid);
-		return obj.orElseThrow(
-				() -> new ObjectNotFoundException("Object not found! Id: " + uuid + ", Type: " + User.class.getName()));
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Uuid: " + uuid + ", Type: " + User.class.getName()));
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class UserService implements CrudInterface<User, Long> {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findAll(pageRequest);
 	}
-	
+
 	public User findByEmail(String email) {
 		return repository.findByEmail(email);
 	}
