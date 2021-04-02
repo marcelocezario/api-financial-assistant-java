@@ -73,7 +73,7 @@ public class AccountResource {
 			return ResponseEntity.noContent().build();
 		}
 		Entry entryAdjust = service.adjustBalance(account, objDTO.getBalance());
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entryAdjust.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(entryAdjust.getUuid())
 				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
