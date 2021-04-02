@@ -34,15 +34,16 @@ public class UserResource {
 
 	@Autowired
 	private UserService service;
-	
+
 	@PostMapping
 	public ResponseEntity<Void> insert(@Valid @RequestBody UserNewDTO objDTO) {
 		User obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
+
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@RequestMapping(value = "/picture", method = RequestMethod.POST)
 	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name = "file") MultipartFile file) {
@@ -56,7 +57,7 @@ public class UserResource {
 		User obj = service.findByUuid(uuid);
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
-	
+
 	@PreAuthorize("hasAnyRole('BASIC_USER') or hasAnyRole('ADMIN')")
 	@PutMapping(value = "/{uuid}")
 	public ResponseEntity<Void> update(@Valid @RequestBody UserDTO objDTO, @PathVariable String uuid) {
@@ -72,7 +73,7 @@ public class UserResource {
 		service.delete(service.findByUuid(uuid).getId());
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> findAll() {
