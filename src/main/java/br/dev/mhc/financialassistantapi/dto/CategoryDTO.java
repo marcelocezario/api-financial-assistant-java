@@ -9,7 +9,7 @@ public class CategoryDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	private String uuid;
 	private String name;
 	private String iconUrl;
 	private Instant creationMoment;
@@ -18,9 +18,9 @@ public class CategoryDTO implements Serializable {
 	public CategoryDTO() {
 	}
 
-	public CategoryDTO(Long id, String name, String iconUrl, Instant creationMoment, Instant lastUpdate) {
+	public CategoryDTO(String uuid, String name, String iconUrl, Instant creationMoment, Instant lastUpdate) {
 		super();
-		this.id = id;
+		this.uuid = uuid;
 		this.name = name;
 		this.iconUrl = iconUrl;
 		this.creationMoment = creationMoment;
@@ -28,19 +28,19 @@ public class CategoryDTO implements Serializable {
 	}
 
 	public CategoryDTO(Category obj) {
-		this.id = obj.getId();
+		this.uuid = obj.getUuid();
 		this.name = obj.getName();
 		this.iconUrl = obj.getIconUrl();
 		this.creationMoment = obj.getCreationMoment();
 		this.lastUpdate = obj.getLastUpdate();
 	}
 
-	public Long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {

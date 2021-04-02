@@ -82,6 +82,17 @@ public class CategoryService implements CrudInterface<Category, Long> {
 	}
 
 	@Override
+	public Category findByUuid(String uuid) {
+		Optional<Category> obj = repository.findByUuid(uuid);
+		Category category = obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Uuid: " + uuid + ", Type: " + Category.class.getName()));
+		if (!category.isDefaultForAllUsers()) {
+			AuthService.validatesUserAuthorization(category.getUser().getId(), AuthorizationType.USER_ONLY);
+		}
+		return category;
+	}
+
+	@Override
 	public List<Category> findAll() {
 		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
 		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
@@ -111,7 +122,7 @@ public class CategoryService implements CrudInterface<Category, Long> {
 	}
 
 	public Category fromDTO(CategoryDTO objDTO) {
-		Category category = new Category(objDTO.getId(), objDTO.getName(), objDTO.getIconUrl(), null);
+		Category category = new Category(null, objDTO.getUuid(), objDTO.getName(), objDTO.getIconUrl(), null);
 		return category;
 	}
 }

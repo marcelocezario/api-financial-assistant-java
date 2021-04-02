@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	@Transactional(readOnly = true)
 	Page<Category> findByUserOrDefaultForAllUsersTrue(User user, Pageable pageRequest);
+
+	Optional<Category> findByUuid(String uuid);
 }

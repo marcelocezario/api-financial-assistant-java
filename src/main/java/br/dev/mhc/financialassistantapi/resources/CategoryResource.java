@@ -36,20 +36,21 @@ public class CategoryResource {
 	public ResponseEntity<Void> insert(@Valid @RequestBody CategoryDTO objDTO) {
 		Category obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping(value = "/default")
 	public ResponseEntity<Void> insertDefaultCategory(@Valid @RequestBody CategoryDTO objDTO) {
 		Category obj = service.fromDTO(objDTO);
 		obj.setDefaultForAllUsers(true);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping
@@ -60,17 +61,17 @@ public class CategoryResource {
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
-		Category obj = service.findById(id);
+	@GetMapping(value = "/{uuid}")
+	public ResponseEntity<CategoryDTO> findById(@PathVariable String uuid) {
+		Category obj = service.findByUuid(uuid);
 		return ResponseEntity.ok().body(new CategoryDTO(obj));
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER') or hasAnyRole('ADMIN')")
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody CategoryDTO objDTO, @PathVariable Long id) {
+	@PutMapping(value = "/{uuid}")
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoryDTO objDTO, @PathVariable String uuid) {
 		Category obj = service.fromDTO(objDTO);
-		obj.setId(id);
+		obj.setId(service.findByUuid(uuid).getId());
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
