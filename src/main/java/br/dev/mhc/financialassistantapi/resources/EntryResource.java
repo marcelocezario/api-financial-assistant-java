@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.dev.mhc.financialassistantapi.dto.EntryDTO;
 import br.dev.mhc.financialassistantapi.dto.EntryNewDTO;
 import br.dev.mhc.financialassistantapi.entities.Entry;
+import br.dev.mhc.financialassistantapi.services.AccountService;
 import br.dev.mhc.financialassistantapi.services.EntryService;
 
 @RestController
@@ -32,47 +33,52 @@ public class EntryResource {
 	@Autowired
 	private EntryService service;
 
+	@Autowired
+	private AccountService accountService;
+
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@PostMapping
 	public ResponseEntity<Void> insert(@Valid @RequestBody EntryNewDTO objDTO) {
 		Entry obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<EntryDTO> findById(@PathVariable Long id) {
-		Entry obj = service.findById(id);
+	@GetMapping(value = "/{uuid}")
+	public ResponseEntity<EntryDTO> findById(@PathVariable String uuid) {
+		Entry obj = service.findByUuid(uuid);
 		return ResponseEntity.ok().body(new EntryDTO(obj));
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@PutMapping(value = "/{idEntry}")
-	public ResponseEntity<Void> update(@Valid @RequestBody EntryDTO objDTO, @PathVariable Long idEntry) {
+	@PutMapping(value = "/{uuidEntry}")
+	public ResponseEntity<Void> update(@Valid @RequestBody EntryDTO objDTO, @PathVariable String uuidEntry) {
 		Entry obj = service.fromDTO(objDTO);
-		obj.setId(idEntry);
+		obj.setId(service.findByUuid(uuidEntry).getId());
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@GetMapping(value = "/account/{idAccount}")
-	public ResponseEntity<List<EntryDTO>> findByAccount(@PathVariable Long idAccount) {
-		List<Entry> list = service.findByAccount(idAccount);
+	@GetMapping(value = "/account/{uuidAccount}")
+	public ResponseEntity<List<EntryDTO>> findByAccount(@PathVariable String uuidAccount) {
+		List<Entry> list = service.findByAccount(accountService.findByUuid(uuidAccount));
 		List<EntryDTO> listDTO = list.stream().map(x -> new EntryDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@GetMapping(value = "/account/{idAccount}/page")
-	public ResponseEntity<Page<EntryDTO>> findPageByAccount(@PathVariable Long idAccount,
+	@GetMapping(value = "/account/{uuidAccount}/page")
+	public ResponseEntity<Page<EntryDTO>> findPageByAccount(@PathVariable String uuidAccount,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "paymentMoment") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "DESC") String direction) {
-		Page<Entry> list = service.findPageByAccount(idAccount, page, linesPerPage, orderBy, direction);
+		Page<Entry> list = service.findPageByAccount(accountService.findByUuid(uuidAccount), page, linesPerPage,
+				orderBy, direction);
 		Page<EntryDTO> listDTO = list.map(x -> new EntryDTO(x));
 		return ResponseEntity.ok().body(listDTO);
 	}

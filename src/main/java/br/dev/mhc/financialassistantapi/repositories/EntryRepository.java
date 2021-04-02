@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,10 +27,12 @@ public interface EntryRepository extends JpaRepository<Entry, Long> {
 
 	@Transactional(readOnly = true)
 	Page<Entry> findByUserAndAccountIsNull(User user, Pageable pageRequest);
-	
+
 	@Transactional(readOnly = true)
 	List<Entry> findByUserAndPaymentMomentIsNullOrderByDueDateAsc(User user);
 
 	@Transactional(readOnly = true)
 	Page<Entry> findByUserAndPaymentMomentIsNull(User user, Pageable pageRequest);
+
+	Optional<Entry> findByUuid(String uuid);
 }

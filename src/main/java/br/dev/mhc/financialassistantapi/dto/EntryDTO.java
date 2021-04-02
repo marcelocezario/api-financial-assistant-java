@@ -14,7 +14,7 @@ public class EntryDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	private String uuid;
 	private BigDecimal value;
 	private String description;
 	private Instant dueDate;
@@ -30,11 +30,11 @@ public class EntryDTO implements Serializable {
 	public EntryDTO() {
 	}
 
-	public EntryDTO(Long id, BigDecimal value, String description, Instant dueDate, Instant paymentMoment,
+	public EntryDTO(String uuid, BigDecimal value, String description, Instant dueDate, Instant paymentMoment,
 			Integer installmentNumber, Integer numberInstallmentsTotal, EntryType entryType, Instant creationMoment,
 			Instant lastUpdate, List<EntryCategoryDTO> categories) {
 		super();
-		this.id = id;
+		this.uuid = uuid;
 		this.value = value;
 		this.description = description;
 		this.dueDate = dueDate;
@@ -48,7 +48,7 @@ public class EntryDTO implements Serializable {
 	}
 
 	public EntryDTO(Entry obj) {
-		this.id = obj.getId();
+		this.uuid = obj.getUuid();
 		this.value = obj.getValue();
 		this.description = obj.getDescription();
 		this.dueDate = obj.getDueDate();
@@ -61,12 +61,12 @@ public class EntryDTO implements Serializable {
 		this.lastUpdate = obj.getLastUpdate();
 	}
 
-	public Long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public BigDecimal getValue() {

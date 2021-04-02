@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,6 +62,8 @@ public class EntryService implements CrudInterface<Entry, Long> {
 			}
 		}
 		obj.setId(null);
+		if (obj.getUuid() == null)
+			obj.setUuid(UUID.randomUUID().toString());
 		obj.setCreationMoment(Instant.now());
 		obj = repository.save(obj);
 		entryCategoryRepository.saveAll(obj.getCategories());
@@ -115,6 +118,15 @@ public class EntryService implements CrudInterface<Entry, Long> {
 	}
 
 	@Override
+	public Entry findByUuid(String uuid) {
+		Optional<Entry> obj = repository.findByUuid(uuid);
+		Entry entry = obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Uuid: " + uuid + ", Type: " + Entry.class.getName()));
+		AuthService.validatesUserAuthorization(entry.getUser().getId(), AuthorizationType.USER_ONLY);
+		return entry;
+	}
+
+	@Override
 	public List<Entry> findAll() {
 		// TODO Auto-generated method stub
 		return null;
@@ -126,8 +138,7 @@ public class EntryService implements CrudInterface<Entry, Long> {
 		return null;
 	}
 
-	public List<Entry> findByAccount(Long idAccount) {
-		Account account = accountService.findById(idAccount);
+	public List<Entry> findByAccount(Account account) {
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		return repository.findByAccountOrderByPaymentMomentDesc(account);
 	}
@@ -146,9 +157,8 @@ public class EntryService implements CrudInterface<Entry, Long> {
 		return repository.findByUserAndPaymentMomentIsNullOrderByDueDateAsc(user);
 	}
 
-	public Page<Entry> findPageByAccount(Long idAccount, Integer page, Integer linesPerPage, String orderBy,
+	public Page<Entry> findPageByAccount(Account account, Integer page, Integer linesPerPage, String orderBy,
 			String direction) {
-		Account account = accountService.findById(idAccount);
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findByAccount(account, pageRequest);
@@ -172,16 +182,17 @@ public class EntryService implements CrudInterface<Entry, Long> {
 	}
 
 	public Entry fromDTO(EntryDTO objDTO) {
-		Entry entry = new Entry(objDTO.getId(), objDTO.getValue(), objDTO.getDescription(), objDTO.getDueDate(),
+		Entry entry = new Entry(null, objDTO.getUuid(), objDTO.getValue(), objDTO.getDescription(), objDTO.getDueDate(),
 				objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(), objDTO.getNumberInstallmentsTotal(),
 				objDTO.getEntryType(), null, null);
 		return entry;
 	}
 
 	public Entry fromDTO(EntryNewDTO objDTO) {
-		Account account = (objDTO.getAccount() == null) ? null : accountService.findById(objDTO.getAccount().getId());
+		Account account = (objDTO.getAccount() == null) ? null
+				: accountService.findByUuid(objDTO.getAccount().getUuid());
 
-		Entry entry = new Entry(objDTO.getId(), objDTO.getValue(), objDTO.getDescription(), objDTO.getDueDate(),
+		Entry entry = new Entry(null, objDTO.getUuid(), objDTO.getValue(), objDTO.getDescription(), objDTO.getDueDate(),
 				objDTO.getPaymentMoment(), objDTO.getInstallmentNumber(), objDTO.getNumberInstallmentsTotal(),
 				objDTO.getEntryType(), account, null);
 
@@ -192,8 +203,8 @@ public class EntryService implements CrudInterface<Entry, Long> {
 	}
 
 	public Entry createAdjustEntry(Account account, BigDecimal valueEntry, EntryType entryType) {
-		Entry entry = new Entry(null, valueEntry, "Ajuste de saldo", Instant.now(), Instant.now(), 1, 1, entryType,
-				account, null);
+		Entry entry = new Entry(null, null, valueEntry, "Ajuste de saldo", Instant.now(), Instant.now(), 1, 1,
+				entryType, account, null);
 		return insert(entry);
 	}
 }
