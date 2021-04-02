@@ -1,4 +1,4 @@
-package br.dev.mhc.financialassistantapi.services;
+package br.dev.mhc.financialassistantapi.services.interfaces;
 
 import java.util.List;
 
@@ -13,6 +13,8 @@ public interface CrudInterface<T, ID> {
 	public void delete(ID id);
 
 	public T findById(ID id);
+
+	public T findByUuid(String uuid);
 
 	public List<T> findAll();
 

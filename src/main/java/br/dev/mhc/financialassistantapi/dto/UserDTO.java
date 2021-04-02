@@ -15,7 +15,7 @@ public class UserDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	private String uuid;
 	private String name;
 	private String nickname;
 	private String email;
@@ -29,10 +29,10 @@ public class UserDTO implements Serializable {
 	public UserDTO() {
 	}
 
-	public UserDTO(Long id, String name, String nickname, String email, String imageUrl, Instant creationMoment,
+	public UserDTO(String uuid, String name, String nickname, String email, String imageUrl, Instant creationMoment,
 			Instant lastUpdate, CurrencyTypeDTO defaultCurrencyType, List<Profile> profiles) {
 		super();
-		this.id = id;
+		this.uuid = uuid;
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
@@ -44,7 +44,7 @@ public class UserDTO implements Serializable {
 	}
 
 	public UserDTO(User obj) {
-		this.id = obj.getId();
+		this.uuid = obj.getUuid();
 		this.name = obj.getName();
 		this.nickname = obj.getNickname();
 		this.email = obj.getEmail();
@@ -55,12 +55,12 @@ public class UserDTO implements Serializable {
 		this.profiles = obj.getProfiles().stream().collect(Collectors.toList());
 	}
 
-	public Long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {

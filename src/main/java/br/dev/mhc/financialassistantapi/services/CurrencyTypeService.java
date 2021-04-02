@@ -21,6 +21,7 @@ import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
 import br.dev.mhc.financialassistantapi.services.hgservice.HGService;
+import br.dev.mhc.financialassistantapi.services.interfaces.CrudInterface;
 
 @Service
 public class CurrencyTypeService implements CrudInterface<CurrencyType, Long> {

@@ -35,21 +35,13 @@ public class UserResource {
 	@Autowired
 	private UserService service;
 	
-	/*
-	 *  Métodos que não exigem autenticação
-	 */
-
 	@PostMapping
 	public ResponseEntity<Void> insert(@Valid @RequestBody UserNewDTO objDTO) {
 		User obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{uuid}").buildAndExpand(obj.getUuid()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
-	/*
-	 * Métodos que exigem no mínimo autenticação HOLE_BASIC_USER (2)
-	 */
 	
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@RequestMapping(value = "/picture", method = RequestMethod.POST)
@@ -59,32 +51,28 @@ public class UserResource {
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-		User obj = service.findById(id);
+	@GetMapping(value = "/{uuid}")
+	public ResponseEntity<UserDTO> findByUuid(@PathVariable String uuid) {
+		User obj = service.findByUuid(uuid);
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 	
-	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody UserDTO objDTO, @PathVariable Long id) {
+	@PreAuthorize("hasAnyRole('BASIC_USER') or hasAnyRole('ADMIN')")
+	@PutMapping(value = "/{uuid}")
+	public ResponseEntity<Void> update(@Valid @RequestBody UserDTO objDTO, @PathVariable String uuid) {
 		User obj = service.fromDTO(objDTO);
-		obj.setId(id);
+		obj.setId(service.findByUuid(uuid).getId());
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		service.delete(id);
+	@DeleteMapping(value = "/{uuid}")
+	public ResponseEntity<Void> delete(@PathVariable String uuid) {
+		service.delete(service.findByUuid(uuid).getId());
 		return ResponseEntity.noContent().build();
 	}
 	
-	/*
-	 * Métodos que exigem autenticação de usuário com profile HOLE_ADMIN (1)
-	 */
-
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> findAll() {

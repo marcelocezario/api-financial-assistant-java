@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,17 +23,11 @@ import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 @Service
 public class DBService {
 
-	@Autowired
-	private UserRepository userRepository;
-
 	@Value("${dbseed.admin_user.email}")
 	private String adminEmail;
 
 	@Value("${dbseed.admin_user.password}")
 	private String adminPassword;
-
-	@Autowired
-	private BCryptPasswordEncoder pe;
 
 	@Autowired
 	private CurrencyTypeRepository currencyRepository;
@@ -41,19 +36,18 @@ public class DBService {
 	private CurrencyTypeService currencyService;
 
 	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private BCryptPasswordEncoder pe;
+
+	@Autowired
 	private CategoryRepository categoryRepository;
 
 	public void databaseSeeding() throws ParseException {
-		// add user admin
-		User user;
-		if (userRepository.count() > 0) {
-			user = userRepository.findById(1l).get();
-		} else {
-			user = new User(1l, null, "Administrador", "Admin", adminEmail, pe.encode(adminPassword), null, null);
-			user.addProfile(Profile.ADMIN);
-			user = userRepository.save(user);
-		}
-
 		// add currencies
 		Instant momentUpdate = Instant.now().minusMillis(300000L);
 		List<CurrencyType> currencies = new ArrayList<>();
@@ -69,7 +63,7 @@ public class DBService {
 		currencies.add(new CurrencyType(11L, "BTC", "Bitcoin", "₿", 5, BigDecimal.ZERO));
 		Long registers = currencyRepository.count();
 		for (CurrencyType x : currencies) {
-			if(x.getId() < registers) {
+			if (x.getId() < registers) {
 				currencies.remove(x);
 			} else {
 				x.setCreationMoment(momentUpdate);
@@ -78,7 +72,24 @@ public class DBService {
 		}
 		currencyRepository.saveAll(currencies);
 		currencyService.updateCurrencyExchange();
-		
+
+		// add user admin
+		User user = userRepository.findById(1L).orElse(null);
+		if (user == null) {
+			user = new User(1l, UUID.nameUUIDFromBytes(("adminUser").getBytes()).toString(), "Administrador", "Admin", adminEmail,
+					pe.encode(adminPassword), null, null);
+			user.addProfile(Profile.ADMIN);
+			user = userService.insert(user);
+		}
+
+		// add basic user
+		User basicUser = userRepository.findById(2L).orElse(null);
+		if (basicUser == null) {
+			basicUser = new User(2L, UUID.nameUUIDFromBytes(("basicUser").getBytes()).toString(), "Marcelo", "marcelo",
+					"marcelocezario@gmail.com", pe.encode("123456"), null, null);
+			basicUser = userService.insert(basicUser);
+		}
+
 		// add categories
 		List<Category> categories = new ArrayList<>();
 		categories.add(new Category(1L, "Alimentação", "", user, true));

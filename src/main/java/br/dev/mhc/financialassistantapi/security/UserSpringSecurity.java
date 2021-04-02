@@ -15,6 +15,7 @@ public class UserSpringSecurity implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	private String uuid;
 	private String email;
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
@@ -22,9 +23,10 @@ public class UserSpringSecurity implements UserDetails {
 	public UserSpringSecurity() {
 	}
 
-	public UserSpringSecurity(Long id, String email, String password, Set<Profile> profiles) {
+	public UserSpringSecurity(Long id, String uuid, String email, String password, Set<Profile> profiles) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
 		this.email = email;
 		this.password = password;
 		this.authorities = profiles.stream().map(x -> new SimpleGrantedAuthority(x.getDescription()))
@@ -33,6 +35,10 @@ public class UserSpringSecurity implements UserDetails {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getUuid() {
+		return uuid;
 	}
 
 	@Override

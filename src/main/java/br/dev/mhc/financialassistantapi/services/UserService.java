@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.email.EmailService;
 import br.dev.mhc.financialassistantapi.services.exceptions.DataIntegrityException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
+import br.dev.mhc.financialassistantapi.services.interfaces.CrudInterface;
 
 @Service
 public class UserService implements CrudInterface<User, Long> {
@@ -63,6 +65,9 @@ public class UserService implements CrudInterface<User, Long> {
 	@Override
 	public User insert(User obj) {
 		obj.setCreationMoment(Instant.now());
+		if (obj.getUuid() == null) {
+			obj.setUuid(UUID.randomUUID().toString());
+		}
 		if (obj.getDefaultCurrencyType() == null) {
 			obj.setDefaultCurrencyType(defaultService.defaultCurrency());
 		}
@@ -87,6 +92,7 @@ public class UserService implements CrudInterface<User, Long> {
 		newObj.setNickname(obj.getNickname());
 		newObj.setEmail(obj.getEmail());
 		newObj.setLastUpdate(Instant.now());
+		newObj.setDefaultCurrencyType(obj.getDefaultCurrencyType());
 		return repository.save(newObj);
 	}
 
@@ -110,6 +116,15 @@ public class UserService implements CrudInterface<User, Long> {
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
 	}
+	
+	@Override
+	public User findByUuid(String uuid) {
+		AuthService.validatesUserAuthorization(uuid, AuthorizationType.USER_OR_ADMIN);
+
+		Optional<User> obj = repository.findByUuid(uuid);
+		return obj.orElseThrow(
+				() -> new ObjectNotFoundException("Object not found! Id: " + uuid + ", Type: " + User.class.getName()));
+	}
 
 	@Override
 	public List<User> findAll() {
@@ -123,13 +138,13 @@ public class UserService implements CrudInterface<User, Long> {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findAll(pageRequest);
 	}
-
+	
 	public User findByEmail(String email) {
 		return repository.findByEmail(email);
 	}
 
 	public User fromDTO(UserDTO objDto) {
-		return new User(objDto.getId(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
+		return new User(null, objDto.getUuid(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
 				objDto.getImageUrl(), currencyService.fromDTO(objDto.getDefaultCurrencyType()));
 	}
 
@@ -143,7 +158,7 @@ public class UserService implements CrudInterface<User, Long> {
 		} else {
 			currency = currencyService.fromDTO(objDTO.getDefaultCurrencyType());
 		}
-		return new User(null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
+		return new User(null, null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
 				pe.encode(objDTO.getPassword()), null, currency);
 	}
 
@@ -155,11 +170,11 @@ public class UserService implements CrudInterface<User, Long> {
 		jpgImage = imageService.cropSquare(jpgImage);
 		jpgImage = imageService.resize(jpgImage, size);
 
-		String fileName = prefix + userSS.getId() + ".jpg";
+		String fileName = prefix + userSS.getUuid() + ".jpg";
 
 		URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 
-		User user = findById(userSS.getId());
+		User user = findByUuid(userSS.getUuid());
 		user.setImageUrl(uri.toString());
 		update(user);
 

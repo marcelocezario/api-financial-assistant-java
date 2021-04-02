@@ -20,7 +20,7 @@ public class AuthService {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	
 	@Autowired
 	private BCryptPasswordEncoder pe;
 
@@ -74,6 +74,33 @@ public class AuthService {
 		}
 	}
 
+	public static void validatesUserAuthorization(String authorizedUserUuid, AuthorizationType authorizationType) {
+		UserSpringSecurity userSS = getAuthenticatedUserSpringSecurity();
+
+		switch (authorizationType) {
+		case ADMIN_ONLY:
+			if (userSS == null || !userSS.hasRole(Profile.ADMIN)) {
+				throw new AuthorizationException("Access denied");
+			}
+			break;
+
+		case USER_ONLY:
+			if (userSS == null || !authorizedUserUuid.equals(userSS.getUuid())) {
+				throw new AuthorizationException("Access denied");
+			}
+			break;
+
+		case USER_OR_ADMIN:
+			if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !authorizedUserUuid.equals(userSS.getUuid())) {
+				throw new AuthorizationException("Access denied");
+			}
+			break;
+
+		default:
+			throw new AuthorizationException("Access denied");
+		}
+	}
+		
 	public void sendNewPassword(String email) {
 
 		User user = userRepository.findByEmail(email);

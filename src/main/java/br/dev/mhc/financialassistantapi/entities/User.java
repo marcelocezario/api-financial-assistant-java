@@ -32,6 +32,7 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String uuid;
 	private String name;
 	private String nickname;
 	private String email;
@@ -58,10 +59,11 @@ public class User implements Serializable {
 		addProfile(Profile.BASIC_USER);
 	}
 
-	public User(Long id, String name, String nickname, String email, String password, String imageUrl,
+	public User(Long id, String uuid, String name, String nickname, String email, String password, String imageUrl,
 			CurrencyType defaultCurrencyType) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
@@ -78,6 +80,14 @@ public class User implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
