@@ -14,7 +14,7 @@ public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	// Account
-	private Long id;
+	private String uuid;
 	private String name;
 	private BigDecimal balance;
 
@@ -42,11 +42,11 @@ public class AccountDTO implements Serializable {
 	public AccountDTO() {
 	}
 
-	public AccountDTO(Long id, String name, BigDecimal balance, AccountType accountType, Instant creationMoment,
+	public AccountDTO(String uuid, String name, BigDecimal balance, AccountType accountType, Instant creationMoment,
 			Instant lastUpdate, CurrencyTypeDTO currencyType, BigDecimal bankInterestRate,
 			BigDecimal limitValueBankAccount, Integer closingDay, Integer dueDay, BigDecimal limitValueCard) {
 		super();
-		this.id = id;
+		this.uuid = uuid;
 		this.name = name;
 		this.balance = balance;
 		this.accountType = accountType;
@@ -61,7 +61,7 @@ public class AccountDTO implements Serializable {
 	}
 
 	public AccountDTO(Account obj) {
-		this.id = obj.getId();
+		this.uuid = obj.getUuid();
 		this.name = obj.getName();
 		this.balance = obj.getBalance();
 		this.accountType = obj.getAccountType();
@@ -86,12 +86,12 @@ public class AccountDTO implements Serializable {
 		}
 	}
 
-	public Long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {

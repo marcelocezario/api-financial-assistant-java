@@ -1,6 +1,7 @@
 package br.dev.mhc.financialassistantapi.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	@Transactional(readOnly = true)
 	@Query("SELECT a FROM Account a WHERE a.user = :user")
 	List<Account> findByUser(User user);
+
+	Optional<Account> findByUuid(String uuid);
 }

@@ -98,6 +98,15 @@ public class AccountService implements CrudInterface<Account, Long> {
 		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
 		return account;
 	}
+	
+	@Override
+	public Account findByUuid(String uuid) {
+		Optional<Account> obj = repository.findByUuid(uuid);
+		Account account = obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Id: " + uuid + ", Type: " + Account.class.getName()));
+		AuthService.validatesUserAuthorization(account.getUser().getId(), AuthorizationType.USER_ONLY);
+		return account;
+	}
 
 	@Override
 	public List<Account> findAll() {
@@ -155,15 +164,15 @@ public class AccountService implements CrudInterface<Account, Long> {
 		}
 		switch (objDTO.getAccountType()) {
 		case WALLET:
-			return new Wallet(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency, null);
+			return new Wallet(null, objDTO.getUuid(), objDTO.getName(), objDTO.getBalance(), currency, null);
 		case BANK_ACCOUNT:
-			return new BankAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency,
+			return new BankAccount(null, objDTO.getUuid(), objDTO.getName(), objDTO.getBalance(), currency,
 					objDTO.getBankInterestRate(), objDTO.getLimitValueBankAccount(), null);
 		case CREDIT_CARD:
-			return new CreditCard(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency,
+			return new CreditCard(null, objDTO.getUuid(), objDTO.getName(), objDTO.getBalance(), currency,
 					objDTO.getClosingDay(), objDTO.getDueDay(), objDTO.getLimitValueCard(), null);
 		case INVESTMENT_ACCOUNT:
-			return new InvestmentAccount(objDTO.getId(), objDTO.getName(), objDTO.getBalance(), currency, null);
+			return new InvestmentAccount(null, objDTO.getUuid(), objDTO.getName(), objDTO.getBalance(), currency, null);
 		}
 		return null;
 	}

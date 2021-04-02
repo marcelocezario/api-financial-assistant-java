@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.dev.mhc.financialassistantapi.dto.AccountDTO;
 import br.dev.mhc.financialassistantapi.dto.AccountBalanceDTO;
+import br.dev.mhc.financialassistantapi.dto.AccountDTO;
 import br.dev.mhc.financialassistantapi.entities.Account;
 import br.dev.mhc.financialassistantapi.entities.Entry;
 import br.dev.mhc.financialassistantapi.services.AccountService;
@@ -29,50 +29,51 @@ import br.dev.mhc.financialassistantapi.services.AccountService;
 public class AccountResource {
 
 	@Autowired
-	private AccountService accountService;
+	private AccountService service;
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@PostMapping
 	public ResponseEntity<Void> insert(@Valid @RequestBody AccountDTO objDTO) {
-		Account obj = accountService.fromDTO(objDTO);
-		obj = accountService.insert(obj);
+		Account obj = service.fromDTO(objDTO);
+		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
+	@PutMapping(value = "/{uuid}")
+	public ResponseEntity<Void> update(@Valid @RequestBody AccountDTO objDTO, @PathVariable String uuid) {
+		Account obj = service.fromDTO(objDTO);
+		obj.setId(service.findByUuid(uuid).getId());
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PreAuthorize("hasAnyRole('BASIC_USER')")
 	@GetMapping
 	public ResponseEntity<List<AccountDTO>> findAllByUser() {
-		List<Account> list = accountService.findByUser();
+		List<Account> list = service.findByUser();
 		List<AccountDTO> listDTO = list.stream().map(x -> new AccountDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<AccountDTO> findById(@PathVariable Long id) {
-		Account obj = accountService.findById(id);
+	@GetMapping(value = "/{uuid}")
+	public ResponseEntity<AccountDTO> findByUuid(@PathVariable String uuid) {
+		Account obj = service.findByUuid(uuid);
 		return ResponseEntity.ok().body(new AccountDTO(obj));
 	}
 
 	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AccountDTO objDTO, @PathVariable Long id) {
-		Account obj = accountService.fromDTO(objDTO);
-		obj.setId(id);
-		obj = accountService.update(obj);
-		return ResponseEntity.noContent().build();
-	}
-	
-	@PreAuthorize("hasAnyRole('BASIC_USER')")
-	@PostMapping(value = "/{id}/adjustBalance")
-	public ResponseEntity<Void> adjustBalance(@Valid @RequestBody AccountBalanceDTO objDTO, @PathVariable Long id) {
-		Account account = accountService.findById(id);
-		if(account.getBalance() == objDTO.getBalance()) {
+	@PostMapping(value = "/{uuid}/adjustBalance")
+	public ResponseEntity<Void> adjustBalance(@Valid @RequestBody AccountBalanceDTO objDTO, @PathVariable String uuid) {
+		Account account = service.findByUuid(uuid);
+		if (account.getBalance() == objDTO.getBalance()) {
 			return ResponseEntity.noContent().build();
 		}
-		Entry entryAdjust = accountService.adjustBalance(account, objDTO.getBalance());
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entryAdjust.getId()).toUri();
+		Entry entryAdjust = service.adjustBalance(account, objDTO.getBalance());
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entryAdjust.getId())
+				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
 }
