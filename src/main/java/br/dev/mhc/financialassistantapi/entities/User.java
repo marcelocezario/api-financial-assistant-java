@@ -2,26 +2,22 @@ package br.dev.mhc.financialassistantapi.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-
-import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -36,44 +32,45 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@NotEmpty(message = "Required field")
-	@Length(max = 50, message = "Maximum number of 80 characters exceeded")
+	private String uuid;
+	private String name;
 	private String nickname;
-
-	@NotEmpty(message = "Required field")
-	@Email(message = "Invalid email adress")
-	@Column(unique = true)
 	private String email;
-
-	@NotEmpty(message = "Required field")
 	@JsonIgnore
 	private String password;
-
-	private Instant registrationMoment;
-	private Instant lastAccess;
 	private String imageUrl;
+	private Instant creationMoment;
+	private Instant lastUpdate;
 	private boolean active;
+
+	@ManyToOne
+	@JoinColumn(name = "default_currency_type_id")
+	private CurrencyType defaultCurrencyType;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "tb_profiles")
 	private Set<Integer> profiles = new HashSet<>();
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<Account> accounts = new HashSet<>();
+
 	public User() {
+		active = true;
 		addProfile(Profile.BASIC_USER);
 	}
 
-	public User(Long id, String nickname, String email, String password, Instant registrationMoment, Instant lastAccess,
-			String imageUrl, boolean active) {
+	public User(Long id, String uuid, String name, String nickname, String email, String password, String imageUrl,
+			CurrencyType defaultCurrencyType) {
 		super();
 		this.id = id;
+		this.uuid = uuid;
+		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
-		this.registrationMoment = registrationMoment;
-		this.lastAccess = lastAccess;
 		this.imageUrl = imageUrl;
-		this.active = active;
+		this.defaultCurrencyType = defaultCurrencyType;
+		this.active = true;
 		addProfile(Profile.BASIC_USER);
 	}
 
@@ -83,6 +80,22 @@ public class User implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getNickname() {
@@ -110,22 +123,6 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public Instant getRegistrationMoment() {
-		return registrationMoment;
-	}
-
-	public void setRegistrationMoment(Instant registrationMoment) {
-		this.registrationMoment = registrationMoment;
-	}
-
-	public Instant getLastAccess() {
-		return lastAccess;
-	}
-
-	public void setLastAccess(Instant lastAccess) {
-		this.lastAccess = lastAccess;
-	}
-
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -134,12 +131,44 @@ public class User implements Serializable {
 		this.imageUrl = imageUrl;
 	}
 
+	public Instant getCreationMoment() {
+		return creationMoment;
+	}
+
+	public void setCreationMoment(Instant creationMoment) {
+		this.creationMoment = creationMoment;
+	}
+
+	public Instant getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Instant lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public CurrencyType getDefaultCurrencyType() {
+		return defaultCurrencyType;
+	}
+
+	public void setDefaultCurrencyType(CurrencyType defaultCurrencyType) {
+		this.defaultCurrencyType = defaultCurrencyType;
+	}
+
+	public Set<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void addAccount(Account account) {
+		accounts.add(account);
 	}
 
 	public Set<Profile> getProfiles() {
@@ -173,32 +202,5 @@ public class User implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withLocale(new Locale("pt", "BR"))
-				.withZone(ZoneId.systemDefault());
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("Olá ");
-		builder.append(nickname);
-		builder.append("!\n\n");
-		builder.append("Cadastrado realizado com sucesso!\n\n");
-		builder.append("E-mail de cadastro: ");
-		builder.append(email);
-		builder.append("\n");
-		builder.append("Data e hora do cadastro: ");
-		builder.append(dtf.format(registrationMoment));
-		builder.append("\n");
-		builder.append("\n");
-		builder.append("O que posso fazer agora?");
-		builder.append("\n");
-		builder.append("Agora você tem acesso ao app Assitente Financeiro, para lhe ajudar a controlar suas finanças.");
-		builder.append("\n");
-		builder.append("\n");
-		builder.append("---------------------------------------------------------------------------------------------");
-		builder.append("\n");
-		return builder.toString();
 	}
 }

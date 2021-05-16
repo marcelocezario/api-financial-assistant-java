@@ -14,7 +14,6 @@ import br.dev.mhc.financialassistantapi.dto.EmailDTO;
 import br.dev.mhc.financialassistantapi.security.JWTUtil;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
 import br.dev.mhc.financialassistantapi.services.AuthService;
-import br.dev.mhc.financialassistantapi.services.UserService;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -22,18 +21,19 @@ public class AuthResource {
 
 	@Autowired
 	private JWTUtil jwtUtil;
-	
+
 	@Autowired
 	private AuthService service;
 
 	@RequestMapping(value = "/refresh_token", method = RequestMethod.POST)
 	public ResponseEntity<Void> refreshToken(HttpServletResponse response) {
-		UserSpringSecurity user = UserService.authenticated();
+		UserSpringSecurity user = AuthService.getAuthenticatedUserSpringSecurity();
 		String token = jwtUtil.generateToken(user.getUsername());
 		response.addHeader("Authorization", "Bearer " + token);
+		response.addHeader("access-control-expose-headers", "Authorization");
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
 	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDTO objDTO) {
 		service.sendNewPassword(objDTO.getEmail());

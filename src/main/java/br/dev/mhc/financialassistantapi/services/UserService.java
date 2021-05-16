@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,25 +20,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.dev.mhc.financialassistantapi.dto.UserDTO;
 import br.dev.mhc.financialassistantapi.dto.UserNewDTO;
+import br.dev.mhc.financialassistantapi.entities.Account;
+import br.dev.mhc.financialassistantapi.entities.CurrencyType;
 import br.dev.mhc.financialassistantapi.entities.User;
-import br.dev.mhc.financialassistantapi.entities.enums.Profile;
 import br.dev.mhc.financialassistantapi.repositories.UserRepository;
 import br.dev.mhc.financialassistantapi.security.UserSpringSecurity;
+import br.dev.mhc.financialassistantapi.security.enums.AuthorizationType;
 import br.dev.mhc.financialassistantapi.services.email.EmailService;
-import br.dev.mhc.financialassistantapi.services.exceptions.AuthorizationException;
 import br.dev.mhc.financialassistantapi.services.exceptions.DataIntegrityException;
 import br.dev.mhc.financialassistantapi.services.exceptions.ObjectNotFoundException;
+import br.dev.mhc.financialassistantapi.services.interfaces.CrudInterface;
 
 @Service
-public class UserService {
+public class UserService implements CrudInterface<User, Long> {
 
-	public static UserSpringSecurity authenticated() {
-		try {
-			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		} catch (Exception e) {
-			return null;
-		}
-	}
+	@Autowired
+	private DefaultService defaultService;
 
 	@Autowired
 	private BCryptPasswordEncoder pe;
@@ -51,21 +48,38 @@ public class UserService {
 
 	@Autowired
 	private S3Service s3Service;
-	
+
 	@Autowired
 	private imageService imageService;
-	
+
+	@Autowired
+	private CurrencyTypeService currencyService;
+
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
-	
+
 	@Value("${img.profile.size}")
 	private Integer size;
 
 	@Transactional
+	@Override
 	public User insert(User obj) {
-		obj.setActive(true);
-		obj.setRegistrationMoment(Instant.now());
-		obj.setLastAccess(obj.getRegistrationMoment());
+		obj.setCreationMoment(Instant.now());
+		if (obj.getUuid() == null) {
+			obj.setUuid(UUID.randomUUID().toString());
+		}
+		if (obj.getDefaultCurrencyType() == null) {
+			obj.setDefaultCurrencyType(defaultService.defaultCurrency());
+		}
+		for (Account account : defaultService.defaultUserAccounts()) {
+			account.setId(null);
+			if (account.getUuid() == null)
+				account.setUuid(UUID.randomUUID().toString());
+			account.setCreationMoment(Instant.now());
+			account.setCurrencyType(obj.getDefaultCurrencyType());
+			account.setUser(obj);
+			obj.addAccount(account);
+		}
 		obj = repository.save(obj);
 //		emailService.sendUserConfirmationEmail(obj);
 		emailService.sendUserConfirmationHtmlEmail(obj);
@@ -73,28 +87,23 @@ public class UserService {
 	}
 
 	@Transactional
+	@Override
 	public User update(User obj) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !obj.getId().equals(userSS.getId())) {
-			throw new AuthorizationException("Access denied");
-		}
-
+		AuthService.validatesUserAuthorization(obj.getId(), AuthorizationType.USER_ONLY);
 		User newObj = findById(obj.getId());
-		updateData(newObj, obj);
+		newObj.setName(obj.getName());
+		newObj.setNickname(obj.getNickname());
+		newObj.setEmail(obj.getEmail());
+		newObj.setImageUrl(obj.getImageUrl());
+		newObj.setLastUpdate(Instant.now());
+		newObj.setDefaultCurrencyType(obj.getDefaultCurrencyType());
 		return repository.save(newObj);
 	}
 
-	public void updateData(User newObj, User obj) {
-		newObj.setNickname(obj.getNickname());
-		newObj.setEmail(obj.getEmail());
-	}
-
+	@Transactional
+	@Override
 	public void delete(Long id) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
-			throw new AuthorizationException("Access denied");
-		}
-
+		AuthService.validatesUserAuthorization(id, AuthorizationType.USER_OR_ADMIN);
 		findById(id);
 		try {
 			repository.deleteById(id);
@@ -103,24 +112,35 @@ public class UserService {
 		}
 	}
 
-	public List<User> findAll() {
-		return repository.findAll();
-	}
-
-	public Page<User> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findAll(pageRequest);
-	}
-
+	@Override
 	public User findById(Long id) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null || !userSS.hasRole(Profile.ADMIN) && !id.equals(userSS.getId())) {
-			throw new AuthorizationException("Access denied");
-		}
+		AuthService.validatesUserAuthorization(id, AuthorizationType.USER_OR_ADMIN);
 
 		Optional<User> obj = repository.findById(id);
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Object not found! Id: " + id + ", Type: " + User.class.getName()));
+	}
+
+	@Override
+	public User findByUuid(String uuid) {
+		AuthService.validatesUserAuthorization(uuid, AuthorizationType.USER_OR_ADMIN);
+
+		Optional<User> obj = repository.findByUuid(uuid);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Object not found! Uuid: " + uuid + ", Type: " + User.class.getName()));
+	}
+
+	@Override
+	public List<User> findAll() {
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.ADMIN_ONLY);
+		return repository.findAll();
+	}
+
+	@Override
+	public Page<User> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findAll(pageRequest);
 	}
 
 	public User findByEmail(String email) {
@@ -128,34 +148,40 @@ public class UserService {
 	}
 
 	public User fromDTO(UserDTO objDto) {
-		return new User(objDto.getId(), objDto.getNickname(), objDto.getEmail(), null, objDto.getRegistrationMoment(),
-				objDto.getLastAccess(), objDto.getImageUrl(), objDto.isActive());
+		return new User(null, objDto.getUuid(), objDto.getName(), objDto.getNickname(), objDto.getEmail(), null,
+				objDto.getImageUrl(), currencyService.fromDTO(objDto.getDefaultCurrencyType()));
 	}
 
 	public User fromDTO(UserNewDTO objDTO) {
-		User user = new User(null, objDTO.getNickname(), objDTO.getEmail(), pe.encode(objDTO.getPassword()), null, null,
-				null, true);
-		return user;
+		if (objDTO.getNickname() == null || objDTO.getNickname().equals("")) {
+			objDTO.setNickname(objDTO.getName().split(" ")[0]);
+		}
+		CurrencyType currency;
+		if (objDTO.getDefaultCurrencyType() == null) {
+			currency = defaultService.defaultCurrency();
+		} else {
+			currency = currencyService.fromDTO(objDTO.getDefaultCurrencyType());
+		}
+		return new User(null, null, objDTO.getName(), objDTO.getNickname(), objDTO.getEmail(),
+				pe.encode(objDTO.getPassword()), null, currency);
 	}
 
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		UserSpringSecurity userSS = UserService.authenticated();
-		if (userSS == null) {
-			throw new AuthorizationException("Access denied");
-		}
-				
+		UserSpringSecurity userSS = AuthService.getAuthenticatedUserSpringSecurity();
+		AuthService.validatesUserAuthorization(userSS.getId(), AuthorizationType.USER_ONLY);
+
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
 		jpgImage = imageService.cropSquare(jpgImage);
 		jpgImage = imageService.resize(jpgImage, size);
-		
-		String fileName = prefix + userSS.getId() + ".jpg";
-		
+
+		String fileName = prefix + userSS.getUuid() + ".jpg";
+
 		URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 
-		User user = findById(userSS.getId());
+		User user = findByUuid(userSS.getUuid());
 		user.setImageUrl(uri.toString());
-		repository.save(user);
-		
+		update(user);
+
 		return uri;
 	}
 }
